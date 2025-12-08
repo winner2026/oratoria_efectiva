@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "edge"; // force rebuild
 
 import { NextResponse } from "next/server";
 import { db } from "../../../db";
