@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../../app/page.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <div style={{ padding: 40, fontSize: 24 }}>\n      🚀 Registro de Gastos — MVP funcionando\n    </div>\n  );\n}\n"],"names":[],"mappings":"mKAAe,SAAS,IACtB,MACE,CAAA,EAAA,EAAA,GAAA,EAAC,MAAA,CAAI,MAAO,CAAE,QAAS,GAAI,SAAU,EAAG,WAAG,2CAI/C"}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///C:/Proyectos/KrediaPRO/app/globals.css"],"sourcesContent":["/* Reset minimal */\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  background: white;\n  font-family: system-ui, sans-serif;\n}\n"],"names":[],"mappings":"AACA;;;;AAIA"}}]
-}
