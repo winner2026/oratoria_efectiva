@@ -14,7 +14,7 @@ export default function BarChart({ data }: { data: Array<{ time: string; value: 
       height: 300,
     });
 
-    const bars = chart.addHistogramSeries({
+    const bars = (chart as any).addHistogramSeries({
       color: "#4F46E5",
     });
 

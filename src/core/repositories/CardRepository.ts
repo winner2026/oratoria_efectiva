@@ -1,12 +1,4 @@
-export interface CardEntity {
-  id: string;
-  userId: string;
-  tasaMensual: number;
-  fechaCorte: Date;
-  fechaVencimiento: Date;
-  saldoActual: number;
-  createdAt: Date;
-}
+import { CardEntity } from "../entities/CreditCard";
 
 export interface CardRepository {
   findById(id: string): Promise<CardEntity | null>;

@@ -1,14 +1,6 @@
-export interface TransactionEntity {
-  id: string;
-  userId: string;
-  cardId: string;
-  monto: number;
-  descripcion: string;
-  fecha: Date;
-  createdAt: Date;
-}
+import { Transaction } from "../entities/Transaction";
 
 export interface TransactionRepository {
-  findByCard(cardId: string): Promise<TransactionEntity[]>;
-  create(tx: TransactionEntity): Promise<void>;
+  findByCard(cardId: string): Promise<Transaction[]>;
+  create(tx: Transaction): Promise<void>;
 }

@@ -1,6 +1,7 @@
-import { UserRepository } from "../repositories/UserRepository";
-import { User } from "../entities/User";
+import { UserRepository } from "@/core/repositories/UserRepository";
+import { UserEntity } from "@/core/entities/User";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 
 export class RegisterUser {
   constructor(private users: UserRepository) {}
@@ -11,11 +12,12 @@ export class RegisterUser {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user: User = {
-      id: crypto.randomUUID(),
+    const user: UserEntity = {
+      id: randomUUID(),
       email,
-      passwordHash,
+      password: passwordHash,
       createdAt: new Date(),
+      plan: "free",
     };
 
     await this.users.create(user);

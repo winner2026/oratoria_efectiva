@@ -1,5 +1,6 @@
-import { CardRepository } from "../repositories/CardRepository";
-import { CreditCard } from "../entities/CreditCard";
+import { CardRepository } from "@/core/repositories/CardRepository";
+import { CardEntity } from "@/core/entities/CreditCard";
+import { randomUUID } from "crypto";
 
 export class CreateCreditCard {
   constructor(private cards: CardRepository) {}
@@ -15,8 +16,8 @@ export class CreateCreditCard {
     fechaCorte: Date;
     fechaVencimiento: Date;
   }) {
-    const card: CreditCard = {
-      id: crypto.randomUUID(),
+    const card: CardEntity = {
+      id: randomUUID(),
       userId,
       saldoActual: 0,
       tasaMensual,

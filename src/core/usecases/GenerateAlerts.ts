@@ -1,5 +1,5 @@
-import { CardRepository } from "../repositories/CardRepository";
-import { FinancialEngine } from "./FinancialEngine";
+import { CardRepository } from "@/core/repositories/CardRepository";
+import { FinancialEngine } from "@/core/usecases/FinancialEngine";
 
 export class GenerateAlerts {
   constructor(private cards: CardRepository) {}

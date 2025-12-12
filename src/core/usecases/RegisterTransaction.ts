@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
-import { CardRepository } from "../repositories/CardRepository";
-import { TransactionRepository } from "../repositories/TransactionRepository";
-import { Transaction } from "../entities/Transaction";
+import { CardRepository } from "@/core/repositories/CardRepository";
+import { TransactionRepository } from "@/core/repositories/TransactionRepository";
+import { Transaction } from "@/core/entities/Transaction";
 
 export class RegisterTransaction {
   constructor(

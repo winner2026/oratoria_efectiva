@@ -1,9 +1,9 @@
 import { CardRepository } from "@/core/repositories/CardRepository";
-import { CreditCard } from "@/core/entities/CreditCard";
+import { CardEntity } from "@/core/entities/CreditCard";
 import { query } from "../db/client";
 
 export class NeonCardRepository implements CardRepository {
-  async findByUser(userId: string): Promise<CreditCard | null> {
+  async findByUser(userId: string): Promise<CardEntity | null> {
     const res = await query(
       `SELECT * FROM credit_cards WHERE user_id = $1 LIMIT 1`,
       [userId]
@@ -24,7 +24,28 @@ export class NeonCardRepository implements CardRepository {
     };
   }
 
-  async create(card: CreditCard): Promise<void> {
+  async findById(id: string): Promise<CardEntity | null> {
+    const res = await query(
+      `SELECT * FROM credit_cards WHERE id = $1 LIMIT 1`,
+      [id]
+    );
+
+    if (res.rowCount === 0) return null;
+
+    const row = res.rows[0];
+
+    return {
+      id: row.id,
+      userId: row.user_id,
+      saldoActual: parseFloat(row.saldo_actual),
+      tasaMensual: parseFloat(row.tasa_mensual),
+      fechaCorte: row.fecha_corte,
+      fechaVencimiento: row.fecha_vencimiento,
+      createdAt: row.created_at,
+    };
+  }
+
+  async create(card: CardEntity): Promise<void> {
     await query(
       `INSERT INTO credit_cards 
       (id, user_id, saldo_actual, tasa_mensual, fecha_corte, fecha_vencimiento, created_at)
@@ -41,7 +62,7 @@ export class NeonCardRepository implements CardRepository {
     );
   }
 
-  async update(card: CreditCard): Promise<void> {
+  async update(card: CardEntity): Promise<void> {
     await query(
       `UPDATE credit_cards
        SET saldo_actual = $1,

@@ -1,6 +1,6 @@
-import { TransactionRepository } from "../repositories/TransactionRepository"
-import { CardRepository } from "../repositories/CardRepository"
-import { FinancialEngine } from "./FinancialEngine"
+import { TransactionRepository } from "@/core/repositories/TransactionRepository"
+import { CardRepository } from "@/core/repositories/CardRepository"
+import { FinancialEngine } from "@/core/usecases/FinancialEngine"
 
 export class GenerateInsights {
   constructor(

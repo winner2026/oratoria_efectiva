@@ -1,5 +1,5 @@
-import { TransactionRepository } from "../repositories/TransactionRepository";
-import { CardRepository } from "../repositories/CardRepository";
+import { TransactionRepository } from "@/core/repositories/TransactionRepository";
+import { CardRepository } from "@/core/repositories/CardRepository";
 
 export class GenerateGraphData {
   constructor(

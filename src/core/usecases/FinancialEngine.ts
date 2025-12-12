@@ -1,4 +1,4 @@
-import { CreditCard } from "../entities/CreditCard";
+import { CardEntity } from "@/core/entities/CreditCard";
 
 export class FinancialEngine {
   static calcularInteresMensual(saldoActual: number, tasaMensual: number) {
@@ -20,7 +20,7 @@ export class FinancialEngine {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
-  static riesgo(card: CreditCard) {
+  static riesgo(card: CardEntity) {
     const dias = this.diasHasta(card.fechaVencimiento);
 
     if (card.saldoActual <= 0) return "green";
@@ -29,7 +29,7 @@ export class FinancialEngine {
     return "green";
   }
 
-  static pagoRecomendado(card: CreditCard) {
+  static pagoRecomendado(card: CardEntity) {
     return Math.round(card.saldoActual * 0.2);
   }
 }

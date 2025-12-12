@@ -1,4 +1,4 @@
-export interface CreditCard {
+export interface CardEntity {
   id: string;
   userId: string;
   saldoActual: number;

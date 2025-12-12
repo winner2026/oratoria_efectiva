@@ -14,7 +14,7 @@ export default function LineChart({ data }: { data: Array<{ time: string; value:
       height: 300,
     });
 
-    const line = chart.addLineSeries();
+    const line = (chart as any).addLineSeries();
     line.setData(data);
 
     return () => chart.remove();

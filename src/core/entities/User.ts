@@ -1,6 +1,7 @@
-export interface User {
+export interface UserEntity {
   id: string;
   email: string;
-  passwordHash: string;
+  password: string;
+  plan: string;
   createdAt: Date;
 }
