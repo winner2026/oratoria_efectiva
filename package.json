@@ -1,7 +1,7 @@
 {
   "name": "oratoria-efectiva",
   "version": "1.0.0",
-  "description": "- \u0007pp/: Next.js UI + routing, no business logic. - src/: Clean architecture core (domain, application, infrastructure, services, lib, types). - prisma/: Database schema + migrations. - public/: Static assets. - scripts/: One-off technical utilities (seed, cleanup). - \\tests/: Domain + application unit tests only.",
+  "description": "- \u0007pp/: Next.js UI + routing, no business logic. - src/: Clean architecture core (domain, application, infrastructure, services, lib, types). - public/: Static assets. - scripts/: One-off technical utilities (seed, cleanup). - \\tests/: Domain + application unit tests only.",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -21,7 +21,6 @@
   "type": "module",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
-    "@prisma/client": "^7.2.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.45.0",

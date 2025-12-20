@@ -8,8 +8,9 @@
       "Bash(taskkill:*)",
       "Bash(Get-Process node -ErrorAction SilentlyContinue)",
       "Bash(Stop-Process -Force)",
-      "Bash(npx prisma generate:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(rd /s /q .next)",
+      "Bash(exit 0)"
     ]
   }
 }

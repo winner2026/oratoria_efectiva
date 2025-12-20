@@ -3,7 +3,6 @@
 ## Layers
 - app/: Next.js UI + routing, no business logic.
 - src/: Clean architecture core (domain, application, infrastructure, services, lib, types).
-- prisma/: Database schema + migrations.
 - public/: Static assets.
 - scripts/: One-off technical utilities (seed, cleanup).
 - tests/: Domain + application unit tests only.
