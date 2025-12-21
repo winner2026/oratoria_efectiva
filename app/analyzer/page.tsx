@@ -14,6 +14,7 @@ const SAMPLE_METRICS: VoiceMetrics = {
   wordsPerMinute: 130,
   avgPauseDuration: 0.45,
   pauseCount: 5,
+  fillerCount: 3,
   pitchVariation: 0.18,
   energyStability: 0.65,
 };

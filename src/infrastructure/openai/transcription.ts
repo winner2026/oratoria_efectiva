@@ -1,31 +1,41 @@
-export async function transcribeAudio(audio: Buffer): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY;
+import OpenAI from "openai";
+import { toFile } from "openai/uploads";
 
-  if (!apiKey) {
-    throw new Error('OPENAI_API_KEY is required to run Whisper transcription.');
-  }
+export type TranscriptionSegment = {
+  id: number;
+  start: number;
+  end: number;
+  text: string;
+};
 
-  const formData = new FormData();
-  formData.append('model', 'whisper-1');
-  formData.append('file', new Blob([new Uint8Array(audio)]), 'audio-input.mp3');
+export type TranscriptionResult = {
+  text: string;
+  segments: TranscriptionSegment[];
+  duration: number;
+};
 
-  const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: formData,
+export async function transcribeAudio(audio: Buffer): Promise<TranscriptionResult> {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Whisper transcription failed (${response.status}): ${body}`);
-  }
+  // Convertir Buffer a File usando el helper de OpenAI
+  const file = await toFile(audio, "audio-input.mp3");
 
-  const payload = (await response.json()) as { text?: string };
-  if (!payload.text) {
+  const transcription = await openai.audio.transcriptions.create({
+    file,
+    model: "whisper-1",
+    response_format: "verbose_json",
+    language: "es",
+  });
+
+  if (!transcription.text) {
     throw new Error('Whisper returned an unexpected payload without text.');
   }
 
-  return payload.text.trim();
+  return {
+    text: transcription.text.trim(),
+    segments: (transcription as any).segments || [],
+    duration: (transcription as any).duration || 0
+  };
 }
