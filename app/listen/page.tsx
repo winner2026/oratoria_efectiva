@@ -16,10 +16,7 @@ export default function ListenPage() {
 
         <div className="space-y-1 text-center">
           <p className="text-[clamp(1rem,2vw,1.4rem)] font-bold leading-tight text-white">
-            Vamos a escuchar tu voz
-          </p>
-          <p className="text-2xl font-semibold leading-tight text-zinc-100">
-            con atención.
+            Sabrás cómo se percibe tu voz cuando hablas.
           </p>
         </div>
 
