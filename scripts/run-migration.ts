@@ -25,20 +25,34 @@ const db = new Pool({
 });
 
 async function runMigration() {
-  const migrationPath = path.join(__dirname, "../migrations/003_create_usage_table.sql");
-  const sql = fs.readFileSync(migrationPath, "utf-8");
+  const migrations = [
+    "003_create_usage_table.sql",
+    "004_create_events_table.sql",
+  ];
 
-  console.log("🔄 Running migration: 003_create_usage_table.sql");
+  for (const migrationFile of migrations) {
+    const migrationPath = path.join(__dirname, "../migrations", migrationFile);
 
-  try {
-    await db.query(sql);
-    console.log("✅ Migration completed successfully!");
-  } catch (error) {
-    console.error("❌ Migration failed:", error);
-    throw error;
-  } finally {
-    await db.end();
+    if (!fs.existsSync(migrationPath)) {
+      console.log(`⏭️  Skipping ${migrationFile} (already run or doesn't exist)`);
+      continue;
+    }
+
+    const sql = fs.readFileSync(migrationPath, "utf-8");
+
+    console.log(`🔄 Running migration: ${migrationFile}`);
+
+    try {
+      await db.query(sql);
+      console.log(`✅ ${migrationFile} completed successfully!`);
+    } catch (error) {
+      console.error(`❌ ${migrationFile} failed:`, error);
+      throw error;
+    }
   }
+
+  await db.end();
+  console.log("✅ All migrations completed!");
 }
 
 runMigration();

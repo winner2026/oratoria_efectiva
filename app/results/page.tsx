@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { logEvent } from "@/lib/events/logEvent";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 /**
  * Contrato único de salida del análisis - MVP
@@ -23,6 +25,8 @@ type AnalysisResult = {
  *
  * Sin comparaciones, sin historial, sin complicaciones.
  * Solo el feedback de esta sesión.
+ *
+ * Con tracking de scroll y engagement.
  */
 export default function ResultsPage() {
   const router = useRouter();
@@ -37,7 +41,33 @@ export default function ResultsPage() {
 
     const analysisResult = JSON.parse(savedResult);
     setResult(analysisResult);
+
+    // 📊 EVENTO: analysis_viewed
+    logEvent("analysis_viewed");
   }, [router]);
+
+  // Track section visibility with IntersectionObserver
+  const diagnosisRef = useIntersectionObserver<HTMLDivElement>({
+    onVisible: () => logEvent("analysis_section_viewed", { section: "diagnosis" }),
+  });
+
+  const strengthsRef = useIntersectionObserver<HTMLDivElement>({
+    onVisible: () => logEvent("analysis_section_viewed", { section: "strengths" }),
+  });
+
+  const weaknessesRef = useIntersectionObserver<HTMLDivElement>({
+    onVisible: () => logEvent("analysis_section_viewed", { section: "weaknesses" }),
+  });
+
+  const decisionRef = useIntersectionObserver<HTMLDivElement>({
+    onVisible: () => {
+      logEvent("analysis_section_viewed", { section: "decision" });
+      // Track engagement after 2 seconds of visibility
+      setTimeout(() => {
+        logEvent("analysis_section_engaged", { section: "decision" });
+      }, 2000);
+    },
+  });
 
   if (!result) {
     return (
@@ -61,14 +91,14 @@ export default function ResultsPage() {
         </div>
 
         {/* Diagnóstico */}
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div ref={diagnosisRef} className="bg-gray-800 rounded-xl p-6">
           <h2 className="text-xl font-semibold text-white mb-3">Diagnóstico</h2>
           <p className="text-gray-300 leading-relaxed">{result.diagnosis}</p>
         </div>
 
         {/* Lo que suma */}
         {result.strengths && result.strengths.length > 0 && (
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div ref={strengthsRef} className="bg-gray-800 rounded-xl p-6">
             <h2 className="text-xl font-semibold text-white mb-3">
               Lo que suma
             </h2>
@@ -85,7 +115,7 @@ export default function ResultsPage() {
 
         {/* Lo que resta */}
         {result.weaknesses && result.weaknesses.length > 0 && (
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div ref={weaknessesRef} className="bg-gray-800 rounded-xl p-6">
             <h2 className="text-xl font-semibold text-white mb-3">
               Lo que resta
             </h2>
@@ -101,7 +131,7 @@ export default function ResultsPage() {
         )}
 
         {/* Decisión */}
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div ref={decisionRef} className="bg-gray-800 rounded-xl p-6">
           <h2 className="text-xl font-semibold text-white mb-3">
             Qué hacer ahora
           </h2>
@@ -123,6 +153,8 @@ export default function ResultsPage() {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => {
+              // 📊 EVENTO: cta_retake_clicked
+              logEvent("cta_retake_clicked");
               localStorage.removeItem("voiceAnalysisResult");
               router.push("/practice");
             }}

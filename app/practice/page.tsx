@@ -3,6 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { getOrCreateAnonymousUserId } from "@/lib/anonymousUser";
+import { logEvent } from "@/lib/events/logEvent";
+
+// 🎯 CONTROL DE ABANDONO TEMPRANO
+const MIN_RECORDING_DURATION = 3; // segundos
+const EARLY_ABANDONMENT_THRESHOLD = 5; // segundos
 
 export default function PracticePage() {
   const router = useRouter();
@@ -42,6 +47,9 @@ export default function PracticePage() {
       audioChunksRef.current = [];
       setRecordingStartTime(Date.now());
 
+      // 📊 EVENTO: recording_started
+      logEvent("recording_started");
+
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
@@ -59,17 +67,35 @@ export default function PracticePage() {
         console.log("- Tamaño:", blob.size, "bytes");
         console.log("- Tipo:", blob.type);
 
-        if (recordingDuration < 3) {
+        if (recordingDuration < MIN_RECORDING_DURATION) {
+          // 📊 EVENTO: recording_abandoned (demasiado corta)
+          logEvent("recording_abandoned", {
+            duration: recordingDuration,
+            reason: "too_short"
+          });
           alert("La grabación es muy corta. Habla al menos 3 segundos para poder analizar tu voz.");
           stream.getTracks().forEach(track => track.stop());
           return;
         }
 
+        // 🎯 Detectar abandono temprano (< 5 segundos)
+        if (recordingDuration < EARLY_ABANDONMENT_THRESHOLD) {
+          logEvent("early_abandonment", { duration: recordingDuration });
+        }
+
         if (blob.size === 0) {
+          // 📊 EVENTO: recording_abandoned (audio vacío)
+          logEvent("recording_abandoned", {
+            duration: recordingDuration,
+            reason: "empty_audio"
+          });
           alert("Error: El audio está vacío. Intenta grabar de nuevo.");
           stream.getTracks().forEach(track => track.stop());
           return;
         }
+
+        // 📊 EVENTO: recording_completed
+        logEvent("recording_completed", { duration: recordingDuration });
 
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
@@ -126,6 +152,10 @@ export default function PracticePage() {
     console.log("  - Tipo:", audioBlob.type);
     console.log("  - User ID:", userId);
 
+    // 📊 EVENTO: cta_analyze_clicked (proceeded to analysis)
+    logEvent("cta_analyze_clicked");
+    logEvent("proceeded_to_analysis");
+
     setIsAnalyzing(true);
 
     try {
@@ -152,6 +182,8 @@ export default function PracticePage() {
         // 🚫 MANEJO ESPECIAL: Free limit reached
         if (response.status === 403 && errorData.error === "FREE_LIMIT_REACHED") {
           console.log("🔒 Free limit reached, redirecting to /upgrade");
+          // 📊 EVENTO: free_limit_reached
+          logEvent("free_limit_reached");
           router.push("/upgrade");
           return;
         }
@@ -225,7 +257,19 @@ export default function PracticePage() {
             <div className="space-y-4">
               <div className="bg-gray-800 rounded-xl p-6 space-y-4">
                 <p className="text-gray-300 text-sm font-semibold">Vista previa:</p>
-                <audio controls src={audioUrl} className="w-full" />
+                <audio
+                  controls
+                  src={audioUrl}
+                  className="w-full"
+                  onPlay={() => {
+                    // 📊 EVENTO: playback_started
+                    logEvent("playback_started");
+                  }}
+                  onEnded={() => {
+                    // 📊 EVENTO: playback_completed
+                    logEvent("playback_completed");
+                  }}
+                />
               </div>
 
               <div className="flex gap-3">
