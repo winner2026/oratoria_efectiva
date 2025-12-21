@@ -4,6 +4,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserPlan } from '@/lib/usage/getUserPlan';
 import { checkFreeUsage } from '@/lib/usage/checkFreeUsage';
 import { incrementUsage } from '@/lib/usage/incrementUsage';
+import { db } from '@/infrastructure/db/client';
+import {
+  generateFingerprint,
+  getClientIP,
+  normalizeUserAgent,
+} from '@/lib/fingerprint/generateFingerprint';
 
 // MODO MOCK: Para probar el flujo sin OpenAI
 const USE_MOCK = !process.env.OPENAI_API_KEY;
@@ -27,16 +33,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!userId) {
-      console.log('[ANALYSIS] ❌ No userId received');
-      return NextResponse.json(
-        { error: 'No se recibió userId' },
-        { status: 400 }
-      );
-    }
+    // 🔐 GENERAR FINGERPRINT ROBUSTO
+    // Preferencia: userId de localStorage
+    // Fallback: hash(IP + User-Agent) para modo incógnito
+    const ip = getClientIP(req.headers, (req as { ip?: string }).ip);
+    const userAgent = normalizeUserAgent(req.headers.get('user-agent'));
+    const fingerprint = generateFingerprint(userId, ip, userAgent);
 
     console.log('[ANALYSIS] ✓ Audio file:', audioFile.name, audioFile.size, 'bytes');
-    console.log('[ANALYSIS] ✓ User ID:', userId);
+    console.log('[ANALYSIS] ✓ User ID (client):', userId || 'null');
+    console.log('[ANALYSIS] ✓ IP:', ip || 'unknown');
+    console.log('[ANALYSIS] ✓ Fingerprint:', fingerprint);
 
     if (audioFile.size === 0) {
       console.log('[ANALYSIS] ❌ Audio file is empty');
@@ -57,25 +64,47 @@ export async function POST(req: NextRequest) {
 
     // 🔒 CONTROL DE USO FREE - CRÍTICO
     // Aquí es donde se bloquea el abuso, NUNCA en la UI
-    const plan = await getUserPlan(userId);
+    const plan = await getUserPlan(fingerprint);
     console.log('[ANALYSIS] User plan:', plan);
 
-    if (plan === "FREE") {
-      const usageCheck = await checkFreeUsage(userId);
-      console.log('[ANALYSIS] Free usage check:', usageCheck);
+    let totalAnalyses = 0;
+    let usageCheck: Awaited<ReturnType<typeof checkFreeUsage>> | null = null;
 
-      if (!usageCheck.allowed) {
-        console.log('[ANALYSIS] 🚫 FREE LIMIT REACHED for user:', userId);
-        return NextResponse.json(
-          {
-            error: 'FREE_LIMIT_REACHED',
-            message: 'Ya realizaste tu análisis gratuito. Actualiza a Premium para continuar.',
-            currentUsage: usageCheck.currentUsage,
-            maxAllowed: usageCheck.maxAllowed,
-          },
-          { status: 403 }
+    if (plan === "FREE") {
+      usageCheck = await checkFreeUsage(fingerprint);
+      totalAnalyses = usageCheck.currentUsage;
+      console.log('[ANALYSIS] Free usage check:', usageCheck);
+    } else {
+      try {
+        const usageResult = await db.query(
+          `SELECT total_analyses FROM usage WHERE user_id = $1`,
+          [fingerprint]
         );
+        totalAnalyses = usageResult.rows[0]?.total_analyses || 0;
+      } catch (error) {
+        console.error('[ANALYSIS] Error fetching total_analyses:', error);
       }
+    }
+
+    console.log('[USAGE]', {
+      ip,
+      userAgent,
+      fingerprint,
+      planType: plan,
+      totalAnalyses,
+    });
+
+    if (plan === "FREE" && usageCheck && !usageCheck.allowed) {
+      console.log('[ANALYSIS] 🚫 FREE LIMIT REACHED for fingerprint:', fingerprint);
+      return NextResponse.json(
+        {
+          error: 'FREE_LIMIT_REACHED',
+          message: 'Ya realizaste tu análisis gratuito. Actualiza a Premium para continuar.',
+          currentUsage: usageCheck.currentUsage,
+          maxAllowed: usageCheck.maxAllowed,
+        },
+        { status: 403 }
+      );
     }
 
     // Si no hay API key de OpenAI, usar respuesta mock
@@ -84,8 +113,8 @@ export async function POST(req: NextRequest) {
 
       // 📊 CRÍTICO: Incrementar uso ANTES de devolver respuesta MOCK
       // Sin esto, el usuario puede hacer análisis infinitos en modo MOCK
-      await incrementUsage(userId, plan);
-      console.log('[ANALYSIS] ✓ Usage incremented for user (MOCK mode):', userId);
+      await incrementUsage(fingerprint, plan);
+      console.log('[ANALYSIS] ✓ Usage incremented for fingerprint (MOCK mode):', fingerprint);
 
       return NextResponse.json({
         success: true,
@@ -130,12 +159,12 @@ export async function POST(req: NextRequest) {
     });
 
     // Guardar sesión en DB
-    const sessionId = await saveVoiceAnalysis(userId, result);
+    const sessionId = await saveVoiceAnalysis(fingerprint, result);
     console.log('[ANALYSIS] ✓ Session saved:', sessionId);
 
     // 📊 INCREMENTAR USO (después de análisis exitoso)
-    await incrementUsage(userId, plan);
-    console.log('[ANALYSIS] ✓ Usage incremented for user:', userId);
+    await incrementUsage(fingerprint, plan);
+    console.log('[ANALYSIS] ✓ Usage incremented for fingerprint:', fingerprint);
 
     console.log('[ANALYSIS] ✓ Analysis complete!');
     return NextResponse.json({
