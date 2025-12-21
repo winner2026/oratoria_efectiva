@@ -12,12 +12,14 @@ export default function ListenPage() {
           KREDIA
         </div>
 
-        <div className="space-y-1 text-center">
+        <div className="space-y-6 text-center">
           <p className="text-[clamp(1rem,2vw,1.4rem)] font-bold leading-tight text-white">
             Sabrás cómo se percibe tu voz cuando hablas.
           </p>
-          <p className="text-base text-zinc-400">Sin juicios.</p>
-          <p className="text-base text-zinc-400">Sin correcciones.</p>
+          <div className="space-y-2">
+            <p className="text-2xl font-semibold text-zinc-300">Sin juicios.</p>
+            <p className="text-2xl font-semibold text-zinc-300">Sin correcciones.</p>
+          </div>
         </div>
 
         <p className="text-sm text-zinc-300 leading-relaxed">
