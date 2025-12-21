@@ -12,28 +12,29 @@ export default function ListenPage() {
           KREDIA
         </div>
 
-        <div className="space-y-2">
-          <p className="text-3xl font-semibold">Hola.</p>
-          <p className="text-lg text-zinc-200 leading-relaxed">
-            Vamos a escuchar tu voz con atención.
+        <p className="text-3xl font-semibold">Hola.</p>
+
+        <div className="space-y-1 text-left">
+          <p className="text-[clamp(3rem,6vw,4rem)] font-bold leading-tight text-white">
+            Vamos a escuchar tu voz
+          </p>
+          <p className="text-2xl font-semibold leading-tight text-zinc-100">
+            con atención.
           </p>
         </div>
 
-        <div className="space-y-2 text-sm text-zinc-400">
-          <p>No vamos a juzgarte.</p>
-          <p>Vamos a decirte cómo se percibe cuando hablas.</p>
-        </div>
+        <p className="text-base text-zinc-400">Sin juicios.</p>
+        <p className="text-base text-zinc-400">Sin correcciones.</p>
 
-        <p className="text-base text-zinc-100 leading-relaxed">
-          Graba un fragmento corto hablando como lo harías en una reunión o al explicar una idea importante.
+        <p className="text-lg font-semibold text-zinc-100 leading-relaxed">
+          Solo vamos a decirte <br />
+          cómo se percibe <br />
+          cuando hablas.
         </p>
 
-        <div className="px-6">
-          <div className="rounded-2xl border border-dashed border-white/40 bg-white/5 p-6 text-left text-sm text-zinc-300">
-            <p className="font-semibold text-white">Grabación de audio</p>
-            <p className="text-xs text-zinc-400">Tu voz se captura cuando presionas el botón. No hay juicios.</p>
-          </div>
-        </div>
+        <p className="text-sm text-zinc-300 leading-relaxed">
+          Graba un fragmento corto, como en una reunión o al explicar una idea importante.
+        </p>
 
         <button
           onClick={() => router.push("/practice")}
