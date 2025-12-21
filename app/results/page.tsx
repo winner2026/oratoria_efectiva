@@ -57,13 +57,23 @@ export default function ResultsPage() {
       const analysisResult = JSON.parse(savedResult);
       setResult(analysisResult);
 
+      // Obtener userId del navegador
+      const { getAnonymousUserId } = await import("@/lib/anonymousUser");
+      const userId = getAnonymousUserId();
+
+      if (!userId) {
+        console.error("No se encontró userId");
+        setLoading(false);
+        return;
+      }
+
       // Obtener comparación con sesión anterior
       try {
         const response = await fetch("/api/session-comparison", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userId: "anonymous", // TODO: usar userId real cuando implementes auth
+            userId,
             currentMetrics: analysisResult.metrics,
             currentScore: analysisResult.authorityScore.score,
           }),

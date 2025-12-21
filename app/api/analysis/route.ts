@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const audioFile = formData.get('audio') as File | null;
+    const userId = formData.get('userId') as string | null;
 
     console.log('[ANALYSIS] Received request');
 
@@ -20,7 +21,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!userId) {
+      console.log('[ANALYSIS] ❌ No userId received');
+      return NextResponse.json(
+        { error: 'No se recibió userId' },
+        { status: 400 }
+      );
+    }
+
     console.log('[ANALYSIS] ✓ Audio file:', audioFile.name, audioFile.size, 'bytes');
+    console.log('[ANALYSIS] ✓ User ID:', userId);
 
     if (audioFile.size === 0) {
       console.log('[ANALYSIS] ❌ Audio file is empty');
@@ -76,8 +86,7 @@ export async function POST(req: NextRequest) {
       userId: undefined,
     });
 
-    // Guardar sesión en DB (usando userId anónimo por ahora)
-    const userId = 'anonymous';
+    // Guardar sesión en DB
     const sessionId = await saveVoiceAnalysis(userId, result);
     console.log('[ANALYSIS] ✓ Session saved:', sessionId);
 

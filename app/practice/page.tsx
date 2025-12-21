@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { getOrCreateAnonymousUserId } from "@/lib/anonymousUser";
 
 export default function PracticePage() {
   const router = useRouter();
@@ -12,6 +13,13 @@ export default function PracticePage() {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Generar o recuperar userId anónimo al montar
+  useEffect(() => {
+    const id = getOrCreateAnonymousUserId();
+    setUserId(id);
+  }, []);
 
   const startRecording = async () => {
     try {
@@ -58,8 +66,14 @@ export default function PracticePage() {
       return;
     }
 
+    if (!userId) {
+      alert("Error: No se pudo identificar el usuario");
+      return;
+    }
+
     // VERIFICACIÓN: Log del blob antes de enviar
     console.log("Audio blob:", audioBlob, "Size:", audioBlob.size, "bytes");
+    console.log("User ID:", userId);
 
     if (audioBlob.size === 0) {
       alert("El audio está vacío. Por favor, graba de nuevo.");
@@ -71,6 +85,7 @@ export default function PracticePage() {
     try {
       const formData = new FormData();
       formData.append("audio", audioBlob, "voice.webm");
+      formData.append("userId", userId);
 
       console.log("Enviando audio al servidor...");
 
