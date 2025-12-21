@@ -3,8 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+/**
+ * Contrato único de salida del análisis.
+ * Este tipo debe coincidir exactamente con lo que devuelve /api/analysis
+ */
 type AnalysisResult = {
   transcription: string;
+  transcriptionWithSilences: string;
   authorityScore: {
     level: "LOW" | "MEDIUM" | "HIGH";
     score: number;
@@ -12,33 +17,70 @@ type AnalysisResult = {
     weaknesses: string[];
     priorityAdjustment: string;
   };
+  metrics: {
+    wordsPerMinute: number;
+    avgPauseDuration: number;
+    pauseCount: number;
+    fillerCount: number;
+    pitchVariation: number;
+    energyStability: number;
+  };
+  durationSeconds: number;
   diagnosis: string;
   strengths: string[];
   weaknesses: string[];
   decision: string;
   payoff: string;
-  feedback?: {
-    nivel: string;
-    loQueSuma: string;
-    loQueResta: string;
-    hoy: string;
-  };
+};
+
+type ComparisonData = {
+  hasPreviousSession: boolean;
+  previousScore: number | null;
+  currentScore: number;
+  dynamicCopy: string[];
 };
 
 export default function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [comparison, setComparison] = useState<ComparisonData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedResult = localStorage.getItem("voiceAnalysisResult");
-    if (savedResult) {
-      setResult(JSON.parse(savedResult));
-    } else {
-      // Si no hay resultados, redirigir a la página de práctica
-      router.push("/practice");
-    }
-    setLoading(false);
+    const loadResults = async () => {
+      const savedResult = localStorage.getItem("voiceAnalysisResult");
+      if (!savedResult) {
+        router.push("/practice");
+        return;
+      }
+
+      const analysisResult = JSON.parse(savedResult);
+      setResult(analysisResult);
+
+      // Obtener comparación con sesión anterior
+      try {
+        const response = await fetch("/api/session-comparison", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: "anonymous", // TODO: usar userId real cuando implementes auth
+            currentMetrics: analysisResult.metrics,
+            currentScore: analysisResult.authorityScore.score,
+          }),
+        });
+
+        if (response.ok) {
+          const comparisonData = await response.json();
+          setComparison(comparisonData);
+        }
+      } catch (error) {
+        console.error("Error al obtener comparación:", error);
+      }
+
+      setLoading(false);
+    };
+
+    loadResults();
   }, [router]);
 
   const handleNewAnalysis = () => {
@@ -58,47 +100,54 @@ export default function ResultsPage() {
     return null;
   }
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case "HIGH":
-        return "text-green-400";
-      case "MEDIUM":
-        return "text-yellow-400";
-      case "LOW":
-        return "text-red-400";
-      default:
-        return "text-gray-400";
+  // Generar indicador visual minimalista
+  const renderAuthorityBar = () => {
+    if (!comparison?.hasPreviousSession) {
+      return null;
     }
-  };
 
-  const getLevelText = (level: string) => {
-    switch (level) {
-      case "HIGH":
-        return "Alta";
-      case "MEDIUM":
-        return "Media";
-      case "LOW":
-        return "Baja";
-      default:
-        return level;
-    }
+    const prev = comparison.previousScore || 0;
+    const curr = result.authorityScore.score;
+    const filledBars = Math.round((curr / 100) * 9);
+
+    return (
+      <div className="flex items-center gap-3 text-gray-300">
+        <div className="flex gap-0.5">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span key={i} className={i < filledBars ? "text-white" : "text-gray-700"}>
+              ▮
+            </span>
+          ))}
+        </div>
+        <span className="text-sm">
+          {prev} → {curr}
+        </span>
+      </div>
+    );
   };
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="card p-8 md:p-12 max-w-3xl w-full space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">
-            Análisis completado
-          </h1>
-          <div className="flex items-center justify-center gap-3">
-            <span className="text-gray-400">Nivel de autoridad:</span>
-            <span className={`text-2xl font-bold ${getLevelColor(result.authorityScore.level)}`}>
-              {getLevelText(result.authorityScore.level)}
-            </span>
-            <span className="text-gray-500">({result.authorityScore.score}/100)</span>
+        {/* Header: Solo el número de autoridad */}
+        <div className="text-center space-y-3">
+          <h1 className="text-2xl text-gray-400 font-normal">Autoridad</h1>
+          <div className="text-6xl font-bold text-white">
+            {result.authorityScore.score}<span className="text-gray-500 text-4xl">/100</span>
           </div>
+          {renderAuthorityBar()}
         </div>
+
+        {/* Copy dinámico: QUÉ cambió */}
+        {comparison?.dynamicCopy && comparison.dynamicCopy.length > 0 && (
+          <div className="bg-gray-800 rounded-xl p-6 space-y-3">
+            {comparison.dynamicCopy.map((copy, index) => (
+              <p key={index} className="text-gray-300 leading-relaxed">
+                {copy}
+              </p>
+            ))}
+          </div>
+        )}
 
         {/* Diagnóstico */}
         <div className="bg-gray-800 rounded-xl p-6 space-y-3">
@@ -159,21 +208,28 @@ export default function ResultsPage() {
           </p>
         </div>
 
-        {/* Botones de acción */}
-        <div className="flex gap-3">
+        {/* CTA FIJO: Lo más importante */}
+        <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 text-center space-y-3">
           <button
+            type="button"
             onClick={handleNewAnalysis}
-            className="flex-1 py-4 rounded-xl bg-gray-300 text-dark-950 font-bold hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full py-4 rounded-xl bg-gray-300 text-dark-950 font-bold hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           >
-            Nuevo análisis
+            Volver a grabar para ganar autoridad
           </button>
-          <button
-            onClick={() => router.push("/")}
-            className="flex-1 py-4 rounded-xl bg-gray-700 text-white font-semibold hover:bg-gray-600 transition-all duration-200"
-          >
-            Inicio
-          </button>
+          <p className="text-gray-400 text-sm">
+            Una grabación al día es suficiente para mejorar.
+          </p>
         </div>
+
+        {/* Botón secundario */}
+        <button
+          type="button"
+          onClick={() => router.push("/")}
+          className="w-full py-3 rounded-xl bg-gray-800 text-gray-300 font-medium hover:bg-gray-700 transition-all duration-200"
+        >
+          Inicio
+        </button>
 
         <p className="text-gray-500 text-center text-sm">
           Simple · Directo · Paz Mental

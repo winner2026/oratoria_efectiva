@@ -66,8 +66,7 @@ export async function POST(req: NextRequest) {
     console.log('[ANALYSIS] 🔄 Starting real analysis...');
 
     const { analyzeVoiceUseCase } = await import('@/application/analyzeVoice/analyzeVoiceUseCase');
-    const { getOrCreateAnonymousUser } = await import('@/application/users/getOrCreateAnonymousUser');
-    const { saveVoiceSession } = await import('@/application/tracking/saveVoiceSession');
+    const { saveVoiceAnalysis } = await import('@/application/tracking/saveVoiceSession');
 
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
 
@@ -77,11 +76,10 @@ export async function POST(req: NextRequest) {
       userId: undefined,
     });
 
-    console.log('[ANALYSIS] Getting user...');
-    const userId = await getOrCreateAnonymousUser();
-
-    console.log('[ANALYSIS] Saving session...');
-    await saveVoiceSession(userId, result.authorityScore.level);
+    // Guardar sesión en DB (usando userId anónimo por ahora)
+    const userId = 'anonymous';
+    const sessionId = await saveVoiceAnalysis(userId, result);
+    console.log('[ANALYSIS] ✓ Session saved:', sessionId);
 
     console.log('[ANALYSIS] ✓ Analysis complete!');
     return NextResponse.json({
