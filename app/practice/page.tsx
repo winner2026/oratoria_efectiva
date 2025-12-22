@@ -13,19 +13,38 @@ export default function PracticePage() {
   const router = useRouter();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const recordingStartTimeRef = useRef<number | null>(null);
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [recordingStartTime, setRecordingStartTime] = useState<number | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [showIncognitoWarning, setShowIncognitoWarning] = useState(false);
+  const [isCheckingIncognito, setIsCheckingIncognito] = useState(true);
 
-  // Generar o recuperar userId anónimo al montar
+  // Detectar modo incógnito y generar userId
   useEffect(() => {
-    const id = getOrCreateAnonymousUserId();
-    setUserId(id);
+    const checkIncognito = async () => {
+      const { isIncognitoMode } = await import("@/lib/detectIncognito");
+      const incognito = await isIncognitoMode();
+
+      console.log('[PRACTICE] Incognito check result:', incognito);
+
+      if (incognito) {
+        setShowIncognitoWarning(true);
+        setIsCheckingIncognito(false);
+        return;
+      }
+
+      // Si no es incógnito, generar userId
+      const id = getOrCreateAnonymousUserId();
+      setUserId(id);
+      setIsCheckingIncognito(false);
+    };
+
+    checkIncognito();
   }, []);
 
   const startRecording = async () => {
@@ -46,7 +65,7 @@ export default function PracticePage() {
       const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
-      setRecordingStartTime(Date.now());
+      recordingStartTimeRef.current = Date.now();
 
       // 📊 EVENTO: recording_started
       logEvent("recording_started");
@@ -61,7 +80,7 @@ export default function PracticePage() {
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
 
         // Validar duración mínima
-        const recordingDuration = recordingStartTime ? (Date.now() - recordingStartTime) / 1000 : 0;
+        const recordingDuration = recordingStartTimeRef.current ? (Date.now() - recordingStartTimeRef.current) / 1000 : 0;
 
         console.log("🎙️ Grabación completada:");
         console.log("- Duración:", recordingDuration.toFixed(1), "segundos");
@@ -114,13 +133,13 @@ export default function PracticePage() {
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     setIsRecording(false);
-    setRecordingStartTime(null);
+    recordingStartTimeRef.current = null;
   };
 
   const reRecord = () => {
     setAudioBlob(null);
     setAudioUrl(null);
-    setRecordingStartTime(null);
+    recordingStartTimeRef.current = null;
     audioChunksRef.current = [];
   };
 
@@ -210,6 +229,67 @@ export default function PracticePage() {
       setIsAnalyzing(false);
     }
   };
+
+  // Mostrar loading mientras se verifica incógnito
+  if (isCheckingIncognito) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-gray-400">Verificando...</div>
+      </main>
+    );
+  }
+
+  // Si está en modo incógnito, mostrar solo el modal de bloqueo
+  if (showIncognitoWarning) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-6">
+          <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full space-y-6 border border-white/10">
+            <div className="space-y-4 text-center">
+              <div className="text-4xl">🔒</div>
+              <h2 className="text-2xl font-bold text-white">
+                No se puede usar en modo incógnito
+              </h2>
+              <div className="space-y-3 text-gray-300 text-left">
+                <p className="leading-relaxed">
+                  <strong className="text-white">Oratoria Efectiva</strong> necesita guardar tu progreso para funcionar correctamente.
+                </p>
+                <p className="leading-relaxed">
+                  En modo incógnito no podemos:
+                </p>
+                <ul className="space-y-2 ml-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">✗</span>
+                    <span>Guardar tu historial de análisis</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">✗</span>
+                    <span>Recordar tu progreso</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-400 mt-1">✗</span>
+                    <span>Controlar tu plan gratuito</span>
+                  </li>
+                </ul>
+                <p className="text-sm text-gray-400 pt-2">
+                  💡 <strong>Solución:</strong> Abre esta página en una ventana normal del navegador.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => router.push("/")}
+                className="w-full py-4 rounded-xl bg-white text-gray-900 font-bold hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
