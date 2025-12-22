@@ -1,95 +1,53 @@
 /**
- * NUEVA ESTRATEGIA: No intentar detectar incógnito directamente.
- * En su lugar, forzar que el usuario tenga un userId persistente.
+ * REALIDAD: No podemos detectar incógnito de forma confiable en Chrome moderno.
+ * Chrome incógnito 2024+ tiene:
+ * - >1GB storage quota
+ * - localStorage funcional durante la sesión
+ * - Todos los APIs funcionan normalmente
  *
- * Si localStorage no funciona o no persiste → bloquear acceso.
+ * NUEVA ESTRATEGIA PRAGMÁTICA:
+ * Permitir UNA prueba gratis SIN verificación de incógnito.
+ * El límite lo controla el backend con fingerprint (IP + User-Agent).
+ * Si el usuario está en incógnito, su fingerprint cambiará cada sesión,
+ * pero eso no nos importa - ya tuvo su prueba gratis.
  *
- * Esto cubre:
- * - Modo incógnito (localStorage no persiste entre sesiones)
- * - Navegadores sin localStorage
- * - Usuarios que limpian cookies constantemente
+ * BLOQUEAR solo si:
+ * 1. localStorage no funciona en absoluto (navegadores antiguos)
+ * 2. Navegación en ambientes sin JavaScript
  */
 
 /**
- * Verifica si localStorage funciona Y puede persistir datos
- * Retorna true si NO puede persistir (debe bloquear)
+ * Verifica si debe bloquear acceso por razones técnicas
+ * Retorna true si debe BLOQUEAR
  */
 export async function shouldBlockAccess(): Promise<boolean> {
-  console.log('[ACCESS CHECK] 🔍 Verificando si se puede persistir userId...');
+  console.log('[ACCESS CHECK] 🔍 Verificando capacidades del navegador...');
 
-  // 1. Verificar que localStorage existe
+  // ÚNICO CHECK: ¿localStorage funciona?
   try {
     if (!window.localStorage) {
-      console.log('[ACCESS CHECK] ❌ localStorage no disponible');
-      return true; // BLOQUEAR
+      console.log('[ACCESS CHECK] ❌ BLOQUEAR: localStorage no disponible');
+      return true;
     }
-  } catch (error) {
-    console.log('[ACCESS CHECK] ❌ Error accediendo a localStorage:', error);
-    return true; // BLOQUEAR
-  }
 
-  // 2. Verificar Storage Quota - si es muy pequeño, probablemente incógnito
-  try {
-    if ('storage' in navigator && 'estimate' in navigator.storage) {
-      const estimate = await navigator.storage.estimate();
-      const quotaMB = (estimate.quota || 0) / 1024 / 1024;
-
-      console.log('[ACCESS CHECK] Storage quota:', quotaMB.toFixed(2), 'MB');
-
-      // Threshold más agresivo: 20MB
-      // Chrome incógnito: ~10MB
-      // Firefox incógnito: ~10MB
-      // Normal: generalmente > 100MB
-      if (quotaMB < 20) {
-        console.log('[ACCESS CHECK] ❌ Quota muy baja (< 20MB) - probablemente incógnito');
-        return true; // BLOQUEAR
-      }
-    }
-  } catch (error) {
-    console.log('[ACCESS CHECK] ⚠️ No se pudo verificar storage quota:', error);
-    // No bloqueamos solo por esto, continuamos con otros checks
-  }
-
-  // 3. Test de persistencia de localStorage
-  try {
-    const testKey = '__storage_test_' + Date.now();
-    const testValue = 'test';
-
-    localStorage.setItem(testKey, testValue);
-    const retrieved = localStorage.getItem(testKey);
+    // Test de escritura/lectura
+    const testKey = '__test_' + Date.now();
+    localStorage.setItem(testKey, 'test');
+    const canRead = localStorage.getItem(testKey) === 'test';
     localStorage.removeItem(testKey);
 
-    if (retrieved !== testValue) {
-      console.log('[ACCESS CHECK] ❌ localStorage no retiene valores');
-      return true; // BLOQUEAR
+    if (!canRead) {
+      console.log('[ACCESS CHECK] ❌ BLOQUEAR: localStorage no funciona');
+      return true;
     }
+
+    console.log('[ACCESS CHECK] ✅ PERMITIR: navegador compatible');
+    return false; // PERMITIR
+
   } catch (error) {
-    console.log('[ACCESS CHECK] ❌ Error escribiendo en localStorage:', error);
+    console.log('[ACCESS CHECK] ❌ BLOQUEAR: Error en localStorage:', error);
     return true; // BLOQUEAR
   }
-
-  // 4. Verificar si existe un userId de sesión previa
-  const existingUserId = localStorage.getItem('oratoria_user_id');
-
-  if (!existingUserId) {
-    console.log('[ACCESS CHECK] ⚠️ Primera visita (no hay userId previo)');
-
-    // En primera visita, creamos un userId de prueba y pedimos al usuario
-    // que RECARGUE la página para verificar persistencia
-    const testUserId = '__test_user_' + Date.now();
-    localStorage.setItem('oratoria_user_id', testUserId);
-
-    console.log('[ACCESS CHECK] ✅ Se creó userId de prueba:', testUserId);
-    console.log('[ACCESS CHECK] ✅ Permitir acceso (primera visita)');
-
-    return false; // PERMITIR primera visita
-  }
-
-  // Si llegamos aquí, hay un userId persistente de una sesión anterior
-  console.log('[ACCESS CHECK] ✅ userId persistente encontrado');
-  console.log('[ACCESS CHECK] ✅ Permitir acceso');
-
-  return false; // PERMITIR
 }
 
 /**

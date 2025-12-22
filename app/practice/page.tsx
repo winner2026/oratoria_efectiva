@@ -122,6 +122,9 @@ export default function PracticePage() {
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach(track => track.stop());
+
+        // Limpiar el timestamp DESPUÉS de usarlo
+        recordingStartTimeRef.current = null;
       };
 
       mediaRecorder.start();
@@ -135,7 +138,8 @@ export default function PracticePage() {
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     setIsRecording(false);
-    recordingStartTimeRef.current = null;
+    // NO limpiar recordingStartTimeRef aquí - se necesita en mediaRecorder.onstop
+    // Se limpiará después de calcular la duración
   };
 
   const reRecord = () => {
