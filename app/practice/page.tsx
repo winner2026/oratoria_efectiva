@@ -9,11 +9,15 @@ import { logEvent } from "@/lib/events/logEvent";
 const MIN_RECORDING_DURATION = 3; // segundos
 const EARLY_ABANDONMENT_THRESHOLD = 5; // segundos
 
+// 💰 CONTROL DE COSTOS - Límite máximo de grabación
+const MAX_RECORDING_DURATION = 60; // segundos (límite de Whisper)
+
 export default function PracticePage() {
   const router = useRouter();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingStartTimeRef = useRef<number | null>(null);
+  const autoStopTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -23,6 +27,7 @@ export default function PracticePage() {
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showIncognitoWarning, setShowIncognitoWarning] = useState(false);
   const [isCheckingIncognito, setIsCheckingIncognito] = useState(true);
+  const [recordingTime, setRecordingTime] = useState(0);
 
   // Detectar modo incógnito y generar userId
   useEffect(() => {
@@ -68,9 +73,26 @@ export default function PracticePage() {
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
       recordingStartTimeRef.current = Date.now();
+      setRecordingTime(0);
 
       // 📊 EVENTO: recording_started
       logEvent("recording_started");
+
+      // 🎯 CONTADOR DE TIEMPO VISUAL
+      const countdownInterval = setInterval(() => {
+        setRecordingTime((prev) => {
+          const newTime = prev + 1;
+          return newTime;
+        });
+      }, 1000);
+
+      // 💰 AUTO-STOP A LOS 60 SEGUNDOS (control de costos)
+      autoStopTimerRef.current = setTimeout(() => {
+        console.log("⏱️ Auto-stop: 60 segundos alcanzados");
+        clearInterval(countdownInterval);
+        stopRecording();
+        logEvent("recording_auto_stopped", { duration: MAX_RECORDING_DURATION });
+      }, MAX_RECORDING_DURATION * 1000);
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -136,6 +158,12 @@ export default function PracticePage() {
   };
 
   const stopRecording = () => {
+    // Limpiar timers
+    if (autoStopTimerRef.current) {
+      clearTimeout(autoStopTimerRef.current);
+      autoStopTimerRef.current = null;
+    }
+
     mediaRecorderRef.current?.stop();
     setIsRecording(false);
     // NO limpiar recordingStartTimeRef aquí - se necesita en mediaRecorder.onstop
@@ -145,8 +173,15 @@ export default function PracticePage() {
   const reRecord = () => {
     setAudioBlob(null);
     setAudioUrl(null);
+    setRecordingTime(0);
     recordingStartTimeRef.current = null;
     audioChunksRef.current = [];
+
+    // Limpiar timers si existen
+    if (autoStopTimerRef.current) {
+      clearTimeout(autoStopTimerRef.current);
+      autoStopTimerRef.current = null;
+    }
   };
 
   const analyzeAudio = async () => {
@@ -170,6 +205,26 @@ export default function PracticePage() {
     // ✅ VALIDACIÓN CRÍTICA 2: Verificar tipo
     if (!audioBlob.type || audioBlob.type === "") {
       console.warn("⚠️ Audio sin mimeType, forzando audio/webm");
+    }
+
+    // 💰 VALIDACIÓN CRÍTICA 3: Estimar duración por tamaño de archivo
+    // WebM audio: ~12-16 KB/segundo aproximadamente
+    // Si el archivo es muy grande, probablemente excede los 60 segundos
+    const estimatedDuration = audioBlob.size / 12000; // Estimación conservadora
+    const MAX_FILE_SIZE = MAX_RECORDING_DURATION * 16000; // ~960 KB para 60 segundos
+
+    if (audioBlob.size > MAX_FILE_SIZE) {
+      alert(
+        `⚠️ El audio es muy largo (${Math.round(estimatedDuration)}s estimados).\n\n` +
+        `Máximo permitido: ${MAX_RECORDING_DURATION} segundos.\n\n` +
+        `Por favor, graba un audio más corto.`
+      );
+      console.error("❌ Audio demasiado largo:", {
+        size: audioBlob.size,
+        estimatedDuration: Math.round(estimatedDuration),
+        maxAllowed: MAX_RECORDING_DURATION
+      });
+      return;
     }
 
     // VERIFICACIÓN: Log detallado antes de enviar
@@ -312,6 +367,12 @@ export default function PracticePage() {
           <p className="text-gray-400 text-sm">
             Explica una idea, comparte una opinión o describe un proyecto.
           </p>
+
+          <div className="bg-blue-900/20 border border-blue-700/30 rounded-xl p-4">
+            <p className="text-blue-300 text-sm">
+              ⏱️ <strong>Máximo 60 segundos.</strong> La grabación se detendrá automáticamente.
+            </p>
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -331,6 +392,22 @@ export default function PracticePage() {
                 <span className="text-3xl">●</span>
                 <span className="text-xl font-semibold">Grabando...</span>
               </div>
+
+              {/* Timer visual */}
+              <div className="bg-gray-800 rounded-xl p-4 text-center">
+                <div className="text-4xl font-bold text-white font-mono">
+                  {recordingTime}s
+                </div>
+                <div className="text-sm text-gray-400 mt-1">
+                  Máximo: {MAX_RECORDING_DURATION}s
+                </div>
+                {recordingTime >= 45 && (
+                  <div className="text-yellow-500 text-xs mt-2 animate-pulse">
+                    ⚠️ Se detendrá automáticamente en {MAX_RECORDING_DURATION - recordingTime}s
+                  </div>
+                )}
+              </div>
+
               <button
                 onClick={stopRecording}
                 className="w-full py-6 rounded-xl bg-gray-700 text-white font-bold text-xl hover:bg-gray-600 transition-all duration-200"

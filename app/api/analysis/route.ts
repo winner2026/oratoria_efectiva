@@ -17,6 +17,11 @@ const USE_MOCK = !process.env.OPENAI_API_KEY;
 // ⏱️ LÍMITE DE DURACIÓN (control de costos MVP)
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5MB máximo
 
+// 💰 LÍMITE INTELIGENTE: Rechazar audios que probablemente excedan 60 segundos
+// WebM audio típico: 12-16 KB/segundo
+// 60 segundos × 16 KB = 960 KB máximo conservador
+const MAX_AUDIO_SIZE_FOR_60_SECONDS = 960 * 1024; // ~960 KB
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -58,6 +63,24 @@ export async function POST(req: NextRequest) {
       console.log('[ANALYSIS] ❌ Audio file too large:', audioFile.size);
       return NextResponse.json(
         { error: 'El audio es demasiado grande. Máximo 5MB.' },
+        { status: 400 }
+      );
+    }
+
+    // 💰 VALIDACIÓN CRÍTICA: Rechazar ANTES de llamar a Whisper si probablemente excede 60s
+    if (audioFile.size > MAX_AUDIO_SIZE_FOR_60_SECONDS) {
+      const estimatedDuration = Math.round(audioFile.size / 12000);
+      console.log('[ANALYSIS] ❌ Audio probablemente demasiado largo:', {
+        size: audioFile.size,
+        estimatedDuration,
+        maxAllowed: 60
+      });
+      return NextResponse.json(
+        {
+          error: `El audio es demasiado largo (${estimatedDuration}s estimados). Máximo permitido: 60 segundos.`,
+          estimatedDuration,
+          maxAllowed: 60
+        },
         { status: 400 }
       );
     }

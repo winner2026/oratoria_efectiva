@@ -20,6 +20,7 @@ export type EventName =
   | "recording_started"
   | "recording_completed"
   | "recording_abandoned"
+  | "recording_auto_stopped"
   | "early_abandonment"
   | "playback_started"
   | "playback_completed"
