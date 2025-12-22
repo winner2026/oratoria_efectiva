@@ -5,7 +5,7 @@ import { db } from "@/infrastructure/db/client";
 /**
  * Check if a Free user can perform another analysis
  *
- * Free plan allows only 1 total analysis.
+ * Free plan allows 3 total analyses.
  * After that, user must upgrade to Premium.
  */
 export async function checkFreeUsage(
