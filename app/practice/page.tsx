@@ -99,7 +99,7 @@ export default function PracticePage() {
         // Auto-analyze after stop to match flow
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
-        analyzeAudio(blob, id); // Auto trigger analysis or show preview? UIUX implies direct analysis or stop
+        analyzeAudio(blob, userId); // Auto trigger analysis or show preview? UIUX implies direct analysis or stop
       };
 
       mediaRecorder.start();

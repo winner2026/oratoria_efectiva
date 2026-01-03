@@ -1,8 +1,8 @@
-import { db } from "@/infrastructure/db/client";
+import { prisma } from "@/infrastructure/db/client";
 import HistoryView from "./HistoryView";
 
 export default async function HistoryPage() {
-  const videos = await db.resource.findMany({
+  const videos = await prisma.resource.findMany({
     where: {
       OR: [
         { type: "VIDEO" },
@@ -13,7 +13,7 @@ export default async function HistoryPage() {
     }
   });
 
-  const books = await db.resource.findMany({
+  const books = await prisma.resource.findMany({
     where: {
       OR: [
         { type: "BOOK" },
@@ -55,13 +55,13 @@ export default async function HistoryPage() {
   // Since I forced the type in seed to be "VIDEO" or "BOOK", query by that.
   // Ideally I would re-seed with granular types, but for now let's just fetch them.
   
-  const allVideos = await db.resource.findMany({
+  const allVideos = await prisma.resource.findMany({
     where: {
       type: "VIDEO"
     }
   });
 
-  const allBooks = await db.resource.findMany({
+  const allBooks = await prisma.resource.findMany({
     where: {
       type: "BOOK"
     }

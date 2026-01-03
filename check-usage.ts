@@ -42,7 +42,7 @@ async function checkUsage() {
       });
     }
 
-    await db.end();
+    // Prisma handles connection cleanup automatically
   } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);

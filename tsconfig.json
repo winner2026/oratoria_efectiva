@@ -40,6 +40,14 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "tests",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "check-usage.ts",
+    "check-usage.mjs",
+    "check-schema.mjs",
+    "test-increment.mjs",
+    "test-increment-usage.mjs"
   ]
 }

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserPlan } from '@/lib/usage/getUserPlan';
 import { checkFreeUsage } from '@/lib/usage/checkFreeUsage';
 import { incrementUsage } from '@/lib/usage/incrementUsage';
-import { db } from '@/infrastructure/db/client';
+import { prisma } from '@/infrastructure/db/client';
 import {
   generateFingerprint,
   getClientIP,
@@ -99,11 +99,11 @@ export async function POST(req: NextRequest) {
       console.log('[ANALYSIS] Free usage check:', usageCheck);
     } else {
       try {
-        const usageResult = await db.query(
+        const usageResult = await prisma.$queryRawUnsafe<{ total_analyses: number }[]>(
           `SELECT total_analyses FROM usage WHERE user_id = $1`,
-          [fingerprint]
+          fingerprint
         );
-        totalAnalyses = usageResult.rows[0]?.total_analyses || 0;
+        totalAnalyses = usageResult[0]?.total_analyses || 0;
       } catch (error) {
         console.error('[ANALYSIS] Error fetching total_analyses:', error);
       }

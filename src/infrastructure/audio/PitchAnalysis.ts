@@ -60,7 +60,18 @@ export async function analyzePitch(
     // Detectar Pitch usando algoritmo YIN (bueno para voz)
     console.log('[PITCH] Detecting frequencies...');
     const detectPitch = YIN({ sampleRate: 44100 });
-    const frequencies = detectPitch(float32Audio); // Devuelve array de Hz (o null)
+    
+    // YIN devuelve un detector que procesa un buffer y devuelve una frecuencia
+    // Necesitamos procesar el audio en ventanas para obtener un array de frecuencias
+    const windowSize = 2048; // Tamaño de ventana para análisis
+    const hopSize = 512; // Salto entre ventanas
+    const frequencies: (number | null)[] = [];
+    
+    for (let i = 0; i < float32Audio.length - windowSize; i += hopSize) {
+      const window = float32Audio.slice(i, i + windowSize);
+      const freq = detectPitch(window);
+      frequencies.push(freq);
+    }
 
     // Filtrar frecuencias válidas (rango voz humana aprox 50Hz - 500Hz)
     const validFrequencies = frequencies.filter((f): f is number => f !== null && f > 50 && f < 500);
