@@ -5,6 +5,7 @@ export const STARTER_PLAN: Plan = {
   features: {
     maxAnalyses: 10,
     maxAnalysesPerWeek: 3,
+    maxAnalysesPerMonth: -1,
     hasHistory: true,
     hasHistoryLimit: 10,
     hasReRecord: true,

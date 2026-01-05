@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getUserPlan } from "@/lib/usage/getUserPlan";
-import { checkFreeUsage } from "@/lib/usage/checkFreeUsage";
+import { checkUsage } from "@/lib/usage/checkUsage";
 import {
   generateFingerprint,
   getClientIP,
@@ -27,23 +27,16 @@ export async function POST(req: NextRequest) {
 
     console.log('[USAGE CHECK] Fingerprint:', fingerprint);
 
+    const usageCheck = await checkUsage(fingerprint);
     const plan = await getUserPlan(fingerprint);
 
-    if (plan === "FREE") {
-      const usageCheck = await checkFreeUsage(fingerprint);
-
-      return NextResponse.json({
-        limitReached: !usageCheck.allowed,
-        currentUsage: usageCheck.currentUsage,
-        maxAllowed: usageCheck.maxAllowed,
-        plan: "FREE",
-      });
-    }
-
-    // Premium users have no limit
     return NextResponse.json({
-      limitReached: false,
-      plan: "PREMIUM",
+      limitReached: !usageCheck.allowed,
+      reason: usageCheck.reason,
+      currentUsage: usageCheck.currentUsage,
+      maxAllowed: usageCheck.maxAllowed,
+      resetsAt: usageCheck.resetsAt,
+      plan: plan,
     });
   } catch (error) {
     console.error("[USAGE CHECK API] Error:", error);

@@ -20,6 +20,7 @@ export const FREE_PLAN: Plan = {
   type: "FREE",
   features: {
     maxAnalysesPerWeek: 3, // Por semana, no total
+    maxAnalysesPerMonth: -1,
     maxAnalyses: 3, // Compatibilidad con código existente
     hasHistory: true, // Ahora sí tienen historial limitado
     hasHistoryLimit: 3, // Solo últimas 3 sesiones
@@ -38,6 +39,7 @@ export const PREMIUM_PLAN: Plan = {
   type: "PREMIUM",
   features: {
     maxAnalysesPerWeek: -1, // Ilimitado
+    maxAnalysesPerMonth: 100, // Límite de rentabilidad
     maxAnalyses: -1,
     hasHistory: true,
     hasHistoryLimit: -1, // Sin límite

@@ -3,7 +3,7 @@ export const maxDuration = 60; // 60 segundos de timeout (máximo en plan Hobby/
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserPlan } from '@/lib/usage/getUserPlan';
-import { checkFreeUsage } from '@/lib/usage/checkFreeUsage';
+import { checkUsage } from '@/lib/usage/checkUsage';
 import { incrementUsage } from '@/lib/usage/incrementUsage';
 import { prisma } from '@/infrastructure/db/client';
 import { PlanType } from "@/types/Plan";
@@ -55,30 +55,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'El audio es demasiado grande. Máximo 5MB.' }, { status: 400 });
     }
 
-    // 🛡️ CONTROL DE USO FREE - CON TOLERANCIA A FALLOS (Fail-Open)
+    // 🛡️ CONTROL DE USO MULTI-PLAN (Fail-Open)
     let plan: PlanType = "FREE";
-    let usageCheck: Awaited<ReturnType<typeof checkFreeUsage>> | null = null;
     let dbError = false;
 
     try {
-      // Intentar obtener plan real
-      plan = await getUserPlan(fingerprint);
+      const usageCheck = await checkUsage(fingerprint);
+      plan = await getUserPlan(fingerprint); // Seguimos necesitando el plan para el incremento
       
-      if (plan === "FREE") {
-        usageCheck = await checkFreeUsage(fingerprint);
+      if (!usageCheck.allowed) {
+        console.log(`[ANALYSIS] 🚫 LIMIT REACHED (${usageCheck.reason}):`, fingerprint);
         
-        if (!usageCheck.allowed) {
-          console.log('[ANALYSIS] 🚫 FREE LIMIT REACHED:', fingerprint);
-          return NextResponse.json(
-            {
-              error: 'FREE_LIMIT_REACHED',
-              message: 'Ya realizaste tu análisis gratuito. Actualiza a Premium.',
-              currentUsage: usageCheck.currentUsage,
-              maxAllowed: usageCheck.maxAllowed,
-            },
-            { status: 403 }
-          );
-        }
+        const messages = {
+          FREE_LIMIT_REACHED: 'Has alcanzado tu límite gratuito semanal (3 análisis). ¡Pásate a Premium para seguir practicando!',
+          STARTER_LIMIT_REACHED: 'Has agotado tus 10 análisis del plan Starter. Es hora de subir a Premium.',
+          PREMIUM_LIMIT_REACHED: 'Has alcanzado el límite de uso justo de 100 análisis este mes. El acceso se reseteará el día 1.',
+          DB_ERROR: 'Error de servidor'
+        };
+
+        return NextResponse.json(
+          {
+            error: usageCheck.reason,
+            message: messages[usageCheck.reason as keyof typeof messages] || 'Límite alcanzado',
+            currentUsage: usageCheck.currentUsage,
+            maxAllowed: usageCheck.maxAllowed,
+            resetsAt: usageCheck.resetsAt
+          },
+          { status: 403 }
+        );
       }
     } catch (error) {
       console.error('[ANALYSIS] ⚠️ DB Error (Checking Usage):', error);

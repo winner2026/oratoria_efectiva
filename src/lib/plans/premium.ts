@@ -13,6 +13,7 @@ export const PREMIUM_PLAN: Plan = {
   features: {
     maxAnalyses: -1, // -1 = unlimited
     maxAnalysesPerWeek: -1,
+    maxAnalysesPerMonth: 100, // Política de Uso Justo (Rentabilidad)
     hasHistory: true,
     hasHistoryLimit: -1,
     hasReRecord: true,
