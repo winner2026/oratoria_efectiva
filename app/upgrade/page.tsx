@@ -17,8 +17,19 @@ export default function UpgradePage() {
 
   const handlePlanSelect = (planName: string) => {
     logEvent("upgrade_plan_selected", { plan: planName });
-    // Aquí iría la redirección a Checkout (Stripe/PayPal)
-    alert(`Redirigiendo a pago de plan ${planName}... (MVP)`);
+    
+    // Mapeo de URLs de Lemon Squeezy (Modo Test)
+    const checkoutUrls: Record<string, string> = {
+      STARTER: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/d5f9fc04-259c-4e38-a10e-9a5c6626013a",
+      PREMIUM: "#", // Pendiente link de Lemon Squeezy
+      COACHING: "#" // Pendiente link de Lemon Squeezy
+    };
+
+    if (checkoutUrls[planName] && checkoutUrls[planName] !== "#") {
+      window.location.href = checkoutUrls[planName];
+    } else {
+      alert(`Redirigiendo a pago de plan ${planName}... (Configurando pasarela)`);
+    }
   };
 
   return (
