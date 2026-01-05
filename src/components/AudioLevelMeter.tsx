@@ -17,6 +17,12 @@ export default function AudioLevelMeter({ stream, isActive }: AudioLevelMeterPro
   useEffect(() => {
     if (!stream || !isActive || !canvasRef.current) return;
 
+    // Verificar si el stream tiene pistas de audio
+    if (stream.getAudioTracks().length === 0) {
+      console.warn("[AudioLevelMeter] No audio tracks found in stream");
+      return;
+    }
+
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const source = audioContext.createMediaStreamSource(stream);

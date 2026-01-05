@@ -612,10 +612,15 @@ export default function PracticePage() {
       <div className="absolute inset-0 z-0 bg-black flex items-center justify-center overflow-hidden">
         
         {/* 🎙️ MEDIDOR DE VOLUMEN (Vertical Extenso) */}
-        {isRecording && (
-          <div className="absolute left-2 md:left-4 top-1/4 bottom-1/4 w-8 md:w-10 z-50 animate-fade-in">
-             <div className="h-full w-full bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1.5 flex flex-col items-center">
+        {recordingStream && (
+          <div className="absolute left-4 md:left-8 top-1/4 bottom-1/4 w-10 md:w-12 z-[60] animate-fade-in flex flex-col items-center gap-2">
+             <div className="flex-1 w-full bg-black/60 backdrop-blur-xl rounded-full border border-white/20 p-2 flex flex-col items-center shadow-2xl">
                 <AudioLevelMeter stream={recordingStream} isActive={true} />
+             </div>
+             <div className="size-8 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center">
+                <span className={`material-symbols-outlined text-sm ${isRecording ? 'text-red-500 animate-pulse' : 'text-blue-400'}`}>
+                  mic
+                </span>
              </div>
           </div>
         )}
