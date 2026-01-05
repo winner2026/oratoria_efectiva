@@ -42,6 +42,8 @@ export default function PracticePage() {
   const [currentTip, setCurrentTip] = useState<VocalTip | null>(null);
   const [mediapipeReady, setMediapipeReady] = useState(false);
   const mediapipeLoadedRef = useRef(0);
+  const [showReview, setShowReview] = useState(false);
+  const [capturedMetrics, setCapturedMetrics] = useState<PostureMetrics | null>(null);
 
   // 🆕 Hook de análisis de postura
   const {
@@ -230,9 +232,10 @@ export default function PracticePage() {
         }
         
         setAudioBlob(blob);
+        setCapturedMetrics(finalPostureMetrics);
+        setShowReview(true);
         // releaseMediaResources() ya fue llamado en stopRecording, pero aquí asegura limpieza si el stop fue por otra razón
         releaseMediaResources();
-        analyzeAudio(blob, userId, finalPostureMetrics);
       };
 
       mediaRecorder.start();
@@ -282,7 +285,6 @@ export default function PracticePage() {
       mediaRecorderRef.current.stop();
     }
     
-    setIsAnalyzing(true);
     setIsRecording(false);
     
     releaseMediaResources();
@@ -383,18 +385,76 @@ export default function PracticePage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Helper para mostrar estado de postura
-  const getPostureStatusColor = (score: number) => {
-    if (score >= 70) return "text-green-400";
-    if (score >= 40) return "text-yellow-400";
-    return "text-red-400";
+  const handleStartAnalysis = () => {
+    if (audioBlob && capturedMetrics) {
+      setShowReview(false);
+      setIsAnalyzing(true);
+      analyzeAudio(audioBlob, userId, capturedMetrics);
+    }
   };
 
-  const getPostureStatusIcon = (score: number) => {
-    if (score >= 70) return "check_circle";
-    if (score >= 40) return "warning";
-    return "error";
+  const handleResetRecording = () => {
+    setAudioBlob(null);
+    setShowReview(false);
+    setCapturedMetrics(null);
+    setRecordingTime(0);
+    // Reiniciar preview de cámara
+    const initCamera = async () => {
+        try {
+          await initPosture();
+          if (videoRef.current?.srcObject) {
+            setRecordingStream(videoRef.current.srcObject as MediaStream);
+          } else {
+             const stream = await navigator.mediaDevices.getUserMedia({ 
+              audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+              video: { facingMode: "user" }
+            });
+            setRecordingStream(stream);
+          }
+        } catch (err) {
+          console.error("Error re-initializing camera:", err);
+        }
+    };
+    initCamera();
   };
+
+  // 🔊 Audio Alert for bad posture
+  const lastAlertTimeRef = useRef<number>(0);
+  const badPostureCountRef = useRef<number>(0);
+  
+  useEffect(() => {
+    if (isRecording && currentMetrics.isPersonDetected && currentMetrics.shouldersLevel !== 'balanced') {
+      badPostureCountRef.current += 1;
+      // Aproximadamente 5 segundos (asumiendo ~30fps -> 150 frames, o si el hook emite menos, ajustamos)
+      // Como currentMetrics viene de usePostureAnalysis que usa requestAnimationFrame, es rápido.
+      // Pongamos un umbral de frames o usemos un intervalo.
+      // usePostureAnalysis actualiza el estado, así que este effect corre frecuentemente.
+      if (badPostureCountRef.current > 100) { // ~3-4 segundos de mala postura continua
+        const now = Date.now();
+        if (now - lastAlertTimeRef.current > 10000) { // No repetir más de cada 10s
+          try {
+            const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, ctx.currentTime);
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.05);
+            gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.3);
+            lastAlertTimeRef.current = now;
+          } catch (e) {
+            console.warn("Audio alert failed", e);
+          }
+        }
+      }
+    } else {
+      badPostureCountRef.current = 0;
+    }
+  }, [isRecording, currentMetrics.shouldersLevel, currentMetrics.isPersonDetected]);
 
   if (isCheckingIncognito) {
     return (
@@ -461,8 +521,41 @@ export default function PracticePage() {
   // --- RECORDING VIEW (with video) ---
 
 
+  // --- REVIEW VIEW ---
+  if (showReview && audioBlob) {
+    return (
+      <main className="min-h-screen bg-[#101922] flex flex-col items-center justify-center p-6 text-white text-center font-display">
+        <div className="size-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
+          <span className="material-symbols-outlined text-4xl text-green-500">check_circle</span>
+        </div>
+        <h2 className="text-2xl font-bold mb-2">¡Grabación completada!</h2>
+        <p className="text-[#9dabb9] mb-8 max-w-xs mx-auto">
+          Tu video está listo para ser analizado por la Inteligencia Artificial.
+        </p>
+
+        <div className="w-full max-w-xs space-y-4">
+          <button 
+            onClick={handleStartAnalysis}
+            className="w-full h-14 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
+          >
+            <span className="material-symbols-outlined">analytics</span>
+            Solicitar análisis
+          </button>
+          
+          <button 
+            onClick={handleResetRecording}
+            className="w-full h-14 bg-[#283039] hover:bg-[#3b4754] text-white font-medium rounded-2xl transition-all border border-[#3b4754] flex items-center justify-center gap-3"
+          >
+            <span className="material-symbols-outlined">refresh</span>
+            Volver a grabar
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   // --- ANALYSIS / LOADING VIEW ---
-  if (isAnalyzing || audioBlob) {
+  if (isAnalyzing) {
     return (
       <main className="min-h-screen bg-[#101922] flex flex-col items-center justify-center p-6 text-white text-center font-display">
         <div className="relative size-24 mb-6">
@@ -508,89 +601,101 @@ export default function PracticePage() {
     <main className="fixed inset-0 bg-black font-display text-white overflow-hidden z-[999]">
       <div className="absolute inset-0 z-0 bg-black flex items-center justify-center overflow-hidden">
         
-        {/* PANEL LATERAL (Flotante sobre video) */}
-        {!isRecording && isPostureReady && (
-          <div className="absolute left-4 right-4 top-20 md:left-6 md:top-1/2 md:-translate-y-1/2 md:right-auto z-40 flex md:flex-col gap-2 md:gap-4 md:w-60 overflow-x-auto md:overflow-visible pb-4 md:pb-0 no-scrollbar">
+        {/* PANEL LATERAL / SUPERIOR (Feedback en Vivo) */}
+        {isPostureReady && (
+          <div className={`absolute z-40 transition-all duration-700 ease-in-out no-scrollbar
+            ${isRecording 
+              ? 'top-20 left-4 right-4 flex flex-row justify-center gap-2 md:top-1/2 md:-translate-y-1/2 md:left-6 md:right-auto md:flex-col md:w-64' 
+              : 'top-20 left-4 right-4 flex flex-row overflow-x-auto gap-2 md:top-1/2 md:-translate-y-1/2 md:left-6 md:right-auto md:flex-col md:w-64 md:overflow-visible'
+            }`}
+          >
 
-            <h3 className="hidden md:block text-white/40 text-xs font-bold uppercase tracking-widest mb-2 pl-1 shadow-black drop-shadow-md">Verificación en Vivo</h3>
+            <div className="hidden md:flex items-center gap-2 mb-2 pl-1">
+              <h3 className="text-white/40 text-[10px] font-bold uppercase tracking-widest shadow-black drop-shadow-md">
+                {isRecording ? "Análisis en Tiempo Real" : "Verificación de Postura"}
+              </h3>
+              {isRecording && (
+                <div className="size-1.5 rounded-full bg-red-500 animate-pulse"></div>
+              )}
+            </div>
 
             
             {/* 1. Mirada/Cabeza */}
-            <div className={`p-3 md:p-4 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out flex-shrink-0 w-32 md:w-full ${
+            <div className={`p-2.5 md:p-4 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out flex-shrink-0 w-[105px] md:w-full ${
               currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' 
-                ? 'bg-green-500/20 border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.4)]' 
-                : 'bg-gray-900/60 border-gray-700/50 opacity-80 grayscale'
+                ? 'bg-green-500/20 border-green-500/50 shadow-[0_4px_15px_rgba(34,197,94,0.3)]' 
+                : 'bg-gray-900/60 border-gray-700/50 opacity-80'
             }`}>
-              <div className="flex items-center gap-3">
-                <div className={`size-8 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
-                  currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'bg-green-500 text-black scale-110' : 'bg-gray-700 text-gray-400'
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-1.5 md:gap-3 text-center md:text-left">
+                <div className={`size-8 md:size-9 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+                  currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'bg-green-500 text-black scale-105' : 'bg-gray-800 text-gray-500'
                 }`}>
-                  <span className="material-symbols-outlined text-lg">visibility</span>
+                  <span className="material-symbols-outlined text-base md:text-lg">visibility</span>
                 </div>
-                <div>
-                  <p className={`text-sm font-bold transition-colors duration-500 ${currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'text-green-400' : 'text-gray-400'}`}>
+                <div className="min-w-0">
+                  <p className={`text-[10px] md:text-xs font-bold uppercase tracking-wider truncate transition-colors duration-500 ${currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'text-green-400' : 'text-gray-400'}`}>
                     Mirada
                   </p>
-                  <p className={`text-[10px] transition-colors duration-500 ${currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'text-green-200/70' : 'text-gray-500'}`}>
-                    {currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'Detectada' : 'Centra tu cabeza'}
+                  <p className={`text-[8px] md:text-[10px] leading-tight transition-colors duration-500 ${currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'text-green-200/70' : 'text-gray-500'}`}>
+                    {currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'Centrada' : 'Centra'}
                   </p>
                 </div>
               </div>
             </div>
 
             {/* 2. Manos */}
-            <div className={`p-3 md:p-4 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out flex-shrink-0 w-32 md:w-full ${
+            <div className={`p-2.5 md:p-4 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out flex-shrink-0 w-[105px] md:w-full ${
                currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low'
-                ? currentMetrics.gesturesUsage === 'excessive' ? 'bg-orange-500/20 border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.4)]' 
-                : 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.4)]'
-                : 'bg-gray-900/60 border-gray-700/50 opacity-80 grayscale'
+                ? currentMetrics.gesturesUsage === 'excessive' ? 'bg-orange-500/20 border-orange-500/50 shadow-[0_4px_15px_rgba(249,115,22,0.3)]' 
+                : 'bg-blue-500/20 border-blue-500/50 shadow-[0_4px_15px_rgba(59,130,246,0.3)]'
+                : 'bg-gray-900/60 border-gray-700/50 opacity-80'
             }`}>
-              <div className="flex items-center gap-3">
-                <div className={`size-8 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-1.5 md:gap-3 text-center md:text-left">
+                <div className={`size-8 md:size-9 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
                    currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low' 
-                   ? currentMetrics.gesturesUsage === 'excessive' ? 'bg-orange-500 text-white scale-110' : 'bg-blue-500 text-white scale-110' 
-                   : 'bg-gray-700 text-gray-400'
+                   ? currentMetrics.gesturesUsage === 'excessive' ? 'bg-orange-500 text-white scale-105' : 'bg-blue-500 text-white scale-105' 
+                   : 'bg-gray-800 text-gray-500'
                 }`}>
-                  <span className="material-symbols-outlined text-lg">sign_language</span>
+                  <span className="material-symbols-outlined text-base md:text-lg">sign_language</span>
                 </div>
-                <div>
-                  <p className={`text-sm font-bold transition-colors duration-500 ${ 
+                <div className="min-w-0">
+                  <p className={`text-[10px] md:text-xs font-bold uppercase tracking-wider truncate transition-colors duration-500 ${ 
                     currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low' 
                     ? currentMetrics.gesturesUsage === 'excessive' ? 'text-orange-400' : 'text-blue-400' 
                     : 'text-gray-400'
                   }`}>
                     Gestos
                   </p>
-                  <p className={`text-[10px] transition-colors duration-500 ${ 
+                  <p className={`text-[8px] md:text-[10px] leading-tight transition-colors duration-500 ${ 
                     currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low' 
                     ? currentMetrics.gesturesUsage === 'excessive' ? 'text-orange-200/70' : 'text-blue-200/70' 
                     : 'text-gray-500'
                   }`}>
                     {currentMetrics.isPersonDetected 
-                        ? (currentMetrics.gesturesUsage === 'optimal' ? 'Dinámicos' : currentMetrics.gesturesUsage === 'excessive' ? 'Exagerados' : 'Mueve tus manos')
-                        : 'Mueve tus manos'}
+                        ? (currentMetrics.gesturesUsage === 'optimal' ? 'Dinámicos' : currentMetrics.gesturesUsage === 'excessive' ? 'Muchos' : 'Usa manos')
+                        : 'Usa manos'}
                   </p>
                 </div>
               </div>
             </div>
 
              {/* 3. Postura/Hombros */}
-             <div className={`p-3 md:p-4 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out flex-shrink-0 w-32 md:w-full ${
+             <div className={`p-2.5 md:p-4 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out flex-shrink-0 w-[105px] md:w-full ${
                currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' 
-                ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_20_rgba(168,85,247,0.4)]' 
-                : 'bg-gray-900/60 border-gray-700/50 opacity-80 grayscale'
+                ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_4px_15px_rgba(168,85,247,0.3)]' 
+                : 'bg-gray-900/60 border-gray-700/50 opacity-80'
             }`}>
-              <div className="flex items-center gap-3">
-                <div className={`size-8 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
-                   currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'bg-purple-500 text-white scale-110' : 'bg-gray-700 text-gray-400'
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-1.5 md:gap-3 text-center md:text-left">
+                <div className={`size-8 md:size-9 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+                   currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'bg-purple-500 text-white scale-105' : 'bg-gray-800 text-gray-500'
                 }`}>
-                  <span className="material-symbols-outlined text-lg">accessibility_new</span>
+                  <span className="material-symbols-outlined text-base md:text-lg">accessibility_new</span>
                 </div>
-                <div>
-                  <p className={`text-sm font-bold transition-colors duration-500 ${ currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'text-purple-400' : 'text-gray-400'}`}>
+                <div className="min-w-0">
+                  <p className={`text-[10px] md:text-xs font-bold uppercase tracking-wider truncate transition-colors duration-500 ${ currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'text-purple-400' : 'text-gray-400'}`}>
                     Postura
                   </p>
-                  <p className={`text-[10px] transition-colors duration-500 ${ currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'text-purple-200/70' : 'text-gray-500'}`}>
+                  <p className={`text-[8px] md:text-[10px] leading-tight transition-colors duration-500 ${ currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'text-purple-200/70' : 'text-gray-500'}`}>
                     {currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'Erguida' : 'Saca pecho'}
                   </p>
                 </div>
