@@ -191,5 +191,466 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
       'Vuelve a velocidad normal manteniendo esa precisión.'
     ],
     benefit: 'Te entenderán a la primera en cualquier trámite o reunión.'
+  },
+  // 🆕 RESPIRACIÓN (BREATHING)
+  {
+    id: 'seseo-control',
+    title: 'Seseo de Control',
+    description: 'Mide y domina tu flujo de aire con una exhalación constante.',
+    category: 'BREATHING',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['energyStability'],
+    steps: [
+      'Inhala profundo con el diafragma.',
+      'Suelta el aire haciendo un sonido de "S" largo y fino.',
+      'Mantén la intensidad constante, que no suba ni baje.',
+      'Cronometra cuánto aguantas sin esfuerzo.'
+    ],
+    benefit: 'Evita que te quedes sin aire a mitad de una frase.'
+  },
+  {
+    id: 'fire-breath',
+    title: 'Respiración de Fuego',
+    description: 'Despierta tu diafragma y energía vital en segundos.',
+    category: 'BREATHING',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['volume', 'energyStability'],
+    steps: [
+      'Inhala y exhala por la nariz de forma rítmica y corta.',
+      'Siente cómo tu abdomen entra y sale como un fuelle.',
+      'Empieza lento y sube la velocidad gradualmente.',
+      'Detente si te mareas.'
+    ],
+    benefit: 'Activa tu voz y elimina la pereza vocal antes de empezar.'
+  },
+  {
+    id: 'golden-pause-478',
+    title: 'La Pausa de Oro (4-7-8)',
+    description: 'La técnica maestra para resetear tu sistema nervioso.',
+    category: 'BREATHING',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['energyStability', 'rhythmConsistency'],
+    steps: [
+      'Inhala por la nariz silenciosamente en 4 segundos.',
+      'Mantén el aire en tus pulmones 7 segundos.',
+      'Exhala ruidosamente por la boca en 8 segundos.',
+      'Repite el ciclo 4 veces.'
+    ],
+    benefit: 'Control total sobre los nervios químicos del cuerpo.'
+  },
+  {
+    id: 'imaginary-candle',
+    title: 'La Vela Imaginaria',
+    description: 'Entrena la precisión milimétrica de tu exhalación.',
+    category: 'BREATHING',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['energyStability'],
+    steps: [
+      'Imagina una vela encendida a 10 cm de tu boca.',
+      'Sopla de forma que la llama se incline pero NO se apague.',
+      'Mantén esa inclinación el mayor tiempo posible.',
+      'Aleja la "vela" imaginaria y repite.'
+    ],
+    benefit: 'Te da un control absoluto sobre el aire que gastas al hablar.'
+  },
+  {
+    id: 'surprise-inhale',
+    title: 'Inspiración de Sorpresa',
+    description: 'Abre tus vías respiratorias al máximo instantáneamente.',
+    category: 'BREATHING',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['volume'],
+    steps: [
+      'Abre la boca como si te acabaran de dar una noticia increíble.',
+      'Inhala rápido y profundo sintiendo cómo se ensancha tu garganta.',
+      'Siente el aire frío llegando al fondo de tus pulmones.',
+      'Exhala con un suspiro de alivio.'
+    ],
+    benefit: 'Prepara tu laringe para una resonancia mucho más rica.'
+  },
+  {
+    id: 'abdominal-kick',
+    title: 'El Contrapunteo Abdominal',
+    description: 'Fortalece los músculos que impulsan tu voz.',
+    category: 'BREATHING',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['volume', 'energyStability'],
+    steps: [
+      'Coloca tus manos en la cintura, sintiendo los músculos laterales.',
+      'Di "¡JA! ¡JA! ¡JA!" con fuerza explosiva.',
+      'Asegúrate de que tus manos sienten el empujón hacia afuera al hablar.',
+      'No tenses el cuello, solo el abdomen.'
+    ],
+    benefit: 'Voz con autoridad que no se quiebra bajo presión.'
+  },
+
+  // 🆕 ARTICULACIÓN (ARTICULATION)
+  {
+    id: 'jaw-massage',
+    title: 'Liberador de Mandíbula',
+    description: 'Elimina la tensión muscular que te impide abrir la boca.',
+    category: 'ARTICULATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['score_claridad'],
+    steps: [
+      'Ubica los músculos donde se unen las mandíbulas superior e inferior.',
+      'Masajea en círculos con las yemas de los dedos durante 30 segundos.',
+      'Deja que la boca caiga por su propio peso (boca entreabierta).',
+      'Di "Aaa-Ooo" exagerando la apertura.'
+    ],
+    benefit: 'Mayor resonancia y menos esfuerzo al proyectar.'
+  },
+  {
+    id: 'tongue-gym',
+    title: 'Gimnasia Lingual 360',
+    description: 'Entrena el músculo más importante de tu dicción.',
+    category: 'ARTICULATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['score_claridad'],
+    steps: [
+      'Toca con la punta de la lengua cada diente por la parte exterior.',
+      'Recorre tus labios con la lengua en sentido de las agujas del reloj.',
+      'Hazlo ahora en sentido contrario.',
+      'Chasquea la lengua contra el paladar con fuerza.'
+    ],
+    benefit: 'Agilidad inmediata para palabras complejas.'
+  },
+  {
+    id: 'chewing-words',
+    title: 'Masticar Palabras',
+    description: 'Exagera la gesticulación para una claridad cristalina.',
+    category: 'ARTICULATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['repetitionCount', 'score_claridad'],
+    steps: [
+      'Toma un texto y léelo simulando que masticas un chicle gigante.',
+      'Cada sílaba debe requerir que muevas toda la cara.',
+      'Involucra labios, lengua y mandíbula.',
+      'Lee ahora el mismo texto de forma normal.'
+    ],
+    benefit: 'Te quita la "pereza labial" que hace que parezca que balbuceas.'
+  },
+  {
+    id: 'explosive-enunciation',
+    title: 'Oclusivas Explosivas',
+    description: 'Haz que tus palabras tengan un inicio limpio y potente.',
+    category: 'ARTICULATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['volume', 'score_claridad'],
+    steps: [
+      'Repite la secuencia: P-T-K, P-T-K, P-T-K.',
+      'Siente el aire salir con fuerza en cada letra.',
+      'Hazlo ahora con palabras: "Papá, Taco, Queso".',
+      'Exagera el golpe de aire inicial.'
+    ],
+    benefit: 'Evita que tus frases suenen flojas o sin energía.'
+  },
+  {
+    id: 'clean-diphthongs',
+    title: 'Diptongos Limpios',
+    description: 'Evita que las vocales se mezclen en un solo sonido.',
+    category: 'ARTICULATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['score_claridad'],
+    steps: [
+      'Pronuncia lentamente: IA, IE, IO, IU.',
+      'Asegúrate de escuchar las DOS vocales por separado.',
+      'Ahora con palabras: "Ciudad, Hielo, Cuatro, Peine".',
+      'No permitas que se vuelvan un solo sonido borroso.'
+    ],
+    benefit: 'Mejora la elegancia de tu habla cotidiana.'
+  },
+  {
+    id: 'no-vowels-reading',
+    title: 'Lectura sin Vocales',
+    description: 'El reto definitivo para tu precisión articulatoria.',
+    category: 'ARTICULATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['score_claridad'],
+    steps: [
+      'Mira una frase (ej: "Hola mundo").',
+      'Intenta decirla pronunciando SOLO las consonantes (H-l-m-n-d).',
+      'El esfuerzo debe estar en la posición de la lengua.',
+      'Léela ahora normal y siente la facilidad.'
+    ],
+    benefit: 'Forza a tus articuladores a trabajar con precisión máxima.'
+  },
+
+  // 🆕 ENTONACIÓN (INTONATION)
+  {
+    id: 'news-anchor',
+    title: 'El Locutor de Noticias',
+    description: 'Practica la autoridad y el énfasis descendente.',
+    category: 'INTONATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['fallingIntonationScore', 'pitchRange'],
+    steps: [
+      'Lee una noticia cualquiera con tono serio y pausado.',
+      'Termina cada frase con un tono claramente hacia abajo.',
+      'Proyecta seguridad en cada afirmación.',
+      'Evita subir el tono al final de las frases (sonido de duda).'
+    ],
+    benefit: 'Proyecta convicción y liderazgo de inmediato.'
+  },
+  {
+    id: 'extreme-drama',
+    title: 'Dramatismo Absurdo',
+    description: 'Explora tus límites emocionales con un texto plano.',
+    category: 'INTONATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['pitchRange'],
+    steps: [
+      'Lee una receta de cocina como si fuera la tragedia más grande de la historia.',
+      'Ponle lágrimas a los ingredientes y agonía a los pasos.',
+      'Ahora léelo como si fuera la noticia más feliz de tu vida.',
+      'Siente cómo tu voz sube y baja de tono.'
+    ],
+    benefit: 'Elimina la voz monótona y aburrida.'
+  },
+  {
+    id: 'constant-question',
+    title: 'El Mundo como Pregunta',
+    description: 'Entrena la flexibilidad de tus finales de frases.',
+    category: 'INTONATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['pitchRange'],
+    steps: [
+      'Toma un texto descriptivo.',
+      'Léelo terminando todas las frases hacia arriba (?).',
+      'Incluso los puntos finales deben sonar como preguntas.',
+      'Nota cómo cambia la percepción de lo que dices.'
+    ],
+    benefit: 'Te da un control consciente de para qué sirve subir o bajar el tono.'
+  },
+  {
+    id: 'priest-voice',
+    title: 'La Voz de Autoridad Calma',
+    description: 'Practica la paz y la profundidad sonora.',
+    category: 'INTONATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['energyStability', 'pitchRange'],
+    steps: [
+      'Usa tu tono más grave y pausado.',
+      'Habla como si estuvieras en una catedral inmensa.',
+      'Alarga ligeramente las vocales.',
+      'Mantén un ritmo lento y deliberado.'
+    ],
+    benefit: 'Ideal para calmar audiencias tensas o dar noticias serias.'
+  },
+  {
+    id: 'word-emphasis',
+    title: 'Énfasis Variable',
+    description: 'Aprende a controlar qué idea resalta en tu discurso.',
+    category: 'INTONATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['rhythmConsistency'],
+    steps: [
+      'Usa la frase: "Yo no dije que él robó el dinero".',
+      'Repítela enfatizando "YO".',
+      'Repítela enfatizando "ROBÓ".',
+      'Repítela enfatizando "DINERO".',
+      'Nota cómo el significado cambia totalmente.'
+    ],
+    benefit: 'Garantiza que tu audiencia entienda exactamente lo importante.'
+  },
+  {
+    id: 'fairy-tale',
+    title: 'Cuentacuentos Mágico',
+    description: 'Añade misterio y curiosidad a tu oratoria.',
+    category: 'INTONATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['pitchRange', 'rhythmConsistency'],
+    steps: [
+      'Susurra algunas partes de tu texto.',
+      'Habla con entusiasmo repentino en otras.',
+      'Usa pausas largas después de palabras clave.',
+      'Crea un ambiente de intriga con tu voz.'
+    ],
+    benefit: 'Mantiene la atención de la audiencia en niveles máximos.'
+  },
+
+  // 🆕 MENTALIDAD (MINDSET)
+  {
+    id: 'power-posing',
+    title: 'Postura de Poder (Supergirl/Superman)',
+    description: 'Hackeo químico para bajar el cortisol inmediatamente.',
+    category: 'MINDSET',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['score_seguridad'],
+    steps: [
+      'Ponte de pie con los pies separados y manos en la cintura.',
+      'Mantén la barbilla ligeramente hacia arriba y pecho fuera.',
+      'Sostén la postura durante 60 segundos antes de hablar.',
+      'Siente la oleada de confianza en tu cuerpo.'
+    ],
+    benefit: 'Baja los niveles de estrés y sube la testosterona.'
+  },
+  {
+    id: 'authority-affirmation',
+    title: 'Afirmación de Autoridad',
+    description: 'Convéncete a ti mismo para poder convencer a otros.',
+    category: 'MINDSET',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['score_seguridad'],
+    steps: [
+      'Mírate al espejo directamente a los ojos.',
+      'Di en voz alta: "Mi mensaje tiene valor y merezco ser escuchado".',
+      'Repítelo 3 veces, bajando el tono al final de la frase.',
+      'Sonríe con sinceridad al terminar.'
+    ],
+    benefit: 'Elimina el síndrome del impostor antes de una sesión.'
+  },
+  {
+    id: 'imaginary-friend',
+    title: 'El Amigo Invisible',
+    description: 'Convierte el miedo al juicio en apoyo incondicional.',
+    category: 'MINDSET',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['score_seguridad'],
+    steps: [
+      'Imagina que en la audiencia (o frente a la cámara) está tu mejor amigo.',
+      'Esa persona te apoya pase lo que pase.',
+      'Háblale directamente a él, olvida al resto por un momento.',
+      'Relaja tu rostro mientras lo haces.'
+    ],
+    benefit: 'Humaniza la oratoria y quita la presión de la perfección.'
+  },
+  {
+    id: 'celebrated-error',
+    title: 'Celebración del Error',
+    description: 'Entrena la resiliencia mental ante equivocaciones.',
+    category: 'MINDSET',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['score_seguridad'],
+    steps: [
+      'Practica un discurso difícil.',
+      'Si te trabas o te equivocas, SONRÍE y sigue como si fuera parte del plan.',
+      'No pidas perdón ni pongas cara de frustración.',
+      'Sigue con más energía que antes.'
+    ],
+    benefit: 'Te vuelve un orador "antifrágil" al que nada detiene.'
+  },
+  {
+    id: 'calm-bubble',
+    title: 'El Escudo de Calma',
+    description: 'Protégete de la energía negativa externa.',
+    category: 'MINDSET',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['energyStability'],
+    steps: [
+      'Visualiza una burbuja de luz azul a tu alrededor.',
+      'Toda crítica o juicio rebota en esa burbuja.',
+      'Dentro de la burbuja, tu voz es perfecta y tu mente está clara.',
+      'Respira dentro de ese espacio seguro.'
+    ],
+    benefit: 'Ideal para hablar en ambientes hostiles o críticos.'
+  },
+  {
+    id: 'focus-on-giving',
+    title: 'Enfoque en el Servicio',
+    description: 'Quita el foco de ti y ponlo en ayudar a otros.',
+    category: 'MINDSET',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['score_seguridad'],
+    steps: [
+      'Antes de empezar, pregúntate: "¿Cómo puedo ayudar hoy?".',
+      'Olvida cómo te ves o qué piensan de ti.',
+      'Concéntrate al 100% en transmitir tu mensaje con claridad.',
+      'Entregar valor es tu única misión.'
+    ],
+    benefit: 'La ansiedad desaparece cuando dejas de ser el protagonista y te vuelves el mensajero.'
+  },
+
+  // 🆕 IMPROVISACIÓN (IMPROVISATION)
+  {
+    id: 'forbidden-letter',
+    title: 'La Letra Prohibida',
+    description: 'Forza a tu cerebro a buscar caminos lingüísticos nuevos.',
+    category: 'IMPROVISATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['awkwardSilences', 'fillerCount'],
+    steps: [
+      'Habla un minuto sobre el clima o tu día.',
+      'Reto: No puedes usar ninguna palabra que contenga la letra "A" (o "O").',
+      'Si te detienes más de 3 segundos, pierde.',
+      'Intenta ser fluido aunque sea difícil.'
+    ],
+    benefit: 'Te vuelve extremadamente rápido para encontrar sinónimos.'
+  },
+  {
+    id: 'air-seller',
+    title: 'El Vendedor de Aire',
+    description: 'Practica la persuasión pura sobre lo absurdo.',
+    category: 'IMPROVISATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['volume', 'pitchRange'],
+    steps: [
+      'Toma un objeto inservible (un clip roto, un pañuelo sucio).',
+      'Intenta vendérnoslo durante 1 minuto.',
+      'Usa argumentos emocionales, de autoridad y de escasez.',
+      'Cree en tu propio discurso mientras lo dices.'
+    ],
+    benefit: 'Desarrolla el carisma y la capacidad de convencer sin guion.'
+  },
+  {
+    id: 'absurd-expert',
+    title: 'El Experto Absurdo',
+    description: 'Entrena la confianza ciega en tu propia palabra.',
+    category: 'IMPROVISATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['fillerCount', 'score_seguridad'],
+    steps: [
+      'Elige un tema del que no sepas nada (ej: "La cría de pingüinos en Marte").',
+      'Explícalo ante la cámara con total autoridad durante 45 segundos.',
+      'Inventa datos, fechas y nombres con seguridad absoluta.',
+      'No Uses muletillas (ehh, mmm).'
+    ],
+    benefit: 'Elimina el miedo a "no saber qué decir" y entrena la elocuencia.'
+  },
+  {
+    id: 'logical-connector',
+    title: 'Puentes Imposibles',
+    description: 'Une conceptos totalmente opuestos de forma lógica.',
+    category: 'IMPROVISATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['awkwardSilences', 'fillerCount'],
+    steps: [
+      'Elige dos palabras al azar (ej: "Pizza" y "Justicia").',
+      'Explica en 30 segundos cómo una pizza puede salvar el sistema judicial.',
+      'Busca una conexión coherente, por loca que sea.',
+      'Termina con una conclusión potente.'
+    ],
+    benefit: 'Te da agilidad mental para responder preguntas difíciles en vivo.'
+  },
+  {
+    id: 'story-chain',
+    title: 'La Cadena de Conectores',
+    description: 'Estructura tus historias de forma dinámica e imparable.',
+    category: 'IMPROVISATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['rhythmConsistency'],
+    steps: [
+      'Empieza una historia con una frase al azar.',
+      'La siguiente frase DEBE empezar con "Y por eso...".',
+      'La siguiente DEBE empezar con "Sin embargo...".',
+      'La siguiente DEBE empezar con "Y finalmente...".',
+      'Repite el ciclo.'
+    ],
+    benefit: 'Elimina la monotonía narrativa y hace tus historias más interesantes.'
+  },
+  {
+    id: 'color-description',
+    title: 'Describiendo lo Invisible',
+    description: 'Mejora tu capacidad de crear imágenes en la mente del otro.',
+    category: 'IMPROVISATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['score_claridad'],
+    steps: [
+      'Imagina que hablas con alguien ciego de nacimiento.',
+      'Describe el color "Rojo" sin usar la palabra rojo ni nombres de objetos rojos.',
+      'Describe sensaciones, texturas y emociones.',
+      'Habla durante 45 segundos.'
+    ],
+    benefit: 'Te vuelve un maestro del storytelling visual y sensorial.'
   }
 ];
