@@ -124,23 +124,13 @@ export default function AudioLevelMeter({ stream, isActive }: AudioLevelMeterPro
   }, [stream, isActive]);
 
   return (
-    <div className="flex h-full gap-1 text-[10px] font-mono text-gray-500">
-      {/* Etiquetas dB Scale */}
-      <div className="flex flex-col justify-between h-full py-1 text-right w-6">
-        <span>0</span>
-        <span>-6</span>
-        <span>-12</span>
-        <span>-24</span>
-        <span>-48</span>
-      </div>
-      
-      {/* Medidor */}
-      <div className="h-full bg-[#111827] p-1 rounded-lg border border-[#374151]">
+    <div className="relative h-full w-full flex flex-col items-center py-2">
+      <div className="h-full w-2 md:w-3 relative">
         <canvas 
           ref={canvasRef} 
-          width={24} 
-          height={200} 
-          className="w-6 h-full"
+          width={40} 
+          height={400} 
+          className="w-full h-full opacity-90"
         />
       </div>
     </div>

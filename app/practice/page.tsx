@@ -601,6 +601,15 @@ export default function PracticePage() {
     <main className="fixed inset-0 bg-black font-display text-white overflow-hidden z-[999]">
       <div className="absolute inset-0 z-0 bg-black flex items-center justify-center overflow-hidden">
         
+        {/* 🎙️ MEDIDOR DE VOLUMEN (Vertical Extenso) */}
+        {isRecording && (
+          <div className="absolute left-2 md:left-4 top-1/4 bottom-1/4 w-8 md:w-10 z-50 animate-fade-in">
+             <div className="h-full w-full bg-black/40 backdrop-blur-md rounded-full border border-white/10 p-1.5 flex flex-col items-center">
+                <AudioLevelMeter stream={recordingStream} isActive={true} />
+             </div>
+          </div>
+        )}
+
         {/* PANEL LATERAL / SUPERIOR (Feedback en Vivo) */}
         {isPostureReady && (
           <div className={`absolute z-40 transition-all duration-700 ease-in-out no-scrollbar
@@ -792,10 +801,7 @@ export default function PracticePage() {
            </div>
         )}
 
-        {/* Audio Meter */}
-        <div className="mb-6 h-8 flex items-center justify-center w-full max-w-[200px]">
-           <AudioLevelMeter stream={recordingStream} isActive={true} />
-        </div>
+        {/* Audio Meter (Removed from bottom, moved to left) */}
 
         {/* 🔴 Main Action Button */}
         {!isRecording ? (
