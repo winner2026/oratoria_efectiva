@@ -1,49 +1,62 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/infrastructure/db/client";
+import { generateFingerprint, getClientIP, normalizeUserAgent } from "@/lib/fingerprint/generateFingerprint";
 
-import { NextResponse } from "next/server";
-import { db } from "@/infrastructure/db/client";
-import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { email, password, name } = await req.json();
+    const { email, name, role, goal } = await req.json();
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email y contraseña son requeridos" },
-        { status: 400 }
-      );
+    if (!email) {
+      return NextResponse.json({ error: "Email es requerido" }, { status: 400 });
     }
 
-    // Check if user exists
-    const existingUser = await db.query(
-      "SELECT id FROM users WHERE email = $1",
-      [email]
-    );
+    console.log("[REGISTER] Intentando registrar/login:", email);
 
-    if (existingUser.rows.length > 0) {
-      return NextResponse.json(
-        { error: "El usuario ya existe" },
-        { status: 400 }
-      );
+    // 1. Verificar si ya existe
+    let user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (user) {
+      console.log("[REGISTER] Usuario existente encontrado:", user.id);
+      // Usuario existente: Podríamos actualizar datos si es un re-engagement
+      // Por ahora solo devolvemos éxito
+    } else {
+      console.log("[REGISTER] Creando nuevo usuario...");
+      // 2. Crear nuevo usuario con 3 créditos GRATIS
+      user = await prisma.user.create({
+        data: {
+          email,
+          name,
+          role,
+          goal,
+          credits: 3, // 🎁 REGALO DE BIENVENIDA
+          plan: "FREE"
+        }
+      });
+      console.log("[REGISTER] Usuario creado:", user.id);
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const userId = uuidv4();
+    // 3. Vincular con Fingerprint (Opcional pero útil para tracking)
+    // Intentaremos asociar el fingerprint actual a este usuario si tenemos la lógica lista
+    // (Por ahora simplificamos la respuesta)
 
-    // Create user
-    await db.query(
-      `INSERT INTO users (id, email, name, password_hash, created_at, last_login)
-       VALUES ($1, $2, $3, $4, NOW(), NOW())`,
-      [userId, email, name || email.split("@")[0], hashedPassword]
-    );
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        credits: user.credits,
+        role: user.role
+      },
+      message: user.credits > 0 ? "¡Tienes 3 análisis grauitos!" : "Has agotado tus créditos gratuitos."
+    });
 
-    return NextResponse.json({ success: true, userId });
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("[REGISTER] Error:", error);
     return NextResponse.json(
-      { error: "Error al registrar usuario" },
+      { error: "Error interno al registrar usuario" },
       { status: 500 }
     );
   }

@@ -11,6 +11,9 @@ export default function ListenPage() {
   const router = useRouter();
   const { data: session } = useSession();
   
+  // Estado local para usuario simulado o sesión real
+  const [userName, setUserName] = useState<string | null>(null);
+  
   // Estado para streak y tip (se cargan en cliente)
   const [streak, setStreak] = useState<StreakData | null>(null);
   const [practicedToday, setPracticedToday] = useState(false);
@@ -24,6 +27,12 @@ export default function ListenPage() {
     setPracticedToday(hasPracticedToday());
     setTipOfDay(getTipOfTheDay());
     setTipNumber(getTipNumber());
+
+    // Login simulado chequeo
+    if (typeof window !== 'undefined') {
+       const storedEmail = localStorage.getItem("user_email");
+       if (storedEmail) setUserName(storedEmail.split('@')[0]);
+    }
   }, []);
 
   const badge = streak ? getStreakBadge(streak.currentStreak) : null;
@@ -116,10 +125,10 @@ export default function ListenPage() {
 
           <button
             onClick={() => {
-              if (session) {
+              if (session || userName || localStorage.getItem("user_email")) {
                 router.push("/practice");
               } else {
-                router.push("/auth/signin");
+                router.push("/");
               }
             }}
             className={`flex w-full items-center justify-center overflow-hidden rounded-xl h-14 px-5 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-lg ${

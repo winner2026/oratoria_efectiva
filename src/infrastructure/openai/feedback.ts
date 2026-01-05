@@ -16,63 +16,54 @@ export type DynamicFeedbackOutput = {
   payoff: string;
 };
 
-// 💰 CONTROL DE COSTOS MVP
-// GPT-4o-mini: ~$0.15 / 1M input tokens, ~$0.60 / 1M output tokens
-// Con este prompt corto: ~500 tokens input + ~200 tokens output = ~$0.0002 por análisis
-// Total por usuario Free: Whisper ($0.006) + GPT-4o-mini ($0.0002) = ~$0.0062
-// Con 100 usuarios Free: ~$0.62 en costos de IA
+// 💰 CONTROL DE COSTOS MVP (Optimized)
+const SYSTEM_PROMPT = `Eres un entrenador de oratoria de clase mundial (estilo TED Talk coach). Tu trabajo no es ser amable, es ser RADICALMENTE ÚTIL. 
+Analizas la psicología detrás de la voz.
 
-const SYSTEM_PROMPT = `Eres un coach experto en oratoria y liderazgo. Tu análisis determina qué tan "segura" y "profesional" suena una persona.
+TU MISIÓN:
+Encontrar la "Verdad Incómoda". ¿Suenal real o falso? ¿Seguro o aterrorizado? ¿Líder o seguidor?
 
-Tu tarea es analizar la TRANSCRIPCIÓN y las MÉTRICAS para evaluar tres pilares:
-1. SEGURIDAD: ¿Usa lenguaje dubitativo (eh, este, creo que) o firme?
-2. CLARIDAD: ¿Sus frases son directas o laberínticas?
-3. RITMO: ¿Es monótono, acelerado o dinámico?
+INSTRUCCIONES DE ESTILO:
+1. DIAGNÓSTICO: Debe ser un golpe a la mandíbula. Corto, profundo y memorable. (Ej: "Tu voz pide permiso antes de hablar" o "Tienes el ritmo de un metrónomo roto").
+2. SIN RELLENO: No uses palabras corporativas vacías. Sé humano, directo y visceral.
+3. CITA EVIDENCIA: Si dices que es repetitivo, dime QUÉ palabra repitió. Si dices que duda, dime DÓNDE.
 
-Devuelve un JSON con:
-- "diagnostico": Una frase de alto impacto sobre su proyección actual.
-- "score_seguridad": Del 1 al 100 (basado en vicios del lenguaje y firmeza).
-- "score_claridad": Del 1 al 100 (basado en estructura de frases).
-- "lo_que_suma": 2 puntos fuertes específicos.
-- "lo_que_resta": 2 puntos débiles específicos.
-- "decision": Una acción concreta para mejorar YA.
-- "payoff": El beneficio inmediato de hacer esa acción.`;
+FORMATO JSON EN ESPAÑOL NEUTRO.`;
 
 function buildUserPrompt(input: DynamicFeedbackInput): string {
-  return `TRANSCRIPCIÓN:
+  return `TRANSCRIPCIÓN DEL USUARIO:
 """
 ${input.transcript}
 """
 
-MÉTRICAS ACÚSTICAS Y ESTRUCTURALES:
-- Velocidad: ${input.metrics.wordsPerMinute} PPM
-- Pausas Totales: ${input.metrics.pauseCount}
-- Pausas Estratégicas (>0.5s): ${input.metrics.strategicPauses}
-- Silencios Incómodos (>2s): ${input.metrics.awkwardSilences}
-- Entonación Descendente al Afirmar: ${input.metrics.fallingIntonationScore ?? 'N/A'}% (Alto = Seguridad)
-- Rango Tonal: ${input.metrics.pitchRange ?? 'N/A'} Hz
-- Consistencia de Ritmo: ${Math.round(input.metrics.rhythmConsistency * 100)}%
+DATOS DUROS (MÉTRICAS):
+- Velocidad: ${input.metrics.wordsPerMinute} PPM (Ideal: 130-150. <100 es aburrido, >160 es atropellado).
+- Pausas Totales: ${input.metrics.pauseCount}.
+- Pausas Estratégicas (>0.5s): ${input.metrics.strategicPauses} (El silencio es poder).
+- Silencios Incómodos (>2s): ${input.metrics.awkwardSilences} (Mata la credibilidad).
+- Entonación Descendente (Sentencias Finales): ${input.metrics.fallingIntonationScore ?? 'N/A'}% (Alto=Autoridad, Bajo=Pregunta/Duda).
+- Variedad Tonal (Pitch Range): ${input.metrics.pitchRange ?? 'N/A'} Hz (Bajo=Monótono/Robot).
+- Consistencia Rítmica: ${Math.round(input.metrics.rhythmConsistency * 100)}%.
 
-VICIOS DEL LENGUAJE:
-- Muletillas (eh, este, mmm): ${input.metrics.fillerCount}
-- Palabras Repetidas: ${input.metrics.repetitionCount}
-- Longitud Promedio de Frase: ${input.metrics.avgSentenceLength} palabras
+VICIOS DETECTADOS:
+- Muletillas (eh, este, mmm): ${input.metrics.fillerCount}.
+- Repeticiones: ${input.metrics.repetitionCount}.
+- Frases Kilométricas: ${input.metrics.longSentences} (Dificultan la comprensión).
 
-TAREA:
-Evalúa la "Seguridad Percibida" combinando acústica y lenguaje.
-1. Si "Entonación Descendente" es baja (<50%) Y tiene silencios incómodos, menciona inseguridad.
-2. Si usa pausas estratégicas y tono descendente, felicítalo por su control.
-3. Si tiene frases largas (>25 palabras) y muchas muletillas, critica la claridad.
+TAREA DE ANÁLISIS PROFUNDO:
+1. Cruza la "Entonación Descendente" con las "Muletillas". Si ambos fallan, el diagnóstico es INSEGURIDAD SEVERA.
+2. Si la velocidad es alta y hay pocas pausas, el diagnóstico es ANSIEDAD/PRISA.
+3. Si el rango tonal es bajo, el diagnóstico es ABURRIMIENTO/MONOTONÍA.
 
-JSON FORMAT:
+OUTPUT JSON ESPERADO:
 {
-  "diagnostico": "string",
-  "score_seguridad": number,
-  "score_claridad": number,
-  "lo_que_suma": ["string", "string"],
-  "lo_que_resta": ["string", "string"],
-  "decision": "string",
-  "payoff": "string"
+  "diagnostico": "Una frase sentencia (máx 10 palabras) que defina su proyección actual.",
+  "score_seguridad": 1-100 (Castiga severamente la duda y el tono ascendente final),
+  "score_claridad": 1-100 (Castiga frases largas y muletillas),
+  "lo_que_suma": ["Punto fuerte 1 (Cita algo específico)", "Punto fuerte 2"],
+  "lo_que_resta": ["Punto débil 1 (Sé duro)", "Punto débil 2"],
+  "decision": "La ÚNICA acción técnica más importante para corregir esto AHORA MISMO.",
+  "payoff": "El beneficio emocional/social inmediato de corregirlo."
 }`;
 }
 

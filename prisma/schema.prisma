@@ -19,10 +19,42 @@ model Resource {
   createdAt   DateTime @default(now())
 }
 
+// Usuario registrado (Lead)
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?
+  role          String?   // "student", "professional", "executive"
+  goal          String?   // "fear", "diction", "leadership"
+  credits       Int      @default(3)
+  plan          String   @default("FREE") // "FREE" | "PREMIUM"
+  magicToken    String?  @unique // Token para acceso sin password
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  sessions      VoiceSession[]
+  usage         Usage?
+}
+
+// Control de uso (Free Tier limit by Fingerprint or User)
+model Usage {
+  id              String   @id @default(uuid())
+  userId          String?  @unique @map("user_id") // Relación con usuario registrado
+  fingerprint     String   @unique // Para usuarios anónimos
+  planType        String   @map("plan_type") @default("FREE")
+  totalAnalyses   Int      @map("total_analyses") @default(0)
+  lastAnalysisAt  DateTime @default(now()) @map("last_analysis_at")
+  
+  user            User?    @relation(fields: [userId], references: [id])
+
+  @@map("usage")
+}
+
 // Sesiones de análisis de voz del usuario
 model VoiceSession {
   id                        String   @id @default(uuid())
-  userId                    String   @map("user_id")
+  userId                    String   @map("user_id") // Puede ser ID de User o Fingerprint
+  user                      User?    @relation(fields: [userId], references: [id]) // Opcional si es anónimo
   createdAt                 DateTime @default(now()) @map("created_at")
   
   // Transcripción

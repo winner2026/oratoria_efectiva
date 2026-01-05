@@ -18,6 +18,7 @@
 
 export type EventName =
   | "recording_started"
+  | "recording_started_with_video"
   | "recording_completed"
   | "recording_abandoned"
   | "recording_auto_stopped"

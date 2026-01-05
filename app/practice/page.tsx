@@ -1,13 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { getOrCreateAnonymousUserId } from "@/lib/anonymousUser";
 import { logEvent } from "@/lib/events/logEvent";
+import Link from "next/link";
+import Script from "next/script";
+import { usePostureAnalysis, PostureMetrics } from "@/lib/posture/usePostureAnalysis";
+import AudioVisualizer from "@/components/AudioVisualizer";
+import AudioLevelMeter from "@/components/AudioLevelMeter";
+import { getRandomTip, VocalTip, getCategoryColor } from "@/lib/tips/vocalHygieneTips";
 
 // 🎯 CONTROL DE ABANDONO TEMPRANO
 const MIN_RECORDING_DURATION = 3; // segundos
-const EARLY_ABANDONMENT_THRESHOLD = 5; // segundos
 
 // 💰 CONTROL DE COSTOS - Límite máximo de grabación
 const MAX_RECORDING_DURATION = 60; // segundos (límite de Whisper)
@@ -18,6 +23,9 @@ export default function PracticePage() {
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingStartTimeRef = useRef<number | null>(null);
   const autoStopTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -27,6 +35,31 @@ export default function PracticePage() {
   const [showIncognitoWarning, setShowIncognitoWarning] = useState(false);
   const [isCheckingIncognito, setIsCheckingIncognito] = useState(true);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [showPosturePreview, setShowPosturePreview] = useState(true);
+  const [recordingStream, setRecordingStream] = useState<MediaStream | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState("Procesando audio...");
+  const [currentTip, setCurrentTip] = useState<VocalTip | null>(null);
+  const [mediapipeReady, setMediapipeReady] = useState(false);
+  const mediapipeLoadedRef = useRef(0);
+
+  // 🆕 Hook de análisis de postura
+  const {
+    currentMetrics,
+    error: postureError,
+    initialize: initPosture,
+    startAnalysis: startPostureAnalysis,
+    stopAnalysis: stopPostureAnalysis,
+    isInitialized: isPostureReady,
+  } = usePostureAnalysis({ videoRef, canvasRef });
+
+  const handleMediapipeLoad = () => {
+    mediapipeLoadedRef.current += 1;
+    if (mediapipeLoadedRef.current >= 3) {
+      setMediapipeReady(true);
+    }
+  };
+
 
   // Detectar modo incógnito y generar userId
   useEffect(() => {
@@ -40,7 +73,7 @@ export default function PracticePage() {
         return;
       }
 
-      const id = getOrCreateAnonymousUserId();
+  const id = getOrCreateAnonymousUserId();
       setUserId(id);
       setIsCheckingIncognito(false);
     };
@@ -48,32 +81,132 @@ export default function PracticePage() {
     checkAccess();
   }, []);
 
+  // 🆕 Sincronizar el video con el stream de forma segura
+  useEffect(() => {
+    let isMounted = true;
+    
+    const playVideo = async () => {
+      if (videoRef.current && recordingStream && isMounted) {
+        // Solo actualizar si es diferente para evitar interrupciones
+        if (videoRef.current.srcObject !== recordingStream) {
+          videoRef.current.srcObject = recordingStream;
+          try {
+            await videoRef.current.play();
+          } catch (e) {
+            // Ignorar errores de interrupción si el componente se desmontó
+            if (isMounted && (e as Error).name !== 'AbortError') {
+              console.error("Error al reproducir video:", e);
+            }
+          }
+        }
+      }
+    };
+
+    playVideo();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [recordingStream, isRecording, videoRef]);
+
+  // Inicializar cámara cuando el componente carga
+  useEffect(() => {
+    const initCamera = async () => {
+      try {
+        // usePostureAnalysis se encarga de esperar a que los scripts estén listos
+        await initPosture();
+        
+        // Intentar obtener el stream que MediaPipe está usando para previsualización
+        if (videoRef.current?.srcObject) {
+          setRecordingStream(videoRef.current.srcObject as MediaStream);
+        } else {
+           const stream = await navigator.mediaDevices.getUserMedia({ 
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true, // Esto ayuda a normalizar el volumen
+            },
+            video: { 
+              width: { ideal: 1920 }, 
+              height: { ideal: 1080 }, 
+              aspectRatio: { ideal: 1.777 },
+              facingMode: "user" 
+            }
+          });
+          setRecordingStream(stream);
+        }
+      } catch (err) {
+        console.error("Error initializing camera:", err);
+        setCameraError("No se pudo acceder a la cámara");
+      }
+    };
+
+    if (!isCheckingIncognito && !showIncognitoWarning) {
+      initCamera();
+    }
+  }, [isCheckingIncognito, showIncognitoWarning, initPosture]);
+
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Solicitar audio y video con alta calidad inicial
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+        video: { 
+          facingMode: "user",
+          // Configuración 16:9 Full HD (Mayor detalle para gestos/mirada)
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          aspectRatio: { ideal: 1.777 } // 16/9
+        }
+      });
 
-      let options = { mimeType: "audio/webm" };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options = { mimeType: "audio/mp4" };
-        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-          options = {} as any;
+      setRecordingStream(stream);
+
+      // Configurar video preview de forma segura
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(e => console.error("Error start video:", e));
+      }
+
+      // Iniciar análisis de postura
+      await startPostureAnalysis();
+
+      // Configurar grabación de audio optimizada
+      let options: MediaRecorderOptions = { 
+        mimeType: 'audio/webm;codecs=opus',
+        audioBitsPerSecond: 64000 // 64kbps para subida rápida
+      };
+      
+      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+        options = { mimeType: 'audio/webm' }; // Fallback estándar
+        if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+           options = {}; // Fallback final (default del navegador)
         }
       }
 
-      const mediaRecorder = new MediaRecorder(stream, options);
+      // Solo grabar pistas de audio para reducir tamaño (el video no se sube)
+      const audioStream = new MediaStream(stream.getAudioTracks());
+      const mediaRecorder = new MediaRecorder(audioStream, options);
+      
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
       recordingStartTimeRef.current = Date.now();
       setRecordingTime(0);
 
-      logEvent("recording_started");
+      logEvent("recording_started_with_video");
 
-      const countdownInterval = setInterval(() => {
+      countdownIntervalRef.current = setInterval(() => {
         setRecordingTime((prev) => prev + 1);
       }, 1000);
 
       autoStopTimerRef.current = setTimeout(() => {
-        clearInterval(countdownInterval);
+        if (countdownIntervalRef.current) {
+          clearInterval(countdownIntervalRef.current);
+        }
         stopRecording();
         logEvent("recording_auto_stopped", { duration: MAX_RECORDING_DURATION });
       }, MAX_RECORDING_DURATION * 1000);
@@ -84,55 +217,124 @@ export default function PracticePage() {
         }
       };
 
-      mediaRecorder.onstop = () => {
-        clearInterval(countdownInterval);
+      mediaRecorder.onstop = async () => {
+        if (countdownIntervalRef.current) {
+          clearInterval(countdownIntervalRef.current);
+        }
+        
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         const recordingDuration = recordingStartTimeRef.current ? (Date.now() - recordingStartTimeRef.current) / 1000 : 0;
+
+        // Recuperar métricas capturadas antes del cierre
+        const finalPostureMetrics = finalMetricsRef.current || stopPostureAnalysis();
 
         if (recordingDuration < MIN_RECORDING_DURATION) {
           logEvent("recording_abandoned", { duration: recordingDuration, reason: "too_short" });
           alert("La grabación es muy corta. Habla al menos 3 segundos.");
-          stream.getTracks().forEach(track => track.stop());
+          releaseMediaResources();
+          setIsAnalyzing(false);
           return;
         }
         
-        // Auto-analyze after stop to match flow
         setAudioBlob(blob);
-        stream.getTracks().forEach(track => track.stop());
-        analyzeAudio(blob, userId); // Auto trigger analysis or show preview? UIUX implies direct analysis or stop
+        // releaseMediaResources() ya fue llamado en stopRecording, pero aquí asegura limpieza si el stop fue por otra razón
+        releaseMediaResources();
+        analyzeAudio(blob, userId, finalPostureMetrics);
       };
 
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
-      console.error("Error accessing microphone:", error);
-      alert("No se pudo acceder al micrófono. Por favor, permite el acceso.");
+      console.error("Error accessing media devices:", error);
+      alert("No se pudo acceder al micrófono o cámara. Por favor, permite el acceso.");
     }
   };
 
+  // Helper para liberar recursos
+  const releaseMediaResources = () => {
+    if (recordingStream) {
+      recordingStream.getTracks().forEach(track => {
+        track.stop();
+        track.enabled = false;
+      });
+      setRecordingStream(null);
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const finalMetricsRef = useRef<PostureMetrics | null>(null);
+
+  // ... (otros refs)
+
+  // ... dentro de stopRecording
   const stopRecording = () => {
+    // 1. CAPTURAR PRIMERO LAS MÉTRICAS DE POSTURA (mientras todo sigue vivo)
+    try {
+        finalMetricsRef.current = stopPostureAnalysis();
+    } catch (e) {
+        console.error("Error capturing posture metrics:", e);
+    }
+
     if (autoStopTimerRef.current) {
       clearTimeout(autoStopTimerRef.current);
       autoStopTimerRef.current = null;
     }
-    mediaRecorderRef.current?.stop();
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    
+    setIsAnalyzing(true);
     setIsRecording(false);
+    
+    releaseMediaResources();
   };
 
-  const analyzeAudio = async (blob: Blob, uid: string | null) => {
+  const analyzeAudio = async (blob: Blob, uid: string | null, postureMetrics: PostureMetrics) => {
     if (!blob || !uid) return;
     
     setIsAnalyzing(true);
+    setLoadingMessage("Subiendo grabación...");
+    setCurrentTip(getRandomTip());
+    
+    // Rotar mensajes para que la espera se sienta menor
+    const messages = [
+      "Transcribiendo tu voz...",
+      "Analizando entonación y pausas...",
+      "Evaluando lenguaje corporal...",
+      "Calculando niveles de seguridad...",
+      "Generando feedback personalizado..."
+    ];
+    let msgIndex = 0;
+    const intervalId = setInterval(() => {
+      if (msgIndex < messages.length) {
+        setLoadingMessage(messages[msgIndex]);
+        msgIndex++;
+      }
+    }, 4000); // Cambiar cada 4 segundos
+
     try {
       const formData = new FormData();
       const fileName = blob.type.includes("mp4") ? "voice.mp4" : "voice.webm";
       formData.append("audio", blob, fileName);
       formData.append("userId", uid);
 
+      // Timeout de seguridad de 90s para el cliente
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000);
+
       const response = await fetch("/api/analysis", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -145,255 +347,394 @@ export default function PracticePage() {
 
       const result = await response.json();
       const dataToSave = result.data || result;
-      localStorage.setItem("voiceAnalysisResult", JSON.stringify(dataToSave));
+      
+      // 🆕 Agregar métricas de postura al resultado (con fallback seguro)
+      const safePostureMetrics = postureMetrics || {
+          postureScore: 0,
+          shouldersLevel: "balanced",
+          headPosition: "centered",
+          eyeContactPercent: 0,
+          gesturesUsage: "none",
+          nervousnessIndicators: { closedFists: 0, handsHidden: 0, excessiveMovement: false }
+      };
+
+      const enhancedResult = {
+        ...dataToSave,
+        postureMetrics: {
+          postureScore: safePostureMetrics.postureScore,
+          shouldersLevel: safePostureMetrics.shouldersLevel,
+          headPosition: safePostureMetrics.headPosition,
+          eyeContactPercent: safePostureMetrics.eyeContactPercent,
+          gesturesUsage: safePostureMetrics.gesturesUsage,
+          nervousnessIndicators: safePostureMetrics.nervousnessIndicators,
+        },
+        score_postura: safePostureMetrics.postureScore,
+        // Forzar score si no viene del backend
+        score_general: dataToSave.score_general || Math.round((dataToSave.score_transcripcion + dataToSave.score_audio + (safePostureMetrics.postureScore || 50)) / 3) 
+      };
+      
+      localStorage.setItem("voiceAnalysisResult", JSON.stringify(enhancedResult));
+      clearInterval(intervalId);
       router.push("/results");
     } catch (error: any) {
+      clearInterval(intervalId);
       alert(`Error: ${error.message}`);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  // Wrapper for analyzeAudio to use state
-  const handleAnalysis = () => {
-      if(audioBlob && userId) analyzeAudio(audioBlob, userId);
-  }
-
-  // Helper to format time
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (isCheckingIncognito) return <div className="min-h-screen bg-background-dark flex items-center justify-center text-white">Cargando...</div>;
+  // Helper para mostrar estado de postura
+  const getPostureStatusColor = (score: number) => {
+    if (score >= 70) return "text-green-400";
+    if (score >= 40) return "text-yellow-400";
+    return "text-red-400";
+  };
 
-  // --- RECORDING VIEW ---
-  if (isRecording) {
-      return (
-        <main className="min-h-screen bg-background-light dark:bg-background-dark text-[#111418] dark:text-white font-display overflow-x-hidden antialiased flex flex-col">
-            {/* Header */}
-            <div className="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-background-light dark:bg-background-dark">
-                <button 
-                  onClick={() => stopRecording()}
-                  className="text-[#111418] dark:text-white flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
-                    <span className="material-symbols-outlined">arrow_back_ios_new</span>
-                </button>
-                <div className="flex flex-col items-center flex-1 pr-12">
-                    <h2 className="text-lg font-bold leading-tight tracking-[-0.015em]">Nueva Grabación</h2>
-                    <p className="text-sm font-normal text-gray-500 dark:text-gray-400">En curso</p>
-                </div>
-            </div>
+  const getPostureStatusIcon = (score: number) => {
+    if (score >= 70) return "check_circle";
+    if (score >= 40) return "warning";
+    return "error";
+  };
 
-            {/* Content */}
-            <div className="flex-1 flex flex-col items-center w-full max-w-md mx-auto px-4 pb-32">
-                {/* Timer */}
-                <div className="flex flex-col items-center justify-center py-8">
-                    <div className="flex items-baseline gap-1 text-6xl font-bold tracking-tighter text-[#111418] dark:text-white tabular-nums">
-                        <span>{formatTime(recordingTime)}</span>
-                    </div>
-                    <div className="mt-2 flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary">
-                        <div className="size-2 rounded-full bg-primary animate-pulse"></div>
-                        <span className="text-xs font-medium uppercase tracking-wide">Grabando</span>
-                    </div>
-                </div>
-
-                {/* Simulated Waveform */}
-                <div className="w-full h-32 flex items-center justify-center gap-[3px] px-4 my-4 overflow-hidden">
-                    {[4,8,6,10,14,20,24,16,28,20,12,16,8,12,6,4,3,2,4,2].map((h, i) => (
-                        <div key={i} className={`w-1.5 rounded-full ${i > 3 && i < 15 ? 'bg-primary animate-pulse' : 'bg-gray-300 dark:bg-gray-700'}`} style={{ height: `${h * 4}%` }}></div>
-                    ))}
-                </div>
-
-                {/* Stats Grid (Mocked for visual) */}
-                <div className="w-full grid grid-cols-2 gap-4 mt-6">
-                    <div className="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col justify-between h-32">
-                        <div className="flex items-start justify-between">
-                            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Ritmo</span>
-                            <span className="material-symbols-outlined text-green-500 text-xl">speed</span>
-                        </div>
-                        <div>
-                            <p className="text-3xl font-bold text-[#111418] dark:text-white tabular-nums">--</p>
-                            <p className="text-xs font-medium text-green-500 mt-1">Calculando...</p>
-                        </div>
-                    </div>
-                    <div className="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col justify-between h-32">
-                        <div className="flex items-start justify-between">
-                            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Muletillas</span>
-                            <span className="material-symbols-outlined text-yellow-500 text-xl">warning</span>
-                        </div>
-                        <div>
-                            <p className="text-3xl font-bold text-[#111418] dark:text-white tabular-nums">--</p>
-                            <p className="text-xs font-medium text-yellow-500 mt-1">Detectando...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Controls Dock */}
-            <div className="fixed bottom-0 left-0 w-full bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 pb-8 pt-4 px-6 z-50">
-                <div className="flex items-center justify-between max-w-md mx-auto">
-                    <button className="flex flex-col items-center gap-1 group opacity-50 cursor-not-allowed">
-                        <div className="size-14 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[#111418] dark:text-white">
-                            <span className="material-symbols-outlined text-3xl">pause</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Pausar</span>
-                    </button>
-
-                    <button 
-                        onClick={stopRecording}
-                        className="flex flex-col items-center gap-1 -mt-8 relative group">
-                        <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl transform group-hover:scale-110 transition-transform"></div>
-                        <div className="relative size-20 rounded-full bg-primary text-white shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-blue-600 border-4 border-background-light dark:border-background-dark">
-                            <div className="size-8 bg-white rounded-md"></div>
-                        </div>
-                        <span className="text-xs font-medium text-primary mt-1">Detener</span>
-                    </button>
-
-                    <button className="flex flex-col items-center gap-1 group opacity-50 cursor-not-allowed">
-                        <div className="size-14 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[#111418] dark:text-white">
-                            <span className="material-symbols-outlined text-3xl">flag</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Marcar</span>
-                    </button>
-                </div>
-            </div>
-        </main>
-      )
+  if (isCheckingIncognito) {
+    return (
+      <main className="min-h-screen bg-[#101922] flex items-center justify-center text-white font-display">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#3b4754] border-t-primary rounded-full animate-spin"></div>
+          <p className="text-[#9dabb9]">Preparando...</p>
+        </div>
+      </main>
+    );
   }
+
+  // --- INCOGNITO WARNING ---
+  if (showIncognitoWarning) {
+    return (
+      <main className="min-h-screen bg-[#101922] flex items-center justify-center p-4 text-white font-display">
+        <div className="bg-[#1a242d] border border-[#3b4754] rounded-2xl p-6 max-w-sm text-center space-y-5">
+          <div className="size-16 rounded-full bg-[#283039] flex items-center justify-center mx-auto">
+            <span className="material-symbols-outlined text-3xl text-[#9dabb9]">visibility_off</span>
+          </div>
+          <h2 className="text-xl font-bold">Modo incógnito detectado</h2>
+          <p className="text-[#9dabb9] text-sm">
+            Para guardar tu progreso y ofrecerte feedback personalizado, usa una ventana normal del navegador.
+          </p>
+          <Link href="/">
+            <button className="w-full h-12 bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-colors">
+              Volver al inicio
+            </button>
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // --- LIMIT MODAL ---
+  if (showLimitModal) {
+    return (
+      <main className="min-h-screen bg-[#101922] flex items-center justify-center p-4 text-white font-display">
+        <div className="bg-[#1a242d] border border-[#3b4754] rounded-2xl p-6 max-w-sm text-center space-y-5">
+          <div className="size-16 rounded-full bg-yellow-500/10 flex items-center justify-center mx-auto">
+            <span className="material-symbols-outlined text-3xl text-yellow-500">lock</span>
+          </div>
+          <h2 className="text-xl font-bold">Límite semanal alcanzado</h2>
+          <p className="text-[#9dabb9] text-sm">
+            Has usado tus análisis gratuitos. Únete a la lista de espera para acceso ilimitado.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link href="/waitlist">
+              <button className="w-full h-12 bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-primary/20">
+                Unirse a waitlist
+              </button>
+            </Link>
+            <Link href="/">
+              <button className="w-full h-11 bg-[#283039] hover:bg-[#3b4754] text-white font-medium rounded-xl transition-colors border border-[#3b4754]">
+                Volver al inicio
+              </button>
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // --- RECORDING VIEW (with video) ---
+
 
   // --- ANALYSIS / LOADING VIEW ---
   if (isAnalyzing || audioBlob) {
-      return (
-        <main className="min-h-screen bg-background-dark flex flex-col items-center justify-center p-6 text-white text-center">
-            <div className="relative size-24 mb-6">
-                 <div className="absolute inset-0 border-4 border-primary/30 rounded-full"></div>
-                 <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    return (
+      <main className="min-h-screen bg-[#101922] flex flex-col items-center justify-center p-6 text-white text-center font-display">
+        <div className="relative size-24 mb-6">
+          <div className="absolute inset-0 border-4 border-primary/30 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Analizando...</h2>
+        <p className="text-[#9dabb9] mb-4 min-h-[1.5em] transition-all duration-300">{loadingMessage}</p>
+        
+        {/* Oratory Tip Card */}
+        {currentTip && (
+          <div className="mt-8 relative w-full max-w-xs bg-gradient-to-br from-[#1a242d] to-[#161f26] rounded-2xl p-6 border border-[#3b4754] shadow-2xl overflow-hidden">
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <span className="material-symbols-outlined text-8xl">{currentTip.icon}</span>
             </div>
-            <h2 className="text-2xl font-bold mb-2">Analizando grabación...</h2>
-            <p className="text-gray-400">Esto tomará unos segundos.</p>
-        </main>
-      )
+            
+            <div className="flex flex-col items-center relative z-10">
+              <div className={`mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border ${getCategoryColor(currentTip.category)}`}>
+                <span className="material-symbols-outlined text-sm">lightbulb</span>
+                {currentTip.category}
+              </div>
+              
+              <div className="mb-3 p-3 bg-white/5 rounded-full border border-white/10">
+                <span className={`material-symbols-outlined text-3xl ${currentTip.category === 'Higiene' ? 'text-blue-400' : currentTip.category === 'Postura' ? 'text-purple-400' : 'text-yellow-400'}`}>
+                  {currentTip.icon}
+                </span>
+              </div>
+              
+              <h3 className="text-lg font-bold text-white mb-2">{currentTip.title}</h3>
+              <p className="text-[#9dabb9] text-sm leading-relaxed">
+                {currentTip.content}
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+
+    );
   }
 
-  // --- SETUP VIEW (Default) ---
   return (
-    <main className="min-h-screen bg-background-light dark:bg-background-dark font-display text-[#111418] dark:text-white overflow-x-hidden antialiased">
-        <div className="relative flex h-full min-h-screen w-full flex-col">
-            {/* Header */}
-            <div className="sticky top-0 z-10 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-800">
-                <button 
-                    onClick={() => router.push("/listen")}
-                    className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
-                    <span className="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
-                </button>
-                <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Nueva Sesión</h2>
-                <div className="size-10"></div> 
+    <main className="min-h-screen bg-[#101922] font-display text-white overflow-hidden flex flex-col relative h-[100dvh]">
+      <div className="absolute inset-0 z-0 bg-[#000] flex items-center justify-center">
+        
+        {/* PANEL LATERAL (Flotante sobre video 16:9) */}
+        {!isRecording && isPostureReady && (
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-4 w-60">
+            <h3 className="text-white/40 text-xs font-bold uppercase tracking-widest mb-2 pl-1 shadow-black drop-shadow-md">Verificación en Vivo</h3>
+            
+            {/* 1. Mirada/Cabeza */}
+            <div className={`p-4 rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out ${
+              currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' 
+                ? 'bg-green-500/20 border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.4)]' 
+                : 'bg-gray-900/60 border-gray-700/50 opacity-80 grayscale'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`size-8 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+                  currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'bg-green-500 text-black scale-110' : 'bg-gray-700 text-gray-400'
+                }`}>
+                  <span className="material-symbols-outlined text-lg">visibility</span>
+                </div>
+                <div>
+                  <p className={`text-sm font-bold transition-colors duration-500 ${currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'text-green-400' : 'text-gray-400'}`}>
+                    Mirada
+                  </p>
+                  <p className={`text-[10px] transition-colors duration-500 ${currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'text-green-200/70' : 'text-gray-500'}`}>
+                    {currentMetrics.isPersonDetected && currentMetrics.headPosition === 'centered' ? 'Detectada' : 'Centra tu cabeza'}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="flex-1 flex flex-col p-4 gap-6 pb-24">
-                {/* Topic Selection */}
-                <div className="flex flex-col gap-4">
-                    <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">¿De qué quieres hablar?</h3>
-                    <label className="flex flex-col h-12 w-full">
-                        <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm">
-                            <div className="text-gray-500 dark:text-[#9dabb9] flex border-none bg-white dark:bg-[#283039] items-center justify-center pl-4 rounded-l-xl border-r-0">
-                                <span className="material-symbols-outlined">search</span>
-                            </div>
-                            <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-white dark:bg-[#283039] h-full placeholder:text-gray-400 dark:placeholder:text-[#9dabb9] px-4 rounded-l-none pl-2 text-base font-normal leading-normal transition-all" placeholder="Escribe un tema para practicar..." />
-                        </div>
-                    </label>
-                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
-                        <button className="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary pl-4 pr-4 transition-transform active:scale-95 shadow-md shadow-primary/20">
-                            <p className="text-white text-sm font-medium leading-normal">Improvisado</p>
-                        </button>
-                        <button className="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-[#283039] border border-gray-200 dark:border-transparent pl-4 pr-4 transition-transform active:scale-95 hover:bg-gray-50 dark:hover:bg-[#323b46]">
-                            <p className="text-slate-700 dark:text-white text-sm font-medium leading-normal">Entrevista</p>
-                        </button>
-                        <button className="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-[#283039] border border-gray-200 dark:border-transparent pl-4 pr-4 transition-transform active:scale-95 hover:bg-gray-50 dark:hover:bg-[#323b46]">
-                            <p className="text-slate-700 dark:text-white text-sm font-medium leading-normal">Presentación</p>
-                        </button>
-                    </div>
+            {/* 2. Manos */}
+            <div className={`p-4 rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out ${
+               currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low'
+                ? currentMetrics.gesturesUsage === 'excessive' ? 'bg-orange-500/20 border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.4)]' 
+                : 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.4)]'
+                : 'bg-gray-900/60 border-gray-700/50 opacity-80 grayscale'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`size-8 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+                   currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low' 
+                   ? currentMetrics.gesturesUsage === 'excessive' ? 'bg-orange-500 text-white scale-110' : 'bg-blue-500 text-white scale-110' 
+                   : 'bg-gray-700 text-gray-400'
+                }`}>
+                  <span className="material-symbols-outlined text-lg">sign_language</span>
                 </div>
-
-                <div className="h-px bg-gray-200 dark:bg-gray-800 w-full"></div>
-
-                {/* Duration */}
-                <div className="flex flex-col gap-4">
-                    <div className="flex justify-between items-end">
-                        <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">Duración límite</h3>
-                        <span className="text-primary text-xl font-bold font-display">1:00 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">min</span></span>
-                    </div>
-                    <div className="bg-white dark:bg-[#283039] rounded-xl p-6 shadow-sm">
-                        <div className="relative w-full h-8 flex items-center">
-                            <div className="absolute w-full h-2 bg-gray-200 dark:bg-[#3b4754] rounded-full"></div>
-                            <div className="absolute h-2 bg-primary rounded-full" style={{width: '100%'}}></div>
-                            <div className="absolute size-6 bg-white border-2 border-primary rounded-full shadow-lg" style={{right: '0%', transform: 'translateX(50%)'}}></div>
-                        </div>
-                    </div>
+                <div>
+                  <p className={`text-sm font-bold transition-colors duration-500 ${ 
+                    currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low' 
+                    ? currentMetrics.gesturesUsage === 'excessive' ? 'text-orange-400' : 'text-blue-400' 
+                    : 'text-gray-400'
+                  }`}>
+                    Gestos
+                  </p>
+                  <p className={`text-[10px] transition-colors duration-500 ${ 
+                    currentMetrics.isPersonDetected && currentMetrics.gesturesUsage !== 'low' 
+                    ? currentMetrics.gesturesUsage === 'excessive' ? 'text-orange-200/70' : 'text-blue-200/70' 
+                    : 'text-gray-500'
+                  }`}>
+                    {currentMetrics.isPersonDetected 
+                        ? (currentMetrics.gesturesUsage === 'optimal' ? 'Dinámicos' : currentMetrics.gesturesUsage === 'excessive' ? 'Exagerados' : 'Mueve tus manos')
+                        : 'Mueve tus manos'}
+                  </p>
                 </div>
-
-                <div className="h-px bg-gray-200 dark:bg-gray-800 w-full"></div>
-
-                {/* Feedback Metrics */}
-                <div className="flex flex-col gap-4">
-                    <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">Métricas activas</h3>
-                    <div className="flex flex-col gap-3">
-                        <div className="flex items-center justify-between bg-white dark:bg-[#283039] p-4 rounded-xl shadow-sm">
-                            <div className="flex items-center gap-4">
-                                <div className="size-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-primary">
-                                    <span className="material-symbols-outlined">speed</span>
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-slate-900 dark:text-white font-medium text-base">Velocidad</span>
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs">Palabras por minuto</span>
-                                </div>
-                            </div>
-                            <div className="w-11 h-6 bg-primary rounded-full relative">
-                                <div className="absolute top-[2px] right-[2px] h-5 w-5 bg-white rounded-full"></div>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between bg-white dark:bg-[#283039] p-4 rounded-xl shadow-sm">
-                             <div className="flex items-center gap-4">
-                                <div className="size-10 rounded-lg bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                                    <span className="material-symbols-outlined">graphic_eq</span>
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-slate-900 dark:text-white font-medium text-base">Pausas</span>
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs">Silencios prolongados</span>
-                                </div>
-                            </div>
-                            <div className="w-11 h-6 bg-primary rounded-full relative">
-                                <div className="absolute top-[2px] right-[2px] h-5 w-5 bg-white rounded-full"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
 
-             {/* Floating Action Button */}
-            <div className="fixed bottom-0 left-0 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-8 border-t border-gray-200 dark:border-gray-800">
-                <button 
-                    onClick={startRecording}
-                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold text-lg h-14 rounded-xl shadow-lg shadow-primary/25 transition-all active:scale-[0.98]">
-                    <span className="material-symbols-outlined">mic</span>
-                    Comenzar Práctica
-                </button>
+             {/* 3. Postura/Hombros */}
+             <div className={`p-4 rounded-2xl border backdrop-blur-md transition-all duration-500 ease-out ${
+               currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' 
+                ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.4)]' 
+                : 'bg-gray-900/60 border-gray-700/50 opacity-80 grayscale'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`size-8 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+                   currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'bg-purple-500 text-white scale-110' : 'bg-gray-700 text-gray-400'
+                }`}>
+                  <span className="material-symbols-outlined text-lg">accessibility_new</span>
+                </div>
+                <div>
+                  <p className={`text-sm font-bold transition-colors duration-500 ${ currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'text-purple-400' : 'text-gray-400'}`}>
+                    Postura
+                  </p>
+                  <p className={`text-[10px] transition-colors duration-500 ${ currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'text-purple-200/70' : 'text-gray-500'}`}>
+                    {currentMetrics.isPersonDetected && currentMetrics.shouldersLevel === 'balanced' ? 'Erguida' : 'Saca pecho'}
+                  </p>
+                </div>
+              </div>
             </div>
+
+          </div>
+        )}
+
+        {showPosturePreview && (
+          // Contenedor 16:9 Centrado (Letterbox si la pantalla es más alta)
+          <div className="relative w-full max-w-6xl aspect-video shadow-2xl bg-black overflow-hidden rounded-xl">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-contain transform -scale-x-100 bg-black" // object-contain muestra TODO el sensor
+                />
+                <canvas
+                  ref={canvasRef}
+                  className="absolute inset-0 w-full h-full object-contain transform -scale-x-100 pointer-events-none opacity-60"
+                />
+                
+                {/* Guía Visual */}
+                {!isRecording && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-40 pointer-events-none border border-white/10 m-6 rounded-2xl">
+                        <div className="absolute top-[20%] w-32 h-32 border-2 border-white/20 rounded-full border-dashed"></div>
+                        <p className="absolute bottom-[15%] text-white/60 text-xs font-medium text-center px-4 w-full bg-black/20 backdrop-blur-sm py-2">
+                           Alinea tu cuerpo en el centro <br/>
+                           <span className="text-yellow-400 text-[10px]">Distancia óptima: ~1 metro</span>
+                        </p>
+                    </div>
+                )}
+
+                {/* Loading State en el centro */}
+                {!isPostureReady && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-20">
+                    <div className="w-10 h-10 border-4 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
+                    <p className="text-white font-medium">Cargando cámara...</p>
+                  </div>
+                )}
+
+                {/* Error State */}
+                {cameraError && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/90 z-30 p-8 text-center">
+                    <span className="material-symbols-outlined text-4xl text-red-500 mb-2">videocam_off</span>
+                    <p className="text-white font-medium">{cameraError}</p>
+                    <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-white/10 rounded-full text-sm hover:bg-white/20">
+                      Reintentar
+                    </button>
+                  </div>
+                )}
+
+                {/* Posture Error State */}
+                {postureError && !cameraError && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 bg-red-500/20 border border-red-500/40 rounded-full text-xs text-red-200 backdrop-blur-md">
+                    {postureError}
+                  </div>
+                )}
+                
+
+          </div>
+        )}
+      </div>
+
+      {/* 🔝 Top UI Overlay */}
+      <div className="absolute top-0 w-full z-10 flex items-center justify-between p-4 pt-4 bg-gradient-to-b from-black/80 to-transparent">
+        <Link href="/listen">
+          <button className="flex size-10 items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all text-white shadow-lg">
+            <span className="material-symbols-outlined text-xl">arrow_back_ios_new</span>
+          </button>
+        </Link>
+        
+        {/* Status Badge */}
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border shadow-lg ${isRecording ? 'bg-red-500/80 border-red-400' : 'bg-black/40 border-white/10'}`}>
+          <div className={`size-2 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-green-400'}`}></div>
+          <span className="text-xs font-bold font-mono tracking-wide text-white">
+            {isRecording ? formatTime(recordingTime) : "LISTO"}
+          </span>
         </div>
 
-        {/* Modal - Logout/Menu (Optional, simplified for now) */}
-        <div className="fixed top-4 right-4 z-50">
-             <button 
-               onClick={() => {
-                  const { signOut } = require("next-auth/react");
-                  signOut({ callbackUrl: "/" });
-               }}
-               className="text-gray-400 hover:text-white text-xs border border-gray-700 hover:border-gray-500 rounded-lg px-3 py-1.5 bg-background-dark/50 backdrop-blur-md"
-             >
-               Cerrar Sesión
-             </button>
+        <div className="size-10"></div>
+      </div>
+
+      {/* 🔻 Bottom UI Overlay (Controls) */}
+      <div className="absolute bottom-0 w-full z-10 flex flex-col items-center pb-8 pt-24 bg-gradient-to-t from-black via-black/60 to-transparent">
+        
+        {/* Tips flotantes (solo si no graba) */}
+        {!isRecording && currentTip && (
+           <div className="mb-6 px-4 py-2 bg-black/50 backdrop-blur-md rounded-xl border border-white/10 max-w-xs text-center animate-fade-in text-xs text-gray-200 hidden md:block">
+              <span className="text-yellow-400 font-bold mr-1">Tip:</span> 
+              {currentTip.content.length > 60 ? currentTip.content.substring(0, 60) + "..." : currentTip.content}
+           </div>
+        )}
+
+        {/* Audio Meter */}
+        <div className="mb-6 h-8 flex items-center justify-center w-full max-w-[200px]">
+           <AudioLevelMeter stream={recordingStream} isActive={true} />
         </div>
+
+        {/* 🔴 Main Action Button */}
+        {!isRecording ? (
+          <button 
+            onClick={startRecording}
+            className="group relative size-20 flex items-center justify-center rounded-full transition-transform active:scale-95 touch-none"
+          >
+            <div className="absolute inset-0 bg-white rounded-full opacity-20 animate-pulse group-hover:opacity-40"></div>
+            <div className="size-16 bg-white rounded-full border-4 border-gray-300 shadow-2xl flex items-center justify-center">
+               <div className="size-12 bg-red-600 rounded-full transition-all group-hover:scale-110 shadow-inner"></div>
+            </div>
+            <span className="absolute -bottom-8 text-xs font-bold uppercase tracking-widest text-white/60">Grabar</span>
+          </button>
+        ) : (
+          <button 
+            onClick={stopRecording}
+            className="group relative size-20 flex items-center justify-center rounded-full transition-transform active:scale-95 touch-none"
+          >
+            <div className="absolute inset-0 border-4 border-red-500 rounded-full animate-ping opacity-50"></div>
+            <div className="size-16 bg-white rounded-full flex items-center justify-center shadow-2xl border-4 border-white transform hover:scale-105 transition-transform">
+               <div className="size-6 bg-red-600 rounded-lg shadow-sm"></div>
+            </div>
+             <span className="absolute -bottom-8 text-xs font-bold uppercase tracking-widest text-red-400">Parar</span>
+          </button>
+        )}
+      </div>
+      {/* Carga robusta de librerías MediaPipe con Next.js Script */}
+      <Script 
+        src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" 
+        strategy="afterInteractive" 
+      />
+      <Script 
+        src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" 
+        strategy="afterInteractive" 
+      />
+      <Script 
+        src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" 
+        strategy="afterInteractive" 
+      />
     </main>
   );
 }
