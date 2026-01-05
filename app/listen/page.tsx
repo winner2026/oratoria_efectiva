@@ -65,12 +65,6 @@ export default function ListenPage() {
           }`}>
             Nivel: {planType}
           </Link>
-          <button 
-            onClick={() => router.push("/my-sessions")}
-            className="text-slate-500 dark:text-[#9dabb9] text-sm font-bold leading-normal tracking-wide shrink-0 hover:text-primary dark:hover:text-primary transition-colors"
-          >
-            Mi Progreso
-          </button>
         </div>
       </div>
 
@@ -115,11 +109,11 @@ export default function ListenPage() {
 
         {/* Text Content */}
         <div className="flex flex-col items-center gap-2 text-center w-full max-w-xs mx-auto">
-          <h1 className="text-white tracking-tight text-[28px] sm:text-[32px] font-bold leading-tight uppercase whitespace-nowrap">
-            ORATORIA EFECTIVA
+          <h1 className="text-white tracking-tight text-[28px] sm:text-[32px] font-black leading-tight uppercase">
+            Practica tu oratoria
           </h1>
-          <p className="text-gray-400 text-base font-normal leading-relaxed">
-            {streak ? getStreakMessage(streak.currentStreak, practicedToday) : "La herramienta definitiva para mejorar tu confianza al hablar."}
+          <p className="text-gray-400 text-sm font-normal leading-relaxed">
+            {streak ? getStreakMessage(streak.currentStreak, practicedToday) : "Mejora tu impacto al hablar con inteligencia artificial."}
           </p>
         </div>
 
@@ -143,63 +137,21 @@ export default function ListenPage() {
                 router.push("/");
               }
             }}
-            className={`flex w-full items-center justify-center overflow-hidden rounded-xl h-14 px-5 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-lg ${
+            className={`flex w-full items-center justify-center overflow-hidden rounded-2xl h-16 px-5 text-white text-lg font-black leading-normal tracking-wider transition-all shadow-2xl ${
               practicedToday 
                 ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/30' 
-                : 'bg-primary hover:bg-blue-600 shadow-primary/20'
+                : 'bg-primary hover:bg-blue-600 shadow-primary/40'
             }`}
           >
-            <span className="mr-2 material-symbols-outlined text-[20px]">mic</span>
-            {practicedToday ? "Practicar de nuevo" : "Comenzar ahora"}
-            {!practicedToday && streak && streak.currentStreak > 0 && (
-              <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                +1 🔥
-              </span>
-            )}
+            <span className="mr-3 material-symbols-outlined text-[24px]">mic</span>
+            {practicedToday ? "Practicar de nuevo" : "Comenzar práctica"}
           </button>
           
-          <button 
-            onClick={() => router.push("/gym")}
-            className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-transparent h-12 px-5 text-slate-600 dark:text-slate-400 text-sm font-bold leading-normal tracking-[0.015em] hover:text-white dark:hover:text-white transition-colors border border-slate-700 hover:bg-slate-800"
-          >
-            <span className="mr-2 text-lg">🏋️</span>
-            Gimnasio Vocal
-          </button>
-
-          <button 
-            onClick={() => router.push("/courses")}
-            className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-transparent h-12 px-5 text-slate-600 dark:text-slate-400 text-sm font-bold leading-normal tracking-[0.015em] hover:text-amber-400 dark:hover:text-amber-400 transition-colors border border-slate-700 hover:border-amber-900/50 hover:bg-slate-900"
-          >
-            <span className="mr-2 text-lg">🗺️</span>
-            Ruta del Héroe
-          </button>
-
-          <button 
-            onClick={() => router.push("/my-sessions")}
-            className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 h-12 px-5 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:from-emerald-500 hover:to-teal-500 transition-all shadow-lg shadow-emerald-900/30"
-          >
-            <span className="mr-2 text-lg">📈</span>
-            Mi Progreso
-            {streak && streak.totalDays > 0 && (
-              <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                {streak.totalDays} sesiones
-              </span>
-            )}
-          </button>
-
           <button 
             onClick={() => router.push("/referrals")}
-            className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 h-12 px-5 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-900/30"
+            className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-transparent h-12 px-5 text-slate-500 text-xs font-bold hover:text-white transition-colors"
           >
-            <span className="mr-2 text-lg">🎁</span>
-            Invitar Amigos
-          </button>
-          
-          <button 
-            onClick={() => router.push("/auth/signin")}
-            className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-transparent h-12 px-5 text-slate-600 dark:text-slate-500 text-xs font-bold leading-normal tracking-[0.015em] hover:text-primary dark:hover:text-white transition-colors"
-          >
-            ¿Ya tienes cuenta? <span className="text-primary ml-1">Inicia sesión</span>
+            Invitar amigos y ganar premios
           </button>
         </div>
         {/* Bottom safe area spacer */}
