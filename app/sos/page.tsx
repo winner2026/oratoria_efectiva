@@ -29,19 +29,19 @@ export default function SOSPage() {
         }
 
         if (phase === 0) {
-          setInstruction('Inhala... (Nariz)');
+          setInstruction('Inhala...');
           setTimeLeft(4);
           phase = 1;
         } else if (phase === 1) {
-          setInstruction('Retén... (Pulmones llenos)');
+          setInstruction('Retiene...');
           setTimeLeft(4);
           phase = 2;
         } else if (phase === 2) {
-          setInstruction('Exhala... (Boca)');
+          setInstruction('Exhala...');
           setTimeLeft(4);
           phase = 3;
         } else if (phase === 3) {
-          setInstruction('Retén... (Pulmones vacíos)');
+          setInstruction('Espera...');
           setTimeLeft(4);
           phase = 0;
           setCycle(c => c + 1);
@@ -97,20 +97,36 @@ export default function SOSPage() {
 
         {step === 'BREATHING' && (
           <div className="space-y-12 animate-fade-in">
-            <div className="relative w-64 h-64 mx-auto flex items-center justify-center">
+            <div className="relative w-72 h-72 mx-auto flex items-center justify-center">
+              {/* Outer Glow */}
+              <div className={`absolute inset-0 rounded-full bg-blue-500/10 blur-3xl transition-all duration-[4000ms] ease-in-out ${
+                instruction === 'Inhala...' ? 'scale-150 opacity-100' : 'scale-100 opacity-0'
+              }`} />
+              
               {/* Breathing Circle Animation */}
               <div 
-                className={`absolute inset-0 border-4 border-blue-500 rounded-full transition-all duration-[4000ms] ease-in-out
-                  ${instruction.includes('Inhala') ? 'scale-100 opacity-100' : 
-                    instruction.includes('Retén') ? 'scale-100 opacity-50 border-white' : 'scale-50 opacity-80'}
+                className={`absolute inset-0 border-[6px] rounded-full transition-all duration-[4000ms] ease-in-out
+                  ${instruction === 'Inhala...' ? 'scale-100 opacity-100 border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.5)]' : 
+                    instruction === 'Retiene...' ? 'scale-100 opacity-60 border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.3)]' : 
+                    instruction === 'Exhala...' ? 'scale-50 opacity-80 border-blue-400 shadow-none' : 
+                    'scale-50 opacity-40 border-slate-600 shadow-none'}
                 `}
               />
-              <span className="text-6xl font-mono font-bold text-white">{timeLeft}</span>
+              <div className="flex flex-col items-center justify-center z-10">
+                <span className="text-7xl font-mono font-black text-white drop-shadow-lg">{timeLeft}</span>
+                <span className="text-xs font-bold text-blue-400 uppercase tracking-tighter">Segundos</span>
+              </div>
             </div>
             
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold">{instruction}</h2>
-              <p className="text-gray-400 text-sm">Ciclo {cycle + 1} de {BREATHING_CYCLES}</p>
+            <div className="space-y-4">
+              <h2 className="text-5xl font-black tracking-tighter text-white animate-pulse">
+                {instruction}
+              </h2>
+              <div className="flex justify-center gap-1">
+                {[...Array(BREATHING_CYCLES)].map((_, i) => (
+                  <div key={i} className={`h-1.5 w-8 rounded-full transition-all ${i < cycle ? 'bg-blue-500' : i === cycle ? 'bg-blue-500/40 animate-pulse' : 'bg-slate-800'}`} />
+                ))}
+              </div>
             </div>
           </div>
         )}
