@@ -32,13 +32,30 @@ export default function ListenPage() {
     // Login simulado chequeo
     if (typeof window !== 'undefined') {
        const storedEmail = localStorage.getItem("user_email");
-       if (storedEmail) setUserName(storedEmail.split('@')[0]);
+       const storedName = localStorage.getItem("user_name");
+       
+       if (storedName) {
+         setUserName(storedName);
+       } else if (storedEmail) {
+         setUserName(storedEmail.split('@')[0]);
+       }
 
        // Simulación de plan para demo (o fetch real si hubiera API)
        const storedPlan = localStorage.getItem("user_plan") || "FREE";
        setPlanType(storedPlan);
     }
   }, []);
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("user_email");
+      localStorage.removeItem("user_name");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("user_credits");
+      // Redirect to landing
+      window.location.href = "/";
+    }
+  };
 
   const badge = streak ? getStreakBadge(streak.currentStreak) : null;
 
@@ -57,14 +74,26 @@ export default function ListenPage() {
             </div>
           )}
         </div>
-        <div className="flex items-center justify-end gap-3">
-          <Link href="/upgrade" className={`text-[10px] font-bold px-2 py-1 rounded border transition-all ${
-            planType === 'PREMIUM' ? 'bg-blue-500/20 border-blue-500 text-blue-400' :
-            planType === 'STARTER' ? 'bg-amber-500/20 border-amber-500 text-amber-500' :
+        <div className="flex items-center justify-end gap-3 px-2">
+          <Link href="/upgrade" className={`text-[10px] font-bold px-3 py-1.5 rounded-full border transition-all shadow-lg ${
+            planType === 'PREMIUM' ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 shadow-blue-500/10' :
+            planType === 'STARTER' ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 shadow-amber-500/10' :
+            planType === 'COACHING' ? 'bg-purple-500/20 border-purple-500/50 text-purple-400 shadow-purple-500/10' :
             'bg-slate-800 border-slate-700 text-slate-500'
           }`}>
-            Nivel: {planType}
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[12px]">workspace_premium</span>
+              {planType}
+            </span>
           </Link>
+          
+          <button 
+            onClick={handleLogout}
+            className="size-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-all"
+            title="Cerrar Sesión"
+          >
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+          </button>
         </div>
       </div>
 
@@ -73,11 +102,16 @@ export default function ListenPage() {
         
         <div className="space-y-6 max-w-xs animate-fade-in">
           {/* Title & Concept */}
-          <div className="space-y-2">
-            <h1 className="text-white tracking-tight text-4xl sm:text-5xl font-black uppercase leading-tight">
-              Practica tu <span className="text-primary">oratoria</span>
-            </h1>
-            <p className="text-slate-400 text-sm font-medium leading-relaxed px-4">
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <span className="text-primary text-xs font-bold uppercase tracking-[0.3em] animate-pulse">
+                Dashboard
+              </span>
+              <h1 className="text-white tracking-tight text-3xl sm:text-5xl font-black leading-tight">
+                ¡Hola, <span className="capitalize">{userName || 'Orador'}</span>! 👋
+              </h1>
+            </div>
+            <p className="text-slate-400 text-sm font-medium leading-relaxed px-4 max-w-[280px] mx-auto">
               {streak ? getStreakMessage(streak.currentStreak, practicedToday) : "Mejora tu impacto al hablar con inteligencia artificial."}
             </p>
           </div>
