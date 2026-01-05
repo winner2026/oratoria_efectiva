@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { logEvent } from "@/lib/events/logEvent";
 import { recordPractice } from "@/lib/streaks/streakSystem";
+import CircularProgress from "@/components/voice/CircularProgress";
 
 /**
  * Contrato único de salida del análisis
@@ -32,7 +33,6 @@ type AnalysisResult = {
     fallingIntonationScore?: number;
     pitchRange?: number;
   };
-  // 🆕 Métricas de postura
   postureMetrics?: {
     postureScore: number;
     shouldersLevel: "balanced" | "uneven";
@@ -49,18 +49,16 @@ type AnalysisResult = {
   diagnosis: string;
   score_seguridad?: number;
   score_claridad?: number;
-  score_postura?: number; // 🆕
+  score_postura?: number;
   strengths: string[];
   weaknesses: string[];
   decision: string;
   payoff: string;
 };
 
-
 export default function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [showDetails, setShowDetails] = useState<string | null>(null); // 'seguridad' | 'claridad' | null
   const [streakUpdated, setStreakUpdated] = useState(false);
 
   useEffect(() => {
@@ -72,265 +70,141 @@ export default function ResultsPage() {
     
     try {
       const analysisResult = JSON.parse(savedResult);
-      console.log("📊 Loaded Result:", analysisResult);
       setResult(analysisResult);
       logEvent("analysis_viewed");
       
-      // 🔥 Registrar práctica para el streak
       if (!streakUpdated) {
-        const newStreak = recordPractice();
+        recordPractice();
         setStreakUpdated(true);
       }
     } catch (e) {
-      console.error("Error parsing analysis result:", e);
-      alert("Hubo un error al leer los resultados. Intenta grabar de nuevo.");
       router.push("/practice");
     }
   }, [router, streakUpdated]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  if (!result) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-gray-500">Cargando Coach...</div>;
 
-  if (!result) return <div className="min-h-screen bg-background-dark flex items-center justify-center text-gray-500">Cargando...</div>;
-
-  const seguridad = result.score_seguridad || 50;
   const claridad = result.score_claridad || 50;
-  const postura = result.score_postura || result.postureMetrics?.postureScore || 0;
+  const autoridad = result.authorityScore.score || 0;
+  const postura = result.postureMetrics?.postureScore || 0;
 
   return (
-    <main className="min-h-screen bg-background-dark text-white font-display overflow-x-hidden antialiased flex justify-center">
-      <div className="relative w-full max-w-md bg-background-dark flex flex-col min-h-screen shadow-2xl">
+    <main className="min-h-screen bg-[#050505] text-white font-display overflow-x-hidden antialiased flex justify-center selection:bg-blue-500/30">
+      
+      {/* 🌌 DYNAMIC BACKGROUND */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/5 blur-[120px] rounded-full" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md bg-transparent flex flex-col min-h-screen">
         
-        {/* Header */}
-        <div className="flex items-center p-4 justify-between sticky top-0 z-50 bg-background-dark/95 backdrop-blur-md border-b border-[#283039]">
-          <button onClick={() => router.push("/practice")} className="flex size-10 items-center justify-center rounded-full hover:bg-[#283039] transition-colors text-white">
+        {/* Header (Glassmorphism) */}
+        <div className="flex items-center p-4 justify-between sticky top-0 z-50 bg-[#050505]/40 backdrop-blur-xl border-b border-white/5">
+          <button onClick={() => router.push("/practice")} className="flex size-10 items-center justify-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-white active:scale-95">
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
-          <h2 className="text-lg font-bold tracking-tight">Tu Análisis</h2>
-          <div className="w-10" />
+          <div className="flex flex-col items-center">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Analysis Report</h2>
+            <p className="text-sm font-bold tracking-tight">Oratoria Efectiva</p>
+          </div>
+          <button className="flex size-10 items-center justify-center rounded-2xl bg-white/5 border border-white/5 text-slate-500">
+            <span className="material-symbols-outlined text-sm">more_vert</span>
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-24 px-4 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto pb-32 px-6 custom-scrollbar scroll-smooth">
           
-          {/* 1. Diagnosis Principal (Humanizado) */}
-          <div className="mt-6 mb-6">
-             <h1 className="text-2xl font-bold leading-tight mb-2">
-               {result.diagnosis}
-             </h1>
-             <p className="text-gray-400 text-sm">
-               Aquí tienes tu desglose personalizado:
-             </p>
+          {/* 1. MOCKUP STYLE: HERO SCORE CIRCLES */}
+          <div className="mt-10 mb-12 flex flex-col items-center">
+             <div className="relative mb-12">
+               <CircularProgress 
+                  value={autoridad}
+                  size={190}
+                  strokeWidth={12}
+                  color="#3b82f6"
+                  label="Authority Score"
+                  subValue="Impacto y Seguridad"
+                  icon="verified"
+               />
+               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-blue-500/40">
+                  AI Verified
+               </div>
+             </div>
+
+             <div className="grid grid-cols-2 gap-12 w-full max-w-[280px]">
+                <CircularProgress 
+                  value={claridad}
+                  size={110}
+                  strokeWidth={8}
+                  color="#10b981"
+                  label="Voice Clarity"
+                  icon="graphic_eq"
+                />
+                <CircularProgress 
+                  value={postura}
+                  size={110}
+                  strokeWidth={8}
+                  color="#a855f7"
+                  label="Body Flow"
+                  icon="accessibility_new"
+                />
+             </div>
           </div>
 
-          {/* 2. Pillars Cards (Visualización Amigable) */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-             
-             {/* Card Seguridad */}
-             <div 
-               className={`relative p-4 rounded-2xl border transition-all duration-300 overflow-hidden ${showDetails === 'seguridad' ? 'bg-[#1a2632] border-primary ring-1 ring-primary' : 'bg-surface-dark border-[#3b4754]'}`}
-             >
-                <div 
-                  onClick={() => setShowDetails(showDetails === 'seguridad' ? null : 'seguridad')}
-                  className="cursor-pointer"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="size-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
-                        <span className="material-symbols-outlined">shield</span>
-                    </div>
-                    <span className="text-2xl font-bold">{seguridad}</span>
-                  </div>
-                  <h3 className="font-bold text-sm text-gray-200">Seguridad</h3>
-                  <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">
-                    Firmeza, tono y control de muletillas.
-                  </p>
-                </div>
+          {/* 2. Diagnosis (Premium Card) */}
+          <div className="relative p-6 rounded-[32px] bg-white/[0.03] border border-white/5 backdrop-blur-md mb-8 overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+                <span className="material-symbols-outlined text-6xl text-blue-500">psychology</span>
+            </div>
+            <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-3">AI Diagnostic</h3>
+            <p className="text-xl font-bold leading-tight text-white mb-4 relative z-10">
+              {result.diagnosis}
+            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/10">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              <span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Live Feedback Ready</span>
+            </div>
+          </div>
 
-                <button 
-                  onClick={(e) => { e.stopPropagation(); scrollToSection('detailed-voice'); }}
-                  className="absolute bottom-2 right-2 size-6 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 hover:text-blue-400 transition-colors"
-                >
-                   <span className="material-symbols-outlined text-sm">analytics</span>
-                </button>
-                
-                {/* Expandable Details */}
-                <div className={`grid transition-all duration-300 ${showDetails === 'seguridad' ? 'grid-rows-[1fr] opacity-100 mt-3 pt-3 border-t border-gray-700' : 'grid-rows-[0fr] opacity-0'}`}>
-                   <div className="overflow-hidden text-xs space-y-2">
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Entonación:</span>
-                         <span className={(result.metrics?.fallingIntonationScore || 0) > 60 ? "text-green-400" : "text-yellow-400"}>
-                            {(result.metrics?.fallingIntonationScore || 0) > 60 ? "Firme 📉" : "Dubitativa 📈"}
-                         </span>
-                      </div>
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Muletillas:</span>
-                         <span className="text-white">{result.metrics?.fillerCount || 0}</span>
-                      </div>
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Silencios Incómodos:</span>
-                         <span className={(result.metrics?.awkwardSilences || 0) > 0 ? "text-red-400" : "text-green-400"}>
-                            {result.metrics?.awkwardSilences || 0}
-                         </span>
-                      </div>
+          {/* 3. Action Step (The Payoff) */}
+          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-emerald-600 rounded-[32px] p-0.5 shadow-2xl shadow-blue-500/20 mb-10 transform hover:scale-[1.02] transition-transform">
+             <div className="bg-[#050505]/60 backdrop-blur-xl rounded-[30px] p-7 h-full">
+                <div className="flex items-center gap-2 mb-4">
+                   <div className="size-8 rounded-full bg-white/10 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-yellow-400 text-lg">bolt</span>
                    </div>
+                   <h4 className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">Strategy Plan</h4>
                 </div>
-             </div>
-
-             {/* Card Claridad */}
-             <div 
-               className={`relative p-4 rounded-2xl border transition-all duration-300 overflow-hidden ${showDetails === 'claridad' ? 'bg-[#1a2632] border-green-500 ring-1 ring-green-500' : 'bg-surface-dark border-[#3b4754]'}`}
-             >
-                <div 
-                  onClick={() => setShowDetails(showDetails === 'claridad' ? null : 'claridad')}
-                  className="cursor-pointer"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="size-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-400">
-                        <span className="material-symbols-outlined">auto_awesome</span>
-                    </div>
-                    <span className="text-2xl font-bold">{claridad}</span>
-                  </div>
-                  <h3 className="font-bold text-sm text-gray-200">Claridad</h3>
-                  <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">
-                    Estructura directa y vocabulario limpio.
-                  </p>
-                </div>
-
-                <button 
-                  onClick={(e) => { e.stopPropagation(); scrollToSection('detailed-language'); }}
-                  className="absolute bottom-2 right-2 size-6 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 hover:text-green-400 transition-colors"
-                >
-                   <span className="material-symbols-outlined text-sm">analytics</span>
-                </button>
-
-                {/* Expandable Details */}
-                <div className={`grid transition-all duration-300 ${showDetails === 'claridad' ? 'grid-rows-[1fr] opacity-100 mt-3 pt-3 border-t border-gray-700' : 'grid-rows-[0fr] opacity-0'}`}>
-                   <div className="overflow-hidden text-xs space-y-2">
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Frases Largas:</span>
-                         <span className={(result.metrics?.longSentences || 0) > 2 ? "text-yellow-400" : "text-green-400"}>
-                            {result.metrics?.longSentences || 0}
-                         </span>
-                      </div>
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Repeticiones:</span>
-                         <span className="text-white">{result.metrics?.repetitionCount || 0}</span>
-                      </div>
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Velocidad:</span>
-                         <span className="text-white">{result.metrics?.wordsPerMinute || 0} ppm</span>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-
-           </div>
-
-           {/* 2.5 Pilar de Postura (Fila Completa para destacar lo nuevo) */}
-           {/* Mostrar siempre si hay métricas, aunque el score sea 0 */}
-           {result.postureMetrics && (
-             <div 
-               className={`relative p-4 mb-6 rounded-2xl border transition-all duration-300 overflow-hidden ${showDetails === 'postura' ? 'bg-[#1a2632] border-purple-500 ring-1 ring-purple-500' : 'bg-surface-dark border-[#3b4754]'}`}
-             >
-                <div 
-                  onClick={() => setShowDetails(showDetails === 'postura' ? null : 'postura')}
-                  className="cursor-pointer"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="size-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
-                        <span className="material-symbols-outlined">accessibility_new</span>
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <span className="text-2xl font-bold">{postura}</span>
-                      <span className="text-[10px] text-purple-400 font-bold uppercase tracking-widest">Nuevo</span>
-                    </div>
-                  </div>
-                  <h3 className="font-bold text-sm text-gray-200">Lenguaje Corporal</h3>
-                  <p className="text-[10px] text-gray-500 mt-1">
-                    Postura, contacto visual y uso de gestos.
-                  </p>
-                </div>
-
-                <button 
-                  onClick={(e) => { e.stopPropagation(); scrollToSection('detailed-body'); }}
-                  className="absolute bottom-2 right-2 size-6 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 hover:text-purple-400 transition-colors"
-                >
-                   <span className="material-symbols-outlined text-sm">analytics</span>
-                </button>
-
-                {/* Expandable Details Postura */}
-                <div className={`grid transition-all duration-300 ${showDetails === 'postura' ? 'grid-rows-[1fr] opacity-100 mt-3 pt-3 border-t border-gray-700' : 'grid-rows-[0fr] opacity-0'}`}>
-                   <div className="overflow-hidden text-xs space-y-2">
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Contacto Visual:</span>
-                         <span className={(result.postureMetrics?.eyeContactPercent || 0) > 60 ? "text-green-400" : "text-yellow-400"}>
-                            {Math.round(result.postureMetrics?.eyeContactPercent || 0)}%
-                         </span>
-                      </div>
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Hombros:</span>
-                         <span className={result.postureMetrics?.shouldersLevel === "balanced" ? "text-green-400" : "text-yellow-400"}>
-                            {result.postureMetrics?.shouldersLevel === "balanced" ? "Nivelados ✅" : "Inclinados ⚠️"}
-                         </span>
-                      </div>
-                      <div className="flex justify-between">
-                         <span className="text-gray-400">Gestos:</span>
-                         <span className="text-white">
-                            {result.postureMetrics?.gesturesUsage === "optimal" ? "Expresivos ✨" : result.postureMetrics?.gesturesUsage === "excessive" ? "Exagerados ⚠️" : "Escasos"}
-                         </span>
-                      </div>
-                      {result.postureMetrics?.nervousnessIndicators && (
-                        <div className="flex justify-between">
-                           <span className="text-gray-400">Nerviosismo (Manos):</span>
-                           <span className={result.postureMetrics.nervousnessIndicators.closedFists > 30 ? "text-red-400" : "text-green-400"}>
-                              {result.postureMetrics.nervousnessIndicators.closedFists > 30 ? "Puños cerrados ⚠️" : "Relajadas ✅"}
-                           </span>
-                        </div>
-                      )}
-                   </div>
-                </div>
-             </div>
-           )}
-
-          {/* 3. Action Plan (Lo más importante) */}
-          <div className="bg-gradient-to-br from-primary via-primary to-blue-600 rounded-2xl p-1 shadow-lg shadow-primary/20 mb-6">
-             <div className="bg-background-dark/40 backdrop-blur-sm rounded-xl p-5 h-full">
-                <div className="flex items-center gap-2 mb-3 text-white font-bold text-sm uppercase tracking-wider">
-                   <span className="material-symbols-outlined text-yellow-300">lightbulb</span>
-                   Tu Próximo Paso
-                </div>
-                <p className="text-lg font-bold text-white mb-2 leading-snug">
+                <p className="text-xl font-black text-white mb-4 leading-tight italic">
                    "{result.decision}"
                 </p>
-                <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-                   <span className="material-symbols-outlined text-green-300 text-sm">trending_up</span>
-                   <p className="text-xs text-blue-100 font-medium">
-                      Beneficio: {result.payoff}
-                   </p>
+                <div className="flex items-start gap-3 bg-white/5 rounded-2xl p-4 border border-white/5">
+                   <span className="material-symbols-outlined text-green-400">trending_up</span>
+                   <div>
+                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Impacto Esperado</p>
+                     <p className="text-sm text-blue-100 font-medium leading-relaxed">
+                        {result.payoff}
+                     </p>
+                   </div>
                 </div>
              </div>
           </div>
 
-          {/* 4. Transcripción (Colapsada por defecto o secundaria) */}
-          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">Lo que dijiste</h3>
-          <div className="bg-surface-dark border border-[#3b4754] rounded-xl p-5 shadow-sm text-sm text-gray-300 leading-relaxed font-light mb-8">
-             {result.transcription}
-          </div>
+          {/* Technical Breakdown Title */}
+          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] px-2 mb-6 text-center">Technical Breakdown</h3>
 
-          {/* 🆕 5. DESGLOSE DETALLADO DE MÉTRICAS */}
+          {/* 4. Detailed Metrics Section */}
           <div className="space-y-8 mb-12">
-            <h2 className="text-xl font-bold flex items-center gap-2 px-1">
-               <span className="material-symbols-outlined text-blue-400">query_stats</span>
-               Desglose por Parámetros
-            </h2>
-
+            
             {/* VOZ Y RITMO */}
-            <section id="detailed-voice" className="space-y-4 animate-fade-in-up">
+            <section id="detailed-voice" className="space-y-4">
               <h3 className="text-xs font-bold text-blue-400 uppercase tracking-widest pl-1">Voz & Ritmo</h3>
-              <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-5 space-y-4">
+              <div className="bg-white/[0.02] rounded-[24px] border border-white/5 p-5 space-y-4 backdrop-blur-sm">
                 <MetricRow 
                   label="Velocidad de habla" 
                   value={`${result.metrics?.wordsPerMinute || 0} ppm`} 
@@ -338,10 +212,10 @@ export default function ResultsPage() {
                   status={ (result.metrics?.wordsPerMinute || 0) > 170 ? 'exceso' : (result.metrics?.wordsPerMinute || 0) < 110 ? 'bajo' : 'optimo' }
                 />
                 <MetricRow 
-                  label="Rango de Entonación" 
-                  value={`${result.metrics?.pitchRange || 0} Hz`} 
-                  desc="Variación tonal para evitar la voz monótona." 
-                  status={ (result.metrics?.pitchRange || 0) > 40 ? 'optimo' : 'bajo' }
+                  label="Pausas Estratégicas" 
+                  value={String(result.metrics?.strategicPauses || 0)} 
+                  desc="Silencios intencionados para enfatizar." 
+                  status={ (result.metrics?.strategicPauses || 0) > 0 ? 'optimo' : 'bajo' }
                 />
                 <MetricRow 
                   label="Estabilidad de Energía" 
@@ -352,60 +226,11 @@ export default function ResultsPage() {
               </div>
             </section>
 
-            {/* LENGUAJE Y DICCION */}
-            <section id="detailed-language" className="space-y-4 animate-fade-in-up">
-              <h3 className="text-xs font-bold text-green-400 uppercase tracking-widest pl-1">Lenguaje & Dicción</h3>
-              <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-5 space-y-4">
-                <MetricRow 
-                  label="Conteo de Muletillas" 
-                  value={String(result.metrics?.fillerCount || 0)} 
-                  desc="Uso de 'eh', 'este', 'bueno' como apoyo vocal." 
-                  status={ (result.metrics?.fillerCount || 0) > 5 ? 'exceso' : 'optimo' }
-                />
-                <MetricRow 
-                  label="Repeticiones de palabras" 
-                  value={String(result.metrics?.repetitionCount || 0)} 
-                  desc="Indica falta de fluidez en la ideación." 
-                  status={ (result.metrics?.repetitionCount || 0) > 3 ? 'bajo' : 'optimo' }
-                />
-                <MetricRow 
-                  label="Longitud media de frase" 
-                  value={`${result.metrics?.avgSentenceLength || 0} pal.`} 
-                  desc="Frases cortas son más impactantes." 
-                  status={ (result.metrics?.avgSentenceLength || 0) > 15 ? 'bajo' : 'optimo' }
-                />
-              </div>
-            </section>
-
-            {/* PAUSAS Y SILENCIOS */}
-            <section id="detailed-pauses" className="space-y-4 animate-fade-in-up">
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest pl-1">Pausas & Silencios</h3>
-              <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-5 space-y-4">
-                <MetricRow 
-                  label="Pausas Estratégicas" 
-                  value={String(result.metrics?.strategicPauses || 0)} 
-                  desc="Silencios intencionados para enfatizar." 
-                  status={ (result.metrics?.strategicPauses || 0) > 0 ? 'optimo' : 'bajo' }
-                />
-                <MetricRow 
-                  label="Silencios Incómodos" 
-                  value={String(result.metrics?.awkwardSilences || 0)} 
-                  desc="Pausas que rompen el ritmo de autoridad." 
-                  status={ (result.metrics?.awkwardSilences || 0) > 2 ? 'bajo' : 'optimo' }
-                />
-                <MetricRow 
-                  label="Duración media de pausa" 
-                  value={`${Number(result.metrics?.avgPauseDuration || 0).toFixed(1)}s`} 
-                  desc="Tiempo que tardas en retomar la idea." 
-                />
-              </div>
-            </section>
-
             {/* CUERPO Y PRESENCIA */}
             {result.postureMetrics && (
-              <section id="detailed-body" className="space-y-4 animate-fade-in-up">
+              <section id="detailed-body" className="space-y-4">
                 <h3 className="text-xs font-bold text-purple-400 uppercase tracking-widest pl-1">Cuerpo & Presencia</h3>
-                <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-5 space-y-4">
+                <div className="bg-white/[0.02] rounded-[24px] border border-white/5 p-5 space-y-4 backdrop-blur-sm">
                   <MetricRow 
                     label="Contacto Visual" 
                     value={`${Math.round(result.postureMetrics.eyeContactPercent)}%`} 
@@ -418,12 +243,6 @@ export default function ResultsPage() {
                     desc="Movimiento de manos para ilustrar ideas." 
                     status={ result.postureMetrics.gesturesUsage === 'optimal' ? 'optimo' : 'bajo' }
                   />
-                  <MetricRow 
-                    label="Control de Nervios" 
-                    value={result.postureMetrics.nervousnessIndicators.excessiveMovement ? 'Inestable' : 'Stable'} 
-                    desc="Detección de tics o movimientos involuntarios." 
-                    status={ result.postureMetrics.nervousnessIndicators.excessiveMovement ? 'bajo' : 'optimo' }
-                  />
                 </div>
               </section>
             )}
@@ -432,7 +251,7 @@ export default function ResultsPage() {
           <div className="h-8"></div>
 
           {/* Botones Finales */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <button 
               onClick={async () => {
                 logEvent("result_shared", { score: result.authorityScore.score });
@@ -443,34 +262,35 @@ export default function ResultsPage() {
                       text: `¡Mira mi nivel de autoridad en Oratoria Efectiva! Saqué un ${result.authorityScore.score}/100.`,
                       url: window.location.origin
                     });
-                  } catch (err) {
-                    console.error("Error sharing:", err);
-                  }
+                  } catch (err) {}
                 } else {
-                  alert("Copiado al portapapeles: " + window.location.origin);
                   navigator.clipboard.writeText(window.location.origin);
+                  alert("Enlace copiado al portapapeles");
                 }
               }}
-              className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-5 rounded-[20px] bg-blue-600 text-white font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 active:scale-[0.98]"
             >
               <span className="material-symbols-outlined">share</span>
               Compartir Resultado
             </button>
-            <button 
-              onClick={() => router.push("/practice")}
-              className="w-full py-4 rounded-xl bg-white text-background-dark font-bold hover:bg-gray-200 transition-colors shadow-lg"
-            >
-              Nueva Grabación
-            </button>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button 
+                onClick={() => router.push("/practice")}
+                className="py-4 rounded-[20px] bg-white text-black font-bold text-sm hover:bg-gray-200 transition-all active:scale-[0.98]"
+              >
+                Grabar otra vez
+              </button>
+              <button 
+                 onClick={() => router.push("/listen")}
+                 className="py-4 rounded-[20px] bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition-all active:scale-[0.98]"
+              >
+                 Volver al inicio
+              </button>
+            </div>
           </div>
-          <button 
-             onClick={() => router.push("/listen")}
-             className="w-full py-4 mt-3 rounded-xl border border-gray-700 text-gray-400 font-bold hover:text-white transition-colors"
-          >
-             Volver al Inicio
-          </button>
 
-          <div className="h-10"></div>
+          <div className="h-20"></div>
         </div>
       </div>
     </main>
@@ -479,34 +299,26 @@ export default function ResultsPage() {
 
 function MetricRow({ label, value, desc, status }: { label: string, value: string, desc: string, status?: 'optimo' | 'bajo' | 'exceso' }) {
   const getStatusColor = () => {
-    if (status === 'optimo') return 'bg-green-500/20 text-green-400 border-green-500/30';
-    if (status === 'bajo') return 'bg-red-500/20 text-red-400 border-red-500/30';
-    if (status === 'exceso') return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
-    return 'bg-slate-800/50 text-slate-400 border-slate-700';
-  }
-
-  const getStatusLabel = () => {
-    if (status === 'optimo') return 'Objetivo logrado';
-    if (status === 'bajo') return 'A mejorar';
-    if (status === 'exceso') return 'Demasiado alto';
-    return null;
+    if (status === 'optimo') return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
+    if (status === 'bajo') return 'text-rose-400 bg-rose-400/10 border-rose-400/20';
+    if (status === 'exceso') return 'text-orange-400 bg-orange-400/10 border-orange-400/20';
+    return 'text-slate-500 bg-slate-800/10 border-white/5';
   }
 
   return (
-    <div className="flex flex-col gap-1 border-b border-slate-800/50 pb-4 last:border-0 last:pb-0">
+    <div className="flex flex-col gap-1 border-b border-white/5 pb-4 last:border-0 last:pb-0">
       <div className="flex justify-between items-center">
         <span className="font-bold text-sm text-slate-200">{label}</span>
         <div className="flex items-center gap-2">
            {status && (
-             <span className={`text-[10px] px-2 py-0.5 rounded-full border ${getStatusColor()}`}>
-               {getStatusLabel()}
+             <span className={`text-[9px] px-2 py-0.5 rounded-full border font-black uppercase tracking-tighter ${getStatusColor()}`}>
+               {status === 'optimo' ? 'Perfect' : status === 'bajo' ? 'Low' : 'Too High'}
              </span>
            )}
-           <span className="text-lg font-black text-white">{value}</span>
+           <span className="text-base font-black text-white">{value}</span>
         </div>
       </div>
-      <p className="text-[11px] text-slate-500 leading-tight pr-10">{desc}</p>
+      <p className="text-[10px] text-slate-500 leading-tight pr-10">{desc}</p>
     </div>
   );
 }
-
