@@ -32,7 +32,9 @@ export type EventName =
   | "decision_revisited"
   | "cta_retake_clicked"
   | "cta_analyze_clicked"
-  | "free_limit_reached";
+  | "free_limit_reached"
+  | "upgrade_page_viewed"
+  | "upgrade_plan_selected";
 
 export type EventMetadata = {
   duration?: number;

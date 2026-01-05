@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { logEvent } from "@/lib/events/logEvent";
 
 /**
  * Upgrade Page - MVP
@@ -9,6 +11,16 @@ import Link from "next/link";
  * Simple, claro, sin distracciones.
  */
 export default function UpgradePage() {
+  useEffect(() => {
+    logEvent("upgrade_page_viewed");
+  }, []);
+
+  const handlePlanSelect = (planName: string) => {
+    logEvent("upgrade_plan_selected", { plan: planName });
+    // Aquí iría la redirección a Checkout (Stripe/PayPal)
+    alert(`Redirigiendo a pago de plan ${planName}... (MVP)`);
+  };
+
   return (
     <main className="min-h-screen bg-slate-950 text-white p-6 pb-24">
       <div className="max-w-4xl mx-auto space-y-12 py-12">
@@ -53,7 +65,10 @@ export default function UpgradePage() {
                    Guía de Calentamiento
                 </li>
              </ul>
-             <button className="w-full py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all">
+             <button 
+                onClick={() => handlePlanSelect("STARTER")}
+                className="w-full py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all"
+             >
                 Empezar Sprint
              </button>
           </div>
@@ -89,7 +104,10 @@ export default function UpgradePage() {
                    Historial sin límites
                 </li>
              </ul>
-             <button className="w-full py-4 rounded-xl bg-white text-blue-600 font-bold text-lg hover:bg-blue-50 transition-all shadow-xl">
+             <button 
+                onClick={() => handlePlanSelect("PREMIUM")}
+                className="w-full py-4 rounded-xl bg-white text-blue-600 font-bold text-lg hover:bg-blue-50 transition-all shadow-xl"
+             >
                 Obtener Todo
              </button>
           </div>
@@ -121,7 +139,10 @@ export default function UpgradePage() {
                    Acceso Directo WhatsApp
                 </li>
              </ul>
-             <button className="w-full py-4 rounded-xl bg-slate-800 hover:bg-amber-600 border border-amber-500/50 text-white font-bold transition-all">
+             <button 
+                onClick={() => handlePlanSelect("COACHING")}
+                className="w-full py-4 rounded-xl bg-slate-800 hover:bg-amber-600 border border-amber-500/50 text-white font-bold transition-all"
+             >
                 Reservar Mi Coach
              </button>
           </div>
