@@ -26,36 +26,46 @@ const NavigationBar = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-t border-slate-800 pb-safe">
-      <div className="max-w-md mx-auto px-6 h-20 flex items-center justify-between">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link 
-              key={item.href} 
-              href={item.href}
-              className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                isActive ? 'text-blue-500' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              <div className={`relative flex items-center justify-center p-2 rounded-2xl transition-all ${
-                isActive ? 'bg-blue-500/10' : ''
-              }`}>
-                <span className={`material-symbols-outlined text-[24px] ${isActive ? 'fill-1' : ''}`}>
-                  {item.icon}
+    <>
+      {/* Botón SOS Flotante (Pánico) - Siempre visible sobre la barra de navegación */}
+      <Link href="/sos" className="fixed bottom-24 right-4 z-50 animate-bounce group">
+        <div className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-full shadow-[0_8px_30px_rgb(220,38,38,0.4)] transition-all hover:scale-105 border border-red-400/50 backdrop-blur-md">
+          <span className="text-lg">🚨</span>
+          <span className="font-bold text-xs uppercase tracking-wider">Pánico</span>
+        </div>
+      </Link>
+
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-t border-slate-800 pb-safe">
+        <div className="max-w-md mx-auto px-6 h-20 flex items-center justify-between">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className={`flex flex-col items-center gap-1 transition-all duration-300 ${
+                  isActive ? 'text-blue-500' : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <div className={`relative flex items-center justify-center p-2 rounded-2xl transition-all ${
+                  isActive ? 'bg-blue-500/10' : ''
+                }`}>
+                  <span className={`material-symbols-outlined text-[24px] ${isActive ? 'fill-1' : ''}`}>
+                    {item.icon}
+                  </span>
+                  {isActive && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                  )}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+                  {item.label}
                 </span>
-                {isActive && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                )}
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 };
 

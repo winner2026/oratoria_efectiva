@@ -194,13 +194,6 @@ export default function ListenPage() {
         <div className="h-6 w-full"></div>
       </div>
 
-      {/* SOS Button (Fixed) */}
-      <Link href="/sos" className="fixed bottom-6 right-6 z-50 animate-bounce">
-        <div className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-5 py-3 rounded-full shadow-lg transition-all hover:scale-105 border border-red-400">
-          <span className="text-xl">🚨</span>
-          <span className="font-bold">Pánico</span>
-        </div>
-      </Link>
     </div>
   );
 }
