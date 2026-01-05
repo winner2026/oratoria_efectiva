@@ -8,9 +8,10 @@ import { Resource } from "@prisma/client";
 interface HistoryViewProps {
   videos: Resource[];
   books: Resource[];
+  sessions: any[];
 }
 
-export default function HistoryView({ videos, books }: HistoryViewProps) {
+export default function HistoryView({ videos, books, sessions }: HistoryViewProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
 
@@ -45,14 +46,20 @@ export default function HistoryView({ videos, books }: HistoryViewProps) {
                                 <span className="material-symbols-outlined text-primary text-[20px]">mic</span>
                                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Sesiones</p>
                             </div>
-                            <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">12</p>
+                            <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                {sessions.length}
+                            </p>
                         </div>
                         <div className="flex flex-col gap-1 rounded-xl p-5 bg-white dark:bg-[#1a2632] shadow-sm border border-gray-100 dark:border-gray-800">
                             <div className="flex items-center gap-2 mb-1">
                                 <span className="material-symbols-outlined text-primary text-[20px]">analytics</span>
                                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Promedio</p>
                             </div>
-                            <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">85%</p>
+                            <p className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                {sessions.length > 0 
+                                    ? Math.round(sessions.reduce((acc, s) => acc + s.authorityScore, 0) / sessions.length)
+                                    : 0}%
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -79,45 +86,63 @@ export default function HistoryView({ videos, books }: HistoryViewProps) {
                 {/* History List */}
                 <section aria-label="Lista de sesiones" className="flex flex-col gap-3">
                     <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider pl-1">Recientes</h3>
-                    {[
-                        { date: "24 Oct", title: "Práctica Libre", score: "9.0", color: "green", time: "5 min", feedback: "Entonación excelente", icon: "equalizer" },
-                        { date: "22 Oct", title: "Entrevista Laboral", score: "7.2", color: "yellow", time: "3 min", feedback: "Demasiadas pausas", icon: "warning" },
-                        { date: "20 Oct", title: "Presentación Ventas", score: "8.5", color: "blue", time: "10 min", feedback: "Volumen controlado", icon: "check_circle" },
-                    ].map((item, i) => (
-                        <div key={i} className="group relative flex gap-4 bg-white dark:bg-[#1a2632] px-4 py-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm active:scale-[0.98] transition-all duration-200 cursor-pointer overflow-hidden">
-                            <div className="shrink-0 flex flex-col items-center justify-center gap-1">
-                                <div className={`relative size-12 flex items-center justify-center rounded-full bg-${item.color}-100 dark:bg-${item.color}-900/30`}>
-                                    <span className={`text-${item.color}-600 dark:text-${item.color}-400 font-bold text-sm`}>{item.score}</span>
-                                    <svg className="absolute inset-0 size-full -rotate-90" viewBox="0 0 36 36">
-                                        <path className="text-transparent" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3"></path>
-                                        <path className={`text-${item.color}-500 stroke-current`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeDasharray={`${Number(item.score) * 10}, 100`} strokeWidth="3"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div className="flex flex-1 flex-col justify-center min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <h4 className="text-gray-900 dark:text-white text-base font-bold leading-tight truncate">{item.title}</h4>
-                                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500">{item.date}</span>
-                                </div>
-                                <div className="flex items-center gap-3 mt-1">
-                                    <div className="flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-[14px] text-gray-400">schedule</span>
-                                        <span className="text-xs text-gray-500 dark:text-gray-400">{item.time}</span>
-                                    </div>
-                                    <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                                    <div className="flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-[14px] text-gray-400">{item.icon}</span>
-                                        <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.feedback}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="shrink-0 flex items-center">
-                                <button className="size-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-[20px]">play_arrow</span>
-                                </button>
-                            </div>
+                    
+                    {sessions.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center p-8 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 text-center">
+                            <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">history</span>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Aún no tienes sesiones grabadas.</p>
+                            <button 
+                                onClick={() => router.push("/practice")}
+                                className="mt-4 text-xs font-bold text-primary hover:underline"
+                            >
+                                ¡Empieza tu primera práctica!
+                            </button>
                         </div>
-                    ))}
+                    ) : (
+                        sessions.map((session, i) => {
+                            const date = new Date(session.createdAt);
+                            const formattedDate = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+                            const score = (session.authorityScore / 10).toFixed(1);
+                            const color = session.authorityScore >= 80 ? "green" : session.authorityScore >= 60 ? "blue" : "yellow";
+                            const duration = Math.round(session.durationSeconds);
+                            
+                            return (
+                                <div key={session.id} className="group relative flex gap-4 bg-white dark:bg-[#1a2632] px-4 py-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm active:scale-[0.98] transition-all duration-200 cursor-pointer overflow-hidden">
+                                    <div className="shrink-0 flex flex-col items-center justify-center gap-1">
+                                        <div className={`relative size-12 flex items-center justify-center rounded-full bg-${color}-100 dark:bg-${color}-900/30`}>
+                                            <span className={`text-${color}-600 dark:text-${color}-400 font-bold text-sm`}>{score}</span>
+                                            <svg className="absolute inset-0 size-full -rotate-90" viewBox="0 0 36 36">
+                                                <path className="text-transparent" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3"></path>
+                                                <path className={`text-${color}-500 stroke-current`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeDasharray={`${session.authorityScore}, 100`} strokeWidth="3"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-1 flex-col justify-center min-w-0">
+                                        <div className="flex justify-between items-start">
+                                            <h4 className="text-gray-900 dark:text-white text-base font-bold leading-tight truncate">Análisis de Voz</h4>
+                                            <span className="text-xs font-medium text-gray-400 dark:text-gray-500">{formattedDate}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-1">
+                                            <div className="flex items-center gap-1">
+                                                <span className="material-symbols-outlined text-[14px] text-gray-400">schedule</span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-400">{duration} seg</span>
+                                            </div>
+                                            <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                                            <div className="flex items-center gap-1 min-w-0">
+                                                <span className="material-symbols-outlined text-[14px] text-gray-400">insights</span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{session.feedbackDiagnostico}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="shrink-0 flex items-center">
+                                        <button className="size-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white transition-colors">
+                                            <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
                 </section>
 
                 <div className="h-px bg-gray-200 dark:bg-gray-800 w-full mx-auto my-2"></div>
