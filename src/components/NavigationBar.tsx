@@ -38,13 +38,7 @@ const NavigationBar = () => {
 
   return (
     <>
-      {/* Botón SOS Flotante (Pánico) - Siempre visible sobre la barra de navegación */}
-      <Link href="/sos" className="fixed bottom-24 right-4 z-50 animate-bounce group">
-        <div className="flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-full shadow-[0_8px_30px_rgb(220,38,38,0.4)] transition-all hover:scale-105 border border-red-400/50 backdrop-blur-md">
-          <span className="text-lg">🚨</span>
-          <span className="font-bold text-xs uppercase tracking-wider">Pánico</span>
-        </div>
-      </Link>
+
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 pb-safe">
         <div className="max-w-md mx-auto px-4 h-20 flex items-center justify-between">
