@@ -13,6 +13,7 @@ const NavigationBar = () => {
                      pathname?.includes('/results') || 
                      pathname?.includes('/auth/') || 
                      pathname?.includes('/sos') ||
+                     pathname?.includes('/admin') ||
                      pathname === '/waitlist' ||
                      pathname === '/offer';
 
