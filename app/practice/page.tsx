@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, Suspense } from "react";
 import { getOrCreateAnonymousUserId } from "@/lib/anonymousUser";
 import { logEvent } from "@/lib/events/logEvent";
 import Link from "next/link";
@@ -17,7 +17,7 @@ const MIN_RECORDING_DURATION = 3; // segundos
 // 💰 CONTROL DE COSTOS - Límite máximo de grabación
 const MAX_RECORDING_DURATION = 60; // segundos (límite de Whisper)
 
-export default function PracticePage() {
+function PracticeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isVoiceOnly = searchParams.get("mode") === "voice";
@@ -966,5 +966,13 @@ export default function PracticePage() {
         strategy="afterInteractive" 
       />
     </main>
+  );
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense fallback={<div className='min-h-screen bg-[#101922] flex items-center justify-center text-white font-display'>Cargando estudio...</div>}>
+      <PracticeContent />
+    </Suspense>
   );
 }
