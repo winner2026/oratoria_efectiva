@@ -27,8 +27,8 @@ export default function UpgradePage() {
     const checkoutUrls: Record<string, string> = {
       STARTER: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/d5f9fc04-259c-4e38-a10e-9a5c6626013a",
       PREMIUM: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/c7518e21-7638-44e7-a49b-79bbcdd0e9c6",
-      VOICE_WEEKLY: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/REPLACE_WITH_WEEKLY_VARIANT_ID",
-      VOICE_MONTHLY: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/REPLACE_WITH_MONTHLY_VARIANT_ID",
+      VOICE_WEEKLY: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/ec9352e2-5007-45c4-a68c-01743188b21e?embed=1", // Voz Semanal - Live Link
+      VOICE_MONTHLY: "https://oratoria-efectiva.lemonsqueezy.com/checkout/buy/bb848dae-ad86-486a-b7ba-7c93d42021e8?embed=1", // Voz Pro Monthly - Live Link
       COACHING: "#" 
     };
 

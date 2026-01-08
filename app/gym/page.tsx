@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { VOICE_EXERCISES } from '@/domain/training/VoiceExercises';
 import ExerciseCard from '@/components/ExerciseCard';
 import { getCategoryLabel } from '@/domain/training/CategoryLabels';
@@ -12,13 +13,22 @@ export default function GymPage() {
   const [filter, setFilter] = useState('ALL');
 
   const [planType, setPlanType] = useState<string>('FREE');
+  const router = useRouter();
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedPlan = localStorage.getItem('user_plan') || 'FREE';
       setPlanType(storedPlan);
+
+      // 🔒 PROTECCIÓN ESTRICTA: GIMNASIO DE VIDEO
+      // Solo accesible si tienes plan de Video.
+      // Si tienes Voz (o Free), no puedes entrar aquí. Debes comprarlo en tu Perfil.
+      if (!storedPlan.includes('VIDEO')) {
+          // Redirigir suavemente al dashboard de audio
+          router.replace('/listen');
+      }
     }
-  }, []);
+  }, [router]);
 
   const isFullAccess = planType !== 'FREE';
 

@@ -21,9 +21,23 @@ const NavigationBar = () => {
     return null;
   }
 
+  // Estado para controlar visibilidad de features
+  const [showVideo, setShowVideo] = React.useState(false);
+
+  React.useEffect(() => {
+     // Solo mostramos Gimnasio si tiene un plan avanzado SUPERIOR a Voz
+     // Por ahora, oculto para todos los Free/Básicos para cumplir la regla de "Escalera de Valor"
+     // En el futuro: if (plan === 'VIDEO_PRO') setShowVideo(true);
+     const plan = localStorage.getItem("user_plan");
+     if (plan && plan !== 'FREE' && plan !== 'VOICE_WEEKLY') {
+         // Lógica futura: Solo si compró el módulo de video
+         // setShowVideo(true);
+     }
+  }, []);
+
   const navItems = [
-    { label: 'Inicio', icon: 'home', href: '/' },
-    { label: 'Gimnasio', icon: 'fitness_center', href: '/gym' },
+    { label: 'Inicio', icon: 'home', href: '/listen' }, // Apunta a listen
+    ...(showVideo ? [{ label: 'Gimnasio', icon: 'fitness_center', href: '/gym' }] : []),
     { label: 'Cursos', icon: 'map', href: '/courses' },
     { label: 'Progreso', icon: 'trending_up', href: '/my-sessions' },
   ];
