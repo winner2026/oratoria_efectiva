@@ -72,17 +72,24 @@ const NavigationBar = () => {
           })}
           
           {/* Logout Item */}
-          <button 
-            onClick={handleLogout}
-            className="flex flex-col items-center gap-1 text-slate-500 hover:text-red-400 transition-all duration-300 min-w-[64px]"
+          {/* Profile Item */}
+          <Link 
+            href="/profile"
+            className={`flex flex-col items-center gap-1 transition-all duration-300 min-w-[64px] ${
+              pathname === '/profile' ? 'text-blue-500' : 'text-slate-500 hover:text-slate-300'
+            }`}
           >
-            <div className="relative flex items-center justify-center p-2 rounded-2xl hover:bg-red-500/10 transition-all">
-              <span className="material-symbols-outlined text-[22px]">logout</span>
+            <div className={`relative flex items-center justify-center p-2 rounded-2xl transition-all ${
+              pathname === '/profile' ? 'bg-blue-500/10' : 'hover:bg-slate-800'
+            }`}>
+              <span className={`material-symbols-outlined text-[22px] ${pathname === '/profile' ? 'fill-1' : ''}`}>
+                person
+              </span>
             </div>
             <span className="text-[9px] font-bold uppercase tracking-widest leading-none">
-              Salir
+              Perfil
             </span>
-          </button>
+          </Link>
         </div>
       </nav>
     </>
