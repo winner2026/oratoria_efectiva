@@ -57,11 +57,9 @@ export default function ProfilePage() {
   };
 
   const handleManageSubscription = () => {
-      if (user?.plan === 'FREE') {
-         router.push("/upgrade");
-      } else {
-         window.open('https://billing.lemonsqueezy.com', '_blank');
-      }
+      // Redirigir siempre a /upgrade por ahora
+      // En el futuro, aquí iría la lógica del Portal de Cliente si es PREMIUM
+      router.push("/upgrade");
   };
 
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Cargando perfil...</div>;
