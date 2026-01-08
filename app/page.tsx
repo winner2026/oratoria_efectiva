@@ -1,15 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-type Step = "hero" | "role" | "goal" | "voice-check" | "capture";
+type Step = "hero" | "role" | "goal" | "voice-check" | "analyzing" | "capture";
 
 export default function LandingPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("hero");
   const [billingCycle, setBillingCycle] = useState<"weekly" | "monthly">("monthly");
+  
+  // Audio Recording State
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Analysis Simulation State
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [analysisMessage, setAnalysisMessage] = useState("");
 
   // Redirigir si ya está logueado
   useEffect(() => {
@@ -33,8 +45,81 @@ export default function LandingPage() {
     if (key === "goal") setStep("voice-check");
   };
 
-  const handleVoiceComplete = () => {
-    setStep("capture");
+  // --- RECORDING LOGIC ---
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      chunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        setAudioBlob(blob);
+        startAnalysisSimulation();
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => {
+          if (prev >= 10) { // Max 10s for landing demo
+            stopRecording();
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Necesitamos acceso al micrófono para el diagnóstico.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+      
+      // Stop all tracks
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+  };
+
+  const startAnalysisSimulation = () => {
+    setStep("analyzing");
+    const messages = [
+      "Extrayendo tono de voz...",
+      "Identificando patrones de ritmo...",
+      "Detectando muletillas...",
+      "Calculando Índice de Autoridad..."
+    ];
+    let msgIndex = 0;
+
+    const interval = setInterval(() => {
+      setAnalysisProgress(prev => {
+        const next = prev + 5; // Finish in ~4 seconds
+        if (next >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setStep("capture"), 500);
+          return 100;
+        }
+        
+        // Change message every 25%
+        if (next % 25 === 0 && msgIndex < messages.length) {
+           setAnalysisMessage(messages[msgIndex]);
+           msgIndex++;
+        }
+        return next;
+      });
+    }, 100);
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -42,22 +127,36 @@ export default function LandingPage() {
     setIsLoading(true);
 
     try {
+      // 1. REGISTER USER
       const res = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       if (res.ok) {
         const data = await res.json();
-        // Guardar sesión básica en cliente
-        localStorage.setItem("user_email", formData.email);
-        localStorage.setItem("user_id", data.user.id); // Guardar ID real
-        localStorage.setItem("user_credits", data.user.credits.toString());
         
-        // Redirigir al dashboard
+        // 2. SAVE SESSION LOCALLY
+        localStorage.setItem("user_email", formData.email);
+        localStorage.setItem("user_id", data.user.id);
+        localStorage.setItem("user_credits", data.user.credits.toString());
+
+        // 3. UPLOAD AUDIO (If exists)
+        if (audioBlob) {
+           const formDataUpload = new FormData();
+           formDataUpload.append("audio", audioBlob);
+           formDataUpload.append("userId", data.user.id); // Associate with new user
+
+           // Fire and forget upload (or await if critical)
+           // We await to ensure they see the result immediately
+           await fetch("/api/analysis", {
+              method: "POST",
+              body: formDataUpload
+           });
+        }
+        
+        // 4. REDIRECT
         router.push("/listen");
       } else {
         alert("Hubo un problema al registrarte. Intenta de nuevo.");
@@ -70,7 +169,7 @@ export default function LandingPage() {
     }
   };
 
-  // --- COMPONENTES DE PASOS ---
+  // --- RENDER STEPS ---
 
   if (step === "hero") {
     return (
@@ -146,7 +245,7 @@ export default function LandingPage() {
       <QuizLayout 
         title="¿Cuál es tu perfil actual?" 
         subtitle="Esto nos ayuda a personalizar tu feedback."
-        progress={33}
+        progress={20}
       >
         <div className="grid gap-4 w-full max-w-md">
           <OptionButton icon="school" label="Estudiante" active={formData.role === "student"} onClick={() => handleNext("role", "student")} />
@@ -163,7 +262,7 @@ export default function LandingPage() {
       <QuizLayout 
         title="¿Qué te impide brillar?" 
         subtitle="Selecciona tu principal obstáculo."
-        progress={66}
+        progress={40}
         onBack={() => setStep("role")}
       >
         <div className="grid gap-4 w-full max-w-md">
@@ -176,51 +275,76 @@ export default function LandingPage() {
     );
   }
 
+  // --- NEW REAL RECORDING STEP ---
   if (step === "voice-check") {
     return (
       <QuizLayout 
-        title="Escuchemos tu voz" 
-        subtitle="Analizaremos tu tono, ritmo y claridad en 10 segundos."
-        progress={80}
+        title="Diagnóstico de Voz" 
+        subtitle="Graba 10 segundos presentándote. Nuestra IA analizará tu autoridad."
+        progress={60}
         onBack={() => setStep("goal")}
       >
         <div className="w-full flex flex-col items-center">
-            {/* Aquí integraremos un mini-grabador premium */}
-            <div className="w-full bg-slate-900/50 border border-slate-700 rounded-[32px] p-10 flex flex-col items-center text-center gap-6 animate-fade-in relative overflow-hidden">
-               {/* Background effect */}
-               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-30"></div>
-               
-               <div className="size-28 bg-blue-600/10 rounded-full flex items-center justify-center border-2 border-blue-500/20 shadow-[0_0_40px_-5px_rgba(59,130,246,0.3)] mb-2 relative group">
-                 <div className="absolute inset-0 bg-blue-500/5 rounded-full animate-ping"></div>
-                 <span className="material-symbols-outlined text-5xl text-blue-500 relative z-10 transition-transform group-hover:scale-110">mic</span>
-               </div>
-               
-               <div className="space-y-3">
-                  <h4 className="text-white font-black text-2xl tracking-tighter uppercase italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Neural Voice Check</h4>
-                  <p className="text-slate-400 text-sm leading-relaxed max-w-[240px] mx-auto">
-                    Habla de forma natural. Nuestra IA identificará tus muletillas y patrones de seguridad.
-                  </p>
-               </div>
-               
+            
+            {!isRecording ? (
                <button 
-                onClick={handleVoiceComplete}
-                className="w-full mt-4 px-10 py-5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-600/20 active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
+                onClick={startRecording}
+                className="size-32 rounded-full bg-red-500 hover:bg-red-600 transition-all shadow-[0_0_50px_rgba(239,68,68,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center group"
                >
-                 INICIAR ANÁLISIS VOCAL
-                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                 <span className="material-symbols-outlined text-5xl text-white group-hover:scale-110 transition-transform">mic</span>
                </button>
-               
-               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] flex items-center gap-2">
-                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                 Solo Audio • Privacidad Protegida
-               </p>
-            </div>
+            ) : (
+                <div className="flex flex-col items-center gap-6">
+                   {/* Recording Animation */}
+                   <div className="flex items-center gap-1 h-12">
+                      {[1,2,3,4,5,6,7].map(i => (
+                        <div key={i} className="w-2 bg-red-500 rounded-full animate-[music-bar_1s_ease-in-out_infinite]" style={{ height: `${Math.random() * 100}%`, animationDelay: `${i * 0.1}s` }} />
+                      ))}
+                   </div>
+                   
+                   <div className="text-4xl font-black text-white font-mono">
+                     00:0{recordingTime}
+                   </div>
+                   
+                   <button 
+                    onClick={stopRecording}
+                    className="px-8 py-3 bg-slate-800 rounded-xl text-sm font-bold border border-slate-700 hover:bg-slate-700 transition-colors"
+                   >
+                     DETENER
+                   </button>
+                </div>
+            )}
+
+            <p className="mt-8 text-sm text-slate-500">
+               {!isRecording ? "Toca el micrófono para empezar" : "Habla natural, como si fuera una reunión..."}
+            </p>
+
         </div>
       </QuizLayout>
     );
   }
 
-  // CAPTURE STEP
+  // --- NEW FAKE ANALYSIS STEP ---
+  if (step === "analyzing") {
+    return (
+      <main className="min-h-screen bg-[#101922] font-display flex flex-col items-center justify-center p-6 text-white text-center">
+         <div className="relative size-32 mb-8">
+            <svg className="size-full rotate-[-90deg]">
+               <circle cx="64" cy="64" r="60" fill="none" stroke="#1e293b" strokeWidth="8" />
+               <circle cx="64" cy="64" r="60" fill="none" stroke="#3b82f6" strokeWidth="8" strokeDasharray="377" strokeDashoffset={377 - (377 * analysisProgress / 100)} className="transition-all duration-300 ease-linear" />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
+               {analysisProgress}%
+            </div>
+         </div>
+         
+         <h2 className="text-2xl font-bold animate-pulse mb-2">Analizando tu voz...</h2>
+         <p className="text-blue-400 text-sm">{analysisMessage || "Iniciando motor de IA..."}</p>
+      </main>
+    );
+  }
+
+  // CAPTURE STEP (Modified)
   return (
     <main className="min-h-screen bg-[#101922] font-display flex flex-col items-center justify-center p-6 text-white relative overflow-hidden">
       {/* Background blobs */}
@@ -228,14 +352,14 @@ export default function LandingPage() {
       
       <div className="w-full max-w-md bg-[#1a242d] border border-[#3b4754] rounded-2xl p-8 shadow-2xl relative z-10 animate-fade-in-up">
         <div className="flex justify-center mb-6">
-           <div className="size-16 bg-green-500/20 rounded-full flex items-center justify-center text-green-400">
-             <span className="material-symbols-outlined text-3xl">check_circle</span>
+           <div className="size-16 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 animate-bounce">
+             <span className="material-symbols-outlined text-3xl">lock</span>
            </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-center mb-2">¡Tu plan está listo!</h2>
-        <p className="text-gray-400 text-center mb-8 text-sm">
-          Hemos diseñado un plan de entrenamiento para eliminar tus {formData.goal === 'fear' ? 'nervios' : formData.goal === 'fillers' ? 'muletillas' : 'bloqueos'} y potenciar tu perfil de {formData.role}.
+        <h2 className="text-2xl font-bold text-center mb-2">¡Tu diagnóstico está listo!</h2>
+        <p className="text-gray-400 text-center mb-8 text-sm px-4">
+          Hemos detectado <strong className="text-white">patrones clave</strong> en tu tono. Ingresa tu correo para ver el reporte completo y escuchar tu versión mejorada.
         </p>
 
         <form onSubmit={handleRegister} className="space-y-4">
@@ -269,18 +393,21 @@ export default function LandingPage() {
             className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-4"
           >
             {isLoading ? (
-               <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+               <div className="flex items-center gap-2">
+                  <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Procesando Audio...</span>
+               </div>
             ) : (
                <>
-                 Desbloquear 3 Análisis Gratis
-                 <span className="material-symbols-outlined text-lg">lock_open</span>
+                 Ver Mis Resultados
+                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
                </>
             )}
           </button>
         </form>
 
         <p className="text-[10px] text-center text-gray-600 mt-4">
-          Al registrarte aceptas nuestros términos y condiciones. Te enviaremos tips semanales.
+          Al registrarte aceptas nuestros términos. Tus 3 créditos gratis incluyen este análisis.
         </p>
       </div>
     </main>
