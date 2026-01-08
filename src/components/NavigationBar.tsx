@@ -12,6 +12,7 @@ const NavigationBar = () => {
                      pathname?.includes('/practice') || 
                      pathname?.includes('/results') || 
                      pathname?.includes('/auth/') || 
+                     pathname?.includes('/sos') ||
                      pathname === '/waitlist' ||
                      pathname === '/offer';
 
@@ -20,7 +21,7 @@ const NavigationBar = () => {
   }
 
   const navItems = [
-    { label: 'Inicio', icon: 'home', href: '/listen' },
+    { label: 'Inicio', icon: 'home', href: '/' },
     { label: 'Gimnasio', icon: 'fitness_center', href: '/gym' },
     { label: 'Cursos', icon: 'map', href: '/courses' },
     { label: 'Progreso', icon: 'trending_up', href: '/my-sessions' },

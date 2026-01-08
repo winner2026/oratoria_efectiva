@@ -46,6 +46,8 @@ type AnalysisResult = {
       excessiveMovement: boolean;
     };
   };
+  rephrase_optimized?: string;
+  score_estructura?: number;
   durationSeconds?: number;
   diagnosis: string;
   score_seguridad?: number;
@@ -88,6 +90,7 @@ export default function ResultsPage() {
   const claridad = result.score_claridad || 50;
   const autoridad = result.authorityScore.score || 0;
   const postura = result.postureMetrics?.postureScore || 0;
+  const estructura = result.score_estructura || 60; // Default if missing
 
   return (
     <main className="min-h-[100dvh] bg-[#050505] text-white font-display overflow-x-hidden antialiased flex justify-center selection:bg-blue-500/30">
@@ -107,7 +110,7 @@ export default function ResultsPage() {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="flex flex-col items-center">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Analysis Report</h2>
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Reporte de Análisis</h2>
             <p className="text-sm font-bold tracking-tight">Oratoria Efectiva</p>
           </div>
           <button className="flex size-10 items-center justify-center rounded-2xl bg-white/5 border border-white/5 text-slate-500">
@@ -125,30 +128,38 @@ export default function ResultsPage() {
                   size={190}
                   strokeWidth={12}
                   color="#3b82f6"
-                  label="Authority Score"
+                  label="Nivel de Autoridad"
                   subValue="Impacto y Seguridad"
                   icon="verified"
                />
                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-blue-500/40">
-                  AI Verified
+                  Verificado por IA
                </div>
              </div>
 
-             <div className="grid grid-cols-2 gap-12 w-full max-w-[280px]">
+             <div className="grid grid-cols-3 gap-4 w-full max-w-[340px]">
                 <CircularProgress 
                   value={claridad}
-                  size={110}
-                  strokeWidth={8}
+                  size={90}
+                  strokeWidth={6}
                   color="#10b981"
-                  label="Voice Clarity"
+                  label="Claridad"
                   icon="graphic_eq"
                 />
                 <CircularProgress 
+                  value={estructura}
+                  size={90}
+                  strokeWidth={6}
+                  color="#f59e0b"
+                  label="Estructura"
+                  icon="architecture"
+                />
+                <CircularProgress 
                   value={postura}
-                  size={110}
-                  strokeWidth={8}
+                  size={90}
+                  strokeWidth={6}
                   color="#a855f7"
-                  label="Body Flow"
+                  label="Corporal"
                   icon="accessibility_new"
                 />
              </div>
@@ -159,7 +170,7 @@ export default function ResultsPage() {
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700">
                 <span className="material-symbols-outlined text-6xl text-blue-500">psychology</span>
             </div>
-            <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-3">AI Diagnostic</h3>
+            <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-3">Diagnóstico IA</h3>
             <p className="text-xl font-bold leading-tight text-white mb-4 relative z-10">
               {result.diagnosis}
             </p>
@@ -168,9 +179,33 @@ export default function ResultsPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              <span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Live Feedback Ready</span>
+              <span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Feedback Completo</span>
             </div>
           </div>
+
+          {/* 3. ✨ NEW: MESSAGE RE-ENGINEERING (The WOW Moment) */}
+          {result.rephrase_optimized && (
+            <div className="mb-10 animate-fade-in-up">
+              <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] px-2 mb-4 text-center">
+                 Reformulación del Mensaje
+              </h3>
+              <div className="bg-gradient-to-b from-amber-500/10 to-transparent border border-amber-500/20 rounded-[32px] p-6 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 p-4 opacity-20">
+                    <span className="material-symbols-outlined text-6xl text-amber-500">auto_fix_high</span>
+                 </div>
+                 
+                 <p className="text-[10px] text-amber-300 font-bold uppercase tracking-wider mb-2">Versión Optimizada (Nivel CEO)</p>
+                 <p className="text-lg text-white font-medium italic leading-relaxed relative z-10">
+                    "{result.rephrase_optimized}"
+                 </p>
+                 
+                 <div className="mt-4 pt-4 border-t border-amber-500/20 flex gap-3 text-amber-200/50 text-xs">
+                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">remove_circle</span> -40% Palabras</span>
+                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">bolt</span> +80% Impacto</span>
+                 </div>
+              </div>
+            </div>
+          )}
 
           {/* 3. Action Step (The Payoff) */}
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-emerald-600 rounded-[32px] p-0.5 shadow-2xl shadow-blue-500/20 mb-10 transform hover:scale-[1.02] transition-transform">
@@ -179,7 +214,7 @@ export default function ResultsPage() {
                    <div className="size-8 rounded-full bg-white/10 flex items-center justify-center">
                       <span className="material-symbols-outlined text-yellow-400 text-lg">bolt</span>
                    </div>
-                   <h4 className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">Strategy Plan</h4>
+                   <h4 className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">Plan Estratégico</h4>
                 </div>
                 <p className="text-xl font-black text-white mb-4 leading-tight italic">
                    "{result.decision}"
@@ -197,7 +232,7 @@ export default function ResultsPage() {
           </div>
 
           {/* Technical Breakdown Title */}
-          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] px-2 mb-6 text-center">Technical Breakdown</h3>
+          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] px-2 mb-6 text-center">Desglose Técnico</h3>
 
           {/* 4. Detailed Metrics Section */}
           <div className="space-y-8 mb-12">

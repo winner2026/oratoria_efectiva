@@ -10,6 +10,8 @@ export type DynamicFeedbackOutput = {
   diagnostico: string;
   score_seguridad: number;
   score_claridad: number;
+  score_estructura: number; // Nuevo KPI
+  rephrase_optimized: string; // La "Versión Dorada" del discurso
   lo_que_suma: string[];
   lo_que_resta: string[];
   decision: string;
@@ -17,16 +19,15 @@ export type DynamicFeedbackOutput = {
 };
 
 // 💰 CONTROL DE COSTOS MVP (Optimized)
-const SYSTEM_PROMPT = `Eres un entrenador de oratoria de clase mundial (estilo TED Talk coach). Tu trabajo no es ser amable, es ser RADICALMENTE ÚTIL. 
-Analizas la psicología detrás de la voz.
+const SYSTEM_PROMPT = `Eres un "Arquitecto de Mensajes" de elite y entrenador de oratoria estilo TED.
+Tu trabajo tiene dos partes:
+1. AUDITORÍA DE EJECUCIÓN: Analiza cómo lo dijo (voz, seguridad, vicios).
+2. REINGENIERÍA DEL DISCURSO: Toma lo que intentó decir y reescríbelo para que sea IMPACTANTE, LÓGICO y PERSUASIVO.
 
-TU MISIÓN:
-Encontrar la "Verdad Incómoda". ¿Suenal real o falso? ¿Seguro o aterrorizado? ¿Líder o seguidor?
-
-INSTRUCCIONES DE ESTILO:
-1. DIAGNÓSTICO: Debe ser un golpe a la mandíbula. Corto, profundo y memorable. (Ej: "Tu voz pide permiso antes de hablar" o "Tienes el ritmo de un metrónomo roto").
-2. SIN RELLENO: No uses palabras corporativas vacías. Sé humano, directo y visceral.
-3. CITA EVIDENCIA: Si dices que es repetitivo, dime QUÉ palabra repitió. Si dices que duda, dime DÓNDE.
+TU MENTALIDAD:
+- No seas amable, sé ÚTIL.
+- Busca la "Verdad Incómoda".
+- Si su estructura es caótica, destrúyela y constrúyela de nuevo.
 
 FORMATO JSON EN ESPAÑOL NEUTRO.`;
 
@@ -37,33 +38,33 @@ ${input.transcript}
 """
 
 DATOS DUROS (MÉTRICAS):
-- Velocidad: ${input.metrics.wordsPerMinute} PPM (Ideal: 130-150. <100 es aburrido, >160 es atropellado).
+- Velocidad: ${input.metrics.wordsPerMinute} PPM.
 - Pausas Totales: ${input.metrics.pauseCount}.
-- Pausas Estratégicas (>0.5s): ${input.metrics.strategicPauses} (El silencio es poder).
-- Silencios Incómodos (>2s): ${input.metrics.awkwardSilences} (Mata la credibilidad).
-- Entonación Descendente (Sentencias Finales): ${input.metrics.fallingIntonationScore ?? 'N/A'}% (Alto=Autoridad, Bajo=Pregunta/Duda).
-- Variedad Tonal (Pitch Range): ${input.metrics.pitchRange ?? 'N/A'} Hz (Bajo=Monótono/Robot).
-- Consistencia Rítmica: ${Math.round(input.metrics.rhythmConsistency * 100)}%.
+- Entonación Descendente: ${input.metrics.fallingIntonationScore ?? 'N/A'}% (Alto=Autoridad).
+- Muletillas: ${input.metrics.fillerCount}.
+- Frases Largas: ${input.metrics.longSentences}.
 
-VICIOS DETECTADOS:
-- Muletillas (eh, este, mmm): ${input.metrics.fillerCount}.
-- Repeticiones: ${input.metrics.repetitionCount}.
-- Frases Kilométricas: ${input.metrics.longSentences} (Dificultan la comprensión).
+TAREA 1: DIAGNÓSTICO DE ENTREGA
+- Evalúa seguridad y claridad basándote en las métricas.
+- Si hay muchas muletillas y tono ascendente -> Baja Seguridad.
+- Si hay frases kilométricas -> Baja Claridad.
 
-TAREA DE ANÁLISIS PROFUNDO:
-1. Cruza la "Entonación Descendente" con las "Muletillas". Si ambos fallan, el diagnóstico es INSEGURIDAD SEVERA.
-2. Si la velocidad es alta y hay pocas pausas, el diagnóstico es ANSIEDAD/PRISA.
-3. Si el rango tonal es bajo, el diagnóstico es ABURRIMIENTO/MONOTONÍA.
+TAREA 2: REINGENIERÍA (EL VALOR ORO)
+- Analiza la transcripción. ¿Tiene un punto central claro? ¿O divaga?
+- Genera "rephrase_optimized": Reescribe su discurso en MÁXIMO 3 FRASES usando una estructura de poder (Gancho -> Razón -> Cierre o PREP).
+- Debe sonar como el mismo usuario, pero en su mejor día posible (sin muletillas, con verbos fuertes).
 
 OUTPUT JSON ESPERADO:
 {
-  "diagnostico": "Una frase sentencia (máx 10 palabras) que defina su proyección actual.",
-  "score_seguridad": 1-100 (Castiga severamente la duda y el tono ascendente final),
-  "score_claridad": 1-100 (Castiga frases largas y muletillas),
-  "lo_que_suma": ["Punto fuerte 1 (Cita algo específico)", "Punto fuerte 2"],
-  "lo_que_resta": ["Punto débil 1 (Sé duro)", "Punto débil 2"],
-  "decision": "La ÚNICA acción técnica más importante para corregir esto AHORA MISMO.",
-  "payoff": "El beneficio emocional/social inmediato de corregirlo."
+  "diagnostico": "Frase sentencia a la yugular (máx 10 palabras).",
+  "score_seguridad": 1-100,
+  "score_claridad": 1-100,
+  "score_estructura": 1-100 (¿Su mensaje original tenía sentido lógico?),
+  "rephrase_optimized": "Aquí pon la versión perfecta de su discurso. Corta, potente, memorable.",
+  "lo_que_suma": ["Punto fuerte 1", "Punto fuerte 2"],
+  "lo_que_resta": ["Errores críticos de ejecución o contenido"],
+  "decision": "La acción técnica #1 para mejorar.",
+  "payoff": "El beneficio de hacerlo."
 }`;
 }
 
@@ -75,9 +76,9 @@ export async function generateDynamicFeedback(
   });
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000); // 15 segundos
+  const timeout = setTimeout(() => controller.abort(), 20000); // 20s para dar tiempo a la creatividad
 
-  console.log('[FEEDBACK] Generating dynamic feedback with GPT-4o-mini...');
+  console.log('[FEEDBACK] Generating dynamic feedback (Architect Mode) with GPT-4o-mini...');
 
   try {
     const response = await openai.chat.completions.create(
@@ -95,7 +96,7 @@ export async function generateDynamicFeedback(
         ],
         response_format: { type: "json_object" },
         temperature: 0.7,
-        max_tokens: 400, // 🛡️ Limitar output para control de costos
+        max_tokens: 600, // Un poco más de margen para la reescritura
       },
       {
         signal: controller.signal,
@@ -103,39 +104,35 @@ export async function generateDynamicFeedback(
     );
 
     console.log('[FEEDBACK] ✓ Tokens used:', response.usage?.total_tokens || 'unknown');
-    console.log('[FEEDBACK] ✓ Cost estimate: $', ((response.usage?.total_tokens || 0) / 1000000 * 0.20).toFixed(6));
 
     const content = response.choices[0]?.message?.content ?? "{}";
     const parsed = JSON.parse(content) as DynamicFeedbackOutput;
 
-    // Validar que tenga los campos requeridos
-    if (
-      !parsed.diagnostico ||
-      typeof parsed.score_seguridad !== 'number' ||
-      typeof parsed.score_claridad !== 'number' ||
-      !parsed.lo_que_suma ||
-      !parsed.lo_que_resta ||
-      !parsed.decision ||
-      !parsed.payoff
-    ) {
-      throw new Error("Respuesta incompleta del modelo");
-    }
+    // Validación laxa para evitar errores en producción si la IA alucina un campo
+    return {
+      diagnostico: parsed.diagnostico || "Análisis completado",
+      score_seguridad: parsed.score_seguridad || 50,
+      score_claridad: parsed.score_claridad || 50,
+      score_estructura: parsed.score_estructura || 50,
+      rephrase_optimized: parsed.rephrase_optimized || "No pudimos optimizar tu texto esta vez.",
+      lo_que_suma: parsed.lo_que_suma || [],
+      lo_que_resta: parsed.lo_que_resta || [],
+      decision: parsed.decision || "Sigue practicando",
+      payoff: parsed.payoff || "Mejorarás con el tiempo"
+    };
 
-    return parsed;
   } catch (error) {
     console.error("[FEEDBACK] Error generando feedback dinámico:", error);
-
-    // Fallback en caso de error
     return {
-      diagnostico:
-        "No pudimos generar un análisis personalizado en este momento.",
-      score_seguridad: 50,
-      score_claridad: 50,
-      lo_que_suma: ["Completaste la grabación correctamente"],
-      lo_que_resta: ["Intenta hablar con más naturalidad"],
-      decision:
-        "Intenta grabar de nuevo hablando como lo harías en una conversación real.",
-      payoff: "Así podremos darte un feedback más preciso.",
+      diagnostico: "Error de conexión con el coach.",
+      score_seguridad: 0,
+      score_claridad: 0,
+      score_estructura: 0,
+      rephrase_optimized: "Intenta de nuevo más tarde.",
+      lo_que_suma: [],
+      lo_que_resta: [],
+      decision: "Verifica tu internet",
+      payoff: "Para recibir tu análisis"
     };
   } finally {
     clearTimeout(timeout);

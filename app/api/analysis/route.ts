@@ -189,6 +189,8 @@ export async function POST(req: NextRequest) {
         diagnosis: result.feedback.diagnostico,
         score_seguridad: result.feedback.score_seguridad,
         score_claridad: result.feedback.score_claridad,
+        score_estructura: result.feedback.score_estructura,
+        rephrase_optimized: result.feedback.rephrase_optimized,
         strengths: result.feedback.lo_que_suma,
         weaknesses: result.feedback.lo_que_resta,
         decision: result.feedback.decision,

@@ -114,91 +114,28 @@ export default function LandingPage() {
             Iniciar Diagnóstico Inteligente
             <span className="inline-block ml-2 transition-transform group-hover:translate-x-1 text-blue-600">→</span>
           </button>
-          
 
-          <p className="mt-4 text-xs text-gray-500">No requiere tarjeta de crédito • Análisis de voz incluido</p>
-          
-          {/* PRICING SECTION */}
-          <div className="mt-32 w-full max-w-6xl animate-fade-in pb-20">
-             <div className="text-center mb-10">
-               <h2 className="text-3xl font-bold text-white mb-4">Planes Flexibles</h2>
-               <p className="text-slate-400">Elige la velocidad de tu transformación.</p>
-             </div>
+        {/* FLOATING TACTICAL SOS BAR */}
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
+          <button
+            onClick={() => router.push("/sos")}
+            className="group relative flex items-center gap-4 bg-[#0a0a0a]/90 backdrop-blur-xl border border-red-500/30 pl-3 pr-6 py-3 rounded-2xl shadow-[0_10px_40px_-10px_rgba(220,38,38,0.5)] transition-all hover:scale-105 active:scale-95 hover:border-red-500/60 overflow-hidden"
+          >
+            {/* Ambient Scan Animation */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/10 to-transparent translate-x-[-100%] animate-[shimmer_3s_infinite]"></div>
+            
+            {/* Icon Container */}
+            <div className="relative size-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center shadow-lg border border-white/10 group-hover:animate-pulse">
+               <span className="material-symbols-outlined text-white text-xl">e911_emergency</span>
+            </div>
 
-             {/* Toggle */}
-             <div className="flex justify-center mb-12">
-               <div className="inline-flex bg-background-dark p-1 rounded-full border border-gray-800">
-                  <button 
-                    onClick={() => setBillingCycle("weekly")}
-                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'weekly' ? 'bg-surface-dark text-white shadow-lg border border-gray-700' : 'text-gray-400 hover:text-white'}`}
-                  >
-                    Semanal
-                  </button>
-                  <button 
-                    onClick={() => setBillingCycle("monthly")}
-                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'text-gray-400 hover:text-white'}`}
-                  >
-                    Mensual (Ahorra 25%)
-                  </button>
-               </div>
-             </div>
-
-             <div className="grid md:grid-cols-2 gap-8 px-4">
-                {/* CARD 1: VOZ DE PODER */}
-                <div className="bg-surface-dark border border-gray-800 rounded-3xl p-8 hover:border-primary/50 transition-all group shadow-xl">
-                   <div className="mb-6">
-                      <span className="text-primary text-xs font-bold uppercase tracking-widest">Opción 01</span>
-                      <h3 className="text-2xl font-black text-white mt-2">Voz de Poder</h3>
-                      <p className="text-gray-400 text-sm mt-2">Dominio total de tu dicción y seguridad. Sin cámaras.</p>
-                   </div>
-                   
-                   <div className="bg-background-dark/50 rounded-2xl p-6 mb-6 border border-gray-800/50">
-                      <div className="flex items-baseline gap-1">
-                         <span className="text-4xl font-black text-white">${billingCycle === 'weekly' ? '4' : '12'}</span>
-                         <span className="text-sm text-gray-500 font-bold uppercase">/{billingCycle === 'weekly' ? 'sem' : 'mes'}</span>
-                      </div>
-                      <p className="text-xs text-primary mt-2 font-bold">
-                        {billingCycle === 'weekly' ? '50 Análisis / semana' : '100 Análisis / mes + Prioridad'}
-                      </p>
-                   </div>
-
-                   <button 
-                     onClick={() => router.push(`/auth/register?plan=${billingCycle === 'weekly' ? 'VOICE_WEEKLY' : 'VOICE_MONTHLY'}`)}
-                     className="w-full py-4 bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20 uppercase text-xs tracking-widest"
-                   >
-                     Empezar Ahora
-                   </button>
-                </div>
-
-                {/* CARD 2: PRESENCIA DE IMPACTO */}
-                <div className="bg-surface-dark border border-purple-500/30 rounded-3xl p-8 hover:border-purple-500/80 transition-all group relative overflow-hidden shadow-2xl shadow-purple-900/10">
-                   <div className="absolute top-0 right-0 bg-purple-600 text-white text-[9px] px-3 py-1 font-bold uppercase rounded-bl-xl shadow-lg">Recomendado</div>
-                   <div className="mb-6">
-                      <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">Opción 02</span>
-                      <h3 className="text-2xl font-black text-white mt-2">Presencia de Impacto</h3>
-                      <p className="text-gray-400 text-sm mt-2">Comunicación 360°: Voz + Lenguaje Corporal y Gestos.</p>
-                   </div>
-                   
-                   <div className="bg-background-dark/50 rounded-2xl p-6 mb-6 border border-gray-800/50">
-                      <div className="flex items-baseline gap-1">
-                         <span className="text-4xl font-black text-white">${billingCycle === 'weekly' ? '9' : '29'}</span>
-                         <span className="text-sm text-gray-500 font-bold uppercase">/{billingCycle === 'weekly' ? 'sem' : 'mes'}</span>
-                      </div>
-                      <p className="text-xs text-purple-400 mt-2 font-bold">
-                        {billingCycle === 'weekly' ? '70 Análisis (Video+Voz)' : '250 Análisis + Coach IA 24/7'}
-                      </p>
-                   </div>
-
-                   <button 
-                     onClick={() => router.push(`/auth/register?plan=${billingCycle === 'weekly' ? 'STARTER' : 'PREMIUM'}`)}
-                     className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-[1.02] text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-900/40 uppercase text-xs tracking-widest"
-                   >
-                     Obtener Acceso Total
-                   </button>
-                </div>
-             </div>
-          </div>
-
+            {/* Text Content */}
+            <div className="flex flex-col items-start gap-0.5">
+               <span className="text-[10px] text-red-400 font-bold uppercase tracking-[0.2em] leading-none">Modo Emergencia</span>
+               <span className="text-sm font-black text-white tracking-wide leading-none">PREPARACIÓN FLASH</span>
+            </div>
+          </button>
+        </div>
         </div>
       </main>
     );
