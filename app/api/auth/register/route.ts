@@ -18,9 +18,11 @@ export async function POST(req: NextRequest) {
     });
 
     if (user) {
-      console.log("[REGISTER] Usuario existente encontrado:", user.id);
-      // Usuario existente: Podríamos actualizar datos si es un re-engagement
-      // Por ahora solo devolvemos éxito
+      console.log("[REGISTER] Usuario existente. Bloqueando re-registro.");
+      return NextResponse.json(
+        { error: "EMAIL_EXISTS", message: "Este correo ya está registrado." },
+        { status: 409 }
+      );
     } else {
       console.log("[REGISTER] Creando nuevo usuario...");
       // 2. Crear nuevo usuario con 3 créditos GRATIS

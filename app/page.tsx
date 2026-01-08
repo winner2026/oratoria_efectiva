@@ -37,6 +37,7 @@ export default function LandingPage() {
     name: "",
     email: ""
   });
+  const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleNext = (key: string, value: string) => {
@@ -125,6 +126,7 @@ export default function LandingPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMsg("");
 
     try {
       // 1. REGISTER USER
@@ -134,9 +136,9 @@ export default function LandingPage() {
         body: JSON.stringify(formData),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
-        
         // 2. SAVE SESSION LOCALLY
         localStorage.setItem("user_email", formData.email);
         localStorage.setItem("user_id", data.user.id);
@@ -159,7 +161,11 @@ export default function LandingPage() {
         // 4. REDIRECT
         router.push("/listen");
       } else {
-        alert("Hubo un problema al registrarte. Intenta de nuevo.");
+        if (data.error === "EMAIL_EXISTS") {
+            setErrorMsg("Este correo ya está registrado. ¿Querías iniciar sesión?");
+        } else {
+            alert("Hubo un problema al registrarte. Intenta de nuevo.");
+        }
       }
     } catch (error) {
       console.error("Error en registro:", error);
@@ -361,6 +367,21 @@ export default function LandingPage() {
         <p className="text-gray-400 text-center mb-8 text-sm px-4">
           Hemos detectado <strong className="text-white">patrones clave</strong> en tu tono. Ingresa tu correo para ver el reporte completo y escuchar tu versión mejorada.
         </p>
+
+        {errorMsg && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-xl flex items-start gap-3 animate-shake">
+            <span className="material-symbols-outlined text-red-500 shrink-0">error</span>
+            <div className="text-left">
+              <p className="text-sm font-bold text-red-400 leading-tight mb-1">Cuenta Existente</p>
+              <p className="text-xs text-red-300/80 leading-relaxed">
+                {errorMsg} 
+                <button onClick={() => router.push("/auth/login")} className="underline hover:text-white ml-1">
+                  Click aquí para entrar.
+                </button>
+              </p>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
