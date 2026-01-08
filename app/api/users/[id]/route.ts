@@ -5,10 +5,12 @@ export const runtime = 'nodejs';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  // Fix Next.js 15 breaking change: params is now a Promise
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id;
+    const { id } = await params;
+    const userId = id;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
