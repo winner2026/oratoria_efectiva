@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Chrome, ArrowRight, Loader2 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/listen";
@@ -152,5 +152,17 @@ export default function LoginPage() {
         &copy; 2026 Oratoria Efectiva. Todos los derechos reservados.
       </footer>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0A0F14] flex items-center justify-center">
+        <Loader2 className="text-blue-500 animate-spin" size={32} />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
