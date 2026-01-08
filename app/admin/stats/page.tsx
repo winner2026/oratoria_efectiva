@@ -21,7 +21,7 @@ export default function AdminStatsPage() {
   const [explanation, setExplanation] = useState<{title: string, text: string} | null>(null);
 
   useEffect(() => {
-    fetch("/api/stats/conversion")
+    fetch("/api/admin/stats")
       .then(res => res.json())
       .then(data => {
         setStats(data);

@@ -26,20 +26,17 @@ export const SITUATIONS: Record<SituationId, { label: string; color: string; str
     structure: [
       { title: 'PUNTO', desc: 'Respuesta directa.' },
       { title: 'RAZÓN', desc: 'Justificación lógica.' },
-      { title: 'EVIDENCIA', desc: 'Dato o ejemplo.' },
-      { title: 'REITERAR', desc: 'Vuelve al inicio.' }
+      { title: 'EVIDENCIA', desc: 'Dato o ejemplo.' }
     ],
     prompts: [
       'Tu respuesta en una frase',
       '¿Por qué crees esto?',
-      'Dame un ejemplo o dato real',
-      'Cierra repitiendo tu Punto'
+      'Dame un ejemplo o dato real'
     ],
     placeholders: [
       'Ej: Sí, es viable el proyecto.',
       'Ej: Porque tenemos el equipo listo.',
-      'Ej: Como hicimos con Cliente X el año pasado.',
-      'Ej: Por eso confirmo que sí es viable.'
+      'Ej: Como hicimos con Cliente X el año pasado.'
     ]
   },
   DEFEND: {
