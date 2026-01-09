@@ -80,7 +80,7 @@ export default function UpgradePage() {
              <ul className="space-y-3 mb-6 flex-1 text-[13px]">
                 <li className="flex items-center gap-2 text-slate-300">
                    <span className="material-symbols-outlined text-blue-400 text-sm">verified</span>
-                   50 Análisis / semana
+                   21 Análisis / semana
                 </li>
                 <li className="flex items-center gap-2 text-slate-300">
                    <span className="material-symbols-outlined text-blue-400 text-sm">verified</span>

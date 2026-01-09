@@ -130,7 +130,7 @@ async function handleSubscriptionChange(userId: string | undefined, data: any) {
 
   // Logic: All subscriptions are assumed to be "Voz Pro" (Monthly) for now
   const appPlan = "VOICE_PRO";
-  const monthlyCredits = 50;
+  const monthlyCredits = 100; // Increased to 100 based on feedback
 
   if (status === "active" || status === "on_trial") {
     if (userId) {
@@ -187,7 +187,7 @@ async function handleOrderCreated(userId: string | undefined, data: any) {
     // Simple Heuristic: Check price or user intent.
     
     // For MVP: Any valid one-time order is "Weekly Pass"
-    const weeklyCredits = 55;
+    const weeklyCredits = 21; // Updated to 21 based on feedback
     
     if (userId) {
         await prisma.user.update({
