@@ -367,12 +367,19 @@ function PracticeContent() {
           headPosition: "centered",
           eyeContactPercent: 0,
           gesturesUsage: "none",
-          nervousnessIndicators: { closedFists: 0, handsHidden: 0, excessiveMovement: false }
+          nervousnessIndicators: { closedFists: 0, handsHidden: 0, excessiveMovement: false },
+          hasTurtleNeck: false,
+          isArmsCrossed: false,
+          areHandsConnected: false
       };
 
       const enhancedResult = {
         ...dataToSave,
         postureMetrics: {
+          // Gated Estatus (Solo Elite)
+          hasTurtleNeck: (dataToSave.userPlan === "PREMIUM") ? safePostureMetrics.hasTurtleNeck : undefined,
+          isArmsCrossed: (dataToSave.userPlan === "PREMIUM") ? safePostureMetrics.isArmsCrossed : undefined,
+          areHandsConnected: (dataToSave.userPlan === "PREMIUM") ? safePostureMetrics.areHandsConnected : undefined,
           postureScore: safePostureMetrics.postureScore,
           shouldersLevel: safePostureMetrics.shouldersLevel,
           headPosition: safePostureMetrics.headPosition,

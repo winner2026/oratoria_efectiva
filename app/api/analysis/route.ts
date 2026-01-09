@@ -204,6 +204,17 @@ export async function POST(req: NextRequest) {
       console.error('[ANALYSIS] ⚠️ Failed to save session (non-critical):', saveError);
     }
 
+    // 🔐 GATING: Bloquear métricas de "Estatus" si no es PREMIUM (Elite)
+    const isElite = plan === "PREMIUM";
+    let safeMetrics = { ...result.metrics };
+
+    if (!isElite) {
+       console.log(`[GATING] User plan is ${plan}. Hiding Elite metrics.`);
+       delete safeMetrics.nasalityScore;
+       delete safeMetrics.brightnessScore;
+       delete safeMetrics.depthScore;
+    }
+
     console.log('[ANALYSIS] ✓ Analysis complete!');
     return NextResponse.json({
       success: true,
@@ -212,10 +223,11 @@ export async function POST(req: NextRequest) {
         isSlow: duration > 8
       },
       data: {
+        userPlan: plan, // 📢 Informamos al frontend del plan actual para UI Gating
         transcription: result.transcription,
         transcriptionWithSilences: result.transcriptionWithSilences,
         authorityScore: result.authorityScore,
-        metrics: result.metrics,
+        metrics: safeMetrics, // Métricas filtradas
         durationSeconds: result.durationSeconds,
         diagnosis: result.feedback.diagnostico,
         score_seguridad: result.feedback.score_seguridad,

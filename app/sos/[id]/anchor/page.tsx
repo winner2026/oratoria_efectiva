@@ -43,6 +43,13 @@ export default function AnchorPage() {
 
   return (
     <div className="min-h-[100dvh] bg-black text-white font-display overflow-hidden flex flex-col items-center justify-center relative">
+       <button 
+          onClick={() => router.push(`/sos`)}
+          className="absolute top-8 left-6 z-50 text-gray-500 hover:text-white px-4 py-2 text-xs font-bold uppercase tracking-widest border border-transparent hover:border-gray-700 rounded-full transition-all"
+        >
+          &lt; Volver
+        </button>
+
         <button 
           onClick={() => router.push(`/sos/${id}/script`)}
           className="absolute top-8 right-6 z-50 text-gray-500 hover:text-white px-4 py-2 text-xs font-bold uppercase tracking-widest border border-transparent hover:border-gray-700 rounded-full transition-all"

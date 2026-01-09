@@ -121,16 +121,29 @@ export async function POST(req: NextRequest) {
 
 async function handleSubscriptionChange(userId: string | undefined, data: any) {
   const attributes = data.attributes;
-  // const variantId = attributes.variant_id; // We don't map this yet
   const customerId = attributes.customer_id.toString();
   const subscriptionId = data.id.toString();
   const status = attributes.status; 
   const renewsAt = attributes.renews_at ? new Date(attributes.renews_at) : null;
-  const productName = attributes.product_name || "Unknown"; // Sometimes available
+  
+  // 🔍 Detectar Plan por Nombre (Heurística MVP)
+  // Lemon Squeezy envía 'variant_name' o 'product_name' en data.attributes (a veces requiere &include=product)
+  // Asumimos que el payload incluye nombre o usamos defaults seguros.
+  const productName = (attributes.product_name || attributes.variant_name || "").toLowerCase();
+  
+  let appPlan: "PREMIUM" | "VOICE_MONTHLY" | "STARTER" = "VOICE_MONTHLY";
+  let creditsToAdd = 100;
 
-  // Logic: All subscriptions are assumed to be "Voz Pro" (Monthly) for now
-  const appPlan = "VOICE_PRO";
-  const monthlyCredits = 100; // Increased to 100 based on feedback
+  if (productName.includes("elite") || productName.includes("ejecutiva")) {
+      appPlan = "PREMIUM";
+      creditsToAdd = 250; // Soft cap mensual
+  } else if (productName.includes("hábito") || productName.includes("mensual")) {
+      appPlan = "VOICE_MONTHLY";
+      creditsToAdd = 100;
+  } else if (productName.includes("sprint") || productName.includes("semanal")) {
+      appPlan = "STARTER"; // Usamos STARTER para el Sprint
+      creditsToAdd = 70; // 70 por periodo
+  }
 
   if (status === "active" || status === "on_trial") {
     if (userId) {
@@ -138,14 +151,18 @@ async function handleSubscriptionChange(userId: string | undefined, data: any) {
         where: { id: userId },
         data: {
           plan: appPlan,
-          credits: { increment: monthlyCredits }, // Add 50 credits on renew
+          // IMPORTANTE: En suscripción, reseteamos créditos o sumamos?
+          // Modelos de suscripción suelen resetear o acumular.
+          // Para evitar acumulación infinita de unused, reseteamos a la base + remanente?
+          // Simplificación: Incrementamos (acumulativo) para no enfadar al usuario.
+          credits: { increment: creditsToAdd }, 
           lemonSqueezyCustomerId: customerId,
           lemonSqueezySubscriptionId: subscriptionId,
           subscriptionStatus: status,
           subscriptionRenewsAt: renewsAt,
         }
       });
-      console.log(`[WEBHOOK] User ${userId} subscribed to ${productName}. Added ${monthlyCredits} credits.`);
+      console.log(`[WEBHOOK] User ${userId} subscribed to ${appPlan}. Added ${creditsToAdd} credits.`);
     } else {
         // Update by SubscriptionID (Renewal)
         const user = await prisma.user.findFirst({ where: { lemonSqueezySubscriptionId: subscriptionId } });
@@ -153,12 +170,13 @@ async function handleSubscriptionChange(userId: string | undefined, data: any) {
              await prisma.user.update({
                 where: { id: user.id },
                 data: {
+                    plan: appPlan, // Asegurar plan actualizado
                     subscriptionStatus: status,
                     subscriptionRenewsAt: renewsAt,
-                    credits: { increment: monthlyCredits } // Renewal adds credits
+                    credits: { increment: creditsToAdd }
                 }
              });
-             console.log(`[WEBHOOK] Subscription renewed for user ${user.id}. Added ${monthlyCredits} credits.`);
+             console.log(`[WEBHOOK] Subscription renewed for user ${user.id} (${appPlan}). Added ${creditsToAdd} credits.`);
         }
     }
   }
@@ -182,25 +200,21 @@ async function handleSubscriptionCancellation(data: any) {
 
 async function handleOrderCreated(userId: string | undefined, data: any) {
     const attributes = data.attributes;
-    const total = attributes.total; // e.g. 299 for $2.99
-    // const firstOrderItem = attributes.first_order_item; // Might need 'included' for this
-    // Simple Heuristic: Check price or user intent.
+    // Si es un "One Time Payment" (Sprint Semanal vendido como producto simple, no suscripción)
     
-    // For MVP: Any valid one-time order is "Weekly Pass"
-    const weeklyCredits = 21; // Updated to 21 based on feedback
+    // Asumimos Sprint Semanal es lo único "no-sub" o sub de corto plazo?
+    // Si Sprint es sub semanal, caerá en handleSubscriptionChange.
+    // Si es lifetime deal o pack de créditos:
+    
+    const credits = 70; // Default pack
     
     if (userId) {
         await prisma.user.update({
             where: { id: userId },
             data: {
-                credits: { increment: weeklyCredits },
-                // Optional: Update plan name to 'VOICE_WEEKLY' if they were FREE
-                // But if they have a sub, don't downgrade them.
-                // Just add credits.
+                credits: { increment: credits },
             }
         });
-        console.log(`[WEBHOOK] User ${userId} bought Weekly Pass. Added ${weeklyCredits} credits.`);
-    } else {
-        console.warn("[WEBHOOK] Order created but no User ID found (Guest checkout?).");
+        console.log(`[WEBHOOK] User ${userId} bought One-Time Pack. Added ${credits} credits.`);
     }
 }

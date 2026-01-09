@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { getStreakData, getStreakBadge, getStreakMessage, hasPracticedToday, type StreakData } from "@/lib/streaks/streakSystem";
-import { getTipOfTheDay, getTipNumber } from "@/lib/tips/dailyTips";
+import { getDailyProtocol, type DailyProtocol } from "@/lib/tips/dailyTips";
 
 export default function ListenPage() {
   const router = useRouter();
@@ -17,8 +17,16 @@ export default function ListenPage() {
   // Estado para streak y tip (se cargan en cliente)
   const [streak, setStreak] = useState<StreakData | null>(null);
   const [practicedToday, setPracticedToday] = useState(false);
-  const [tipOfDay, setTipOfDay] = useState<string>("");
-  const [tipNumber, setTipNumber] = useState<number>(1);
+  
+  // Nuevo Estado: Protocolo Diario
+  const [protocol, setProtocol] = useState<DailyProtocol>({
+    day: 1,
+    phase: "HARDWARE",
+    title: "Cargando...",
+    action: "Sincronizando...",
+    science: ""
+  });
+
   const [planType, setPlanType] = useState<string>("FREE");
 
   useEffect(() => {
@@ -26,8 +34,9 @@ export default function ListenPage() {
     const streakData = getStreakData();
     setStreak(streakData);
     setPracticedToday(hasPracticedToday());
-    setTipOfDay(getTipOfTheDay());
-    setTipNumber(getTipNumber());
+    
+    // Cargar Protocolo del Día
+    setProtocol(getDailyProtocol());
 
     // Login simulado chequeo
     if (typeof window !== 'undefined') {
@@ -108,12 +117,30 @@ export default function ListenPage() {
                 Dashboard
               </span>
               <h1 className="text-white tracking-tight text-3xl sm:text-5xl font-black leading-tight">
-                ¡Hola, <span className="capitalize">{userName || 'Orador'}</span>! 👋
+                ¡Hola, <span className="capitalize">{userName || 'Santiago'}</span>! 👋
               </h1>
             </div>
-            <p className="text-slate-400 text-sm font-medium leading-relaxed px-4 max-w-[280px] mx-auto">
-              {streak ? getStreakMessage(streak.currentStreak, practicedToday) : "Mejora tu impacto al hablar con inteligencia artificial."}
-            </p>
+
+            {/* PROTOCOLO DEL DÍA CARD */}
+            <div className="bg-[#161B22] border border-blue-500/30 rounded-2xl p-4 text-left relative overflow-hidden group hover:border-blue-500/60 transition-colors">
+               <div className="absolute top-0 right-0 bg-blue-600/20 px-2 py-1 rounded-bl-lg">
+                  <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Día {protocol.day}/30</span>
+               </div>
+               
+               <div className="mb-2">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{protocol.phase}</span>
+                  <h3 className="text-lg font-bold text-white leading-tight mt-0.5">{protocol.title}</h3>
+               </div>
+               
+               <p className="text-gray-400 text-xs leading-relaxed border-l-2 border-blue-500 pl-3 mb-3">
+                  "{protocol.action}"
+               </p>
+
+               <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                  <span className="material-symbols-outlined text-sm">science</span>
+                  <span className="opacity-70 truncate">{protocol.science}</span>
+               </div>
+            </div>
           </div>
 
           {/* Action Cards Grid */}

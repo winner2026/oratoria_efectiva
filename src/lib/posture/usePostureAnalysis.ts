@@ -36,6 +36,11 @@ export interface PostureMetrics {
   };
   frameCount: number;
   isTracking: boolean;
+  
+  // 🆕 Métricas de Estatus Ejecutivo
+  hasTurtleNeck?: boolean;
+  isArmsCrossed?: boolean;
+  areHandsConnected?: boolean;
 }
 
 // Estado inicial de métricas
@@ -55,6 +60,9 @@ const initialMetrics: PostureMetrics = {
     handsHidden: 0,
     excessiveMovement: false,
   },
+  hasTurtleNeck: false,
+  isArmsCrossed: false,
+  areHandsConnected: false,
   frameCount: 0,
   isTracking: false,
 };
@@ -420,18 +428,73 @@ export function usePostureAnalysis({ videoRef, canvasRef }: UsePostureAnalysisPr
     else if (avgHandMovement > 0.08) gesturesUsage = "optimal";
     else gesturesUsage = "low";
 
+// --- 4. NUEVAS MÉTRICAS DE ESTATUS ("SANTIAGO MODE") ---
+    
+    // 4.1. Turtle Neck (Cabeza adelantada = Ansiedad/Tech Neck)
+    // MediaPipe Z: Negativo es "hacia la cámara".
+    // Si la nariz está mucho más cerca de la cámara que los hombros, hay proyección frontal excesiva.
+    // Normalizado por ancho de hombros para ser agnóstico a la distancia.
+    const shoulderZ = ((leftShoulder?.z || 0) + (rightShoulder?.z || 0)) / 2;
+    const noseZ = nose?.z || 0;
+    const shoulderWidth3D = Math.abs((leftShoulder?.x || 0) - (rightShoulder?.x || 0)); // Approx width
+    
+    // Z es relativo a la cadera en Holistic, pero en Pose a veces es relativo al centro de imagen.
+    // Usamos diferencia relativa. Si noseZ es mucho menor que shoulderZ (más negativo), está adelantada.
+    const neckForwardness = (shoulderZ - noseZ) / (shoulderWidth3D || 1); // Positivo = Cabeza adelante
+    
+    // Umbral empírico: > 0.5 empieza a ser Turtle Neck notable
+    const hasTurtleNeck = neckForwardness > 0.6; 
+
+    // 4.2. Brazos Cruzados (Gesto Defensivo / Bajo Estatus de Apertura)
+    const leftWrist = pose?.[15];
+    const rightWrist = pose?.[16];
+    let isArmsCrossed = false;
+    
+    if (leftWrist && rightWrist && leftShoulder && rightShoulder) {
+       // Si muñeca izquierda está a la derecha de muñeca derecha (cruce horizontal)
+       // Y ambas están dentro del torso (entre hombros)
+       const wristsCrossed = leftWrist.x < rightWrist.x; // En MediaPipe coords, x va de 0 (izq) a 1 (der). Wait, Izq es la mano izquierda del sujeto (que está a la derecha de la pantalla si no espejo).
+       // Asumiendo espejo: Left es Left del usuario. 
+       // Normal: LeftWrist.x < RightWrist.x significa brazos abiertos.
+       // Cruzados: LeftWrist.x > RightWrist.x
+       
+       isArmsCrossed = leftWrist.x > rightWrist.x;
+       
+       // Verificar altura (deben estar arriba de la cintura y abajo del cuello para ser cruce de brazos real)
+       const avgShoulderY = (leftShoulder.y + rightShoulder.y) / 2;
+       const avgHipY = ((leftHip?.y || 1) + (rightHip?.y || 1)) / 2;
+       const avgWristY = (leftWrist.y + rightWrist.y) / 2;
+       
+       if (avgWristY < avgShoulderY || avgWristY > avgHipY) {
+           isArmsCrossed = false; // Cruzados arriba de la cabeza o abajo no cuenta como bloqueo defensivo estándar
+       }
+    }
+
+    // 4.3. Manos Conectadas (Torre de Poder o Frotarse)
+    // Simplemente proximidad de muñecas
+    let areHandsConnected = false;
+    if (leftWrist && rightWrist) {
+        const dist = Math.hypot(leftWrist.x - rightWrist.x, leftWrist.y - rightWrist.y);
+        if (dist < 0.15) areHandsConnected = true;
+    }
+
     // Actualizar estado UI usando el gesto instantáneo para reactividad
     setCurrentMetrics({
       isPersonDetected: true,
-      postureScore: Math.min(100, Math.max(0, currentPostureScore)), 
+      postureScore: Math.min(100, Math.max(0, currentPostureScore - (hasTurtleNeck ? 15 : 0) - (isArmsCrossed ? 10 : 0))), 
       shouldersLevel, 
       shouldersAngle: shouldersAngle, 
       headPosition, 
       headTilt: headTilt, 
       spineAlignment: spineScore, 
       eyeContactPercent: (acc.eyeContactFrames / acc.totalFrames) * 100, 
-      gesturesUsage: instantGestures, // <--- CAMBIO: Usar instantáneo para feedback
+      gesturesUsage: instantGestures, 
       handMovementScore: Math.min(100, avgHandMovement * 10), 
+      // Nuevos flags
+      hasTurtleNeck,
+      isArmsCrossed,
+      areHandsConnected,
+      
       nervousnessIndicators: {
         closedFists: (acc.closedFistFrames / acc.totalFrames) * 100,
         handsHidden: (acc.hiddenHandsFrames / acc.totalFrames) * 100,
@@ -446,7 +509,24 @@ export function usePostureAnalysis({ videoRef, canvasRef }: UsePostureAnalysisPr
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        // Aquí se puede agregar dibujo de landmarks si se desea
+        // Feedback Visual de Estatus
+        const w = canvasRef.current.width;
+        const h = canvasRef.current.height;
+        ctx.save();
+        ctx.translate(w, 0);
+        ctx.scale(-1, 1);
+        
+        ctx.font = "16px sans-serif";
+        ctx.fillStyle = "red";
+        
+        if (hasTurtleNeck && nose) {
+            ctx.fillText("🐢 POSTURA ADELANTADA", nose.x * w, (nose.y * h) - 20);
+        }
+        if (isArmsCrossed && leftShoulder) {
+            ctx.fillText("🛡️ BLOQUEO DETECTADO", leftShoulder.x * w, leftShoulder.y * h);
+        }
+        
+        ctx.restore();
       }
     }
   }, []);

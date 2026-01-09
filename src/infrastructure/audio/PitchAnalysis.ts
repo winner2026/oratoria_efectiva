@@ -24,7 +24,7 @@ function bufferToStream(buffer: Buffer): Readable {
 }
 
 // Convertir cualquier formato (WebM/MP4) a WAV (Float32, 44100Hz, Mono)
-async function decodeAudio(inputBuffer: Buffer): Promise<Float32Array> {
+export async function decodeAudio(inputBuffer: Buffer): Promise<Float32Array> {
   return new Promise((resolve, reject) => {
     const buffers: Buffer[] = [];
     const stream = bufferToStream(inputBuffer);

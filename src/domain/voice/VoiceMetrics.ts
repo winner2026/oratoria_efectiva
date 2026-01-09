@@ -19,6 +19,11 @@ export type VoiceMetrics = {
   fallingIntonationScore?: number; // % de frases con tono descendente (Seguridad)
   meanPitch?: number; // Hz
   pitchRange?: number; // Hz
+
+  // 🌈 Métricas Espectrales (Timbre)
+  nasalityScore?: number; // 0-100 (Alto = Nasal/Opaco)
+  brightnessScore?: number; // 0-100 (Alto = Claro/Brillante)
+  depthScore?: number;    // 0-100 (Alto = Voz Profunda/Cuerpo)
 };
 
 type TranscriptionSegment = {

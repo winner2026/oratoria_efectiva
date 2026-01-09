@@ -86,16 +86,16 @@ export default function ProfilePage() {
         
         {/* Sección: Uso y Saldo (VERIFICACIÓN) */}
         <section>
-          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Uso y Saldo</h2>
+          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Métricas de Entrenamiento</h2>
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
                <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
                  <span className="material-symbols-outlined">bolt</span>
                </div>
                <div>
-                 <p className="font-bold text-lg">{user.credits} Disponibles</p>
+                 <p className="font-bold text-lg">{user.credits} Sesiones</p>
                  <p className="text-xs text-slate-500 font-mono">
-                    Histórico: <strong className="text-slate-300">{user.totalUsage} Análisis</strong>
+                    Histórico: <strong className="text-slate-300">{user.totalUsage} Optimizaciones</strong>
                  </p>
                </div>
             </div>

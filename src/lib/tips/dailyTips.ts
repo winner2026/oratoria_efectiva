@@ -1,154 +1,248 @@
 /**
- * Tips Diarios - Oratoria Efectiva
+ * PROTOCOLO DE 30 DÍAS: BIO-CALIBRACIÓN MENSUAL ("SANTIAGO")
  * 
- * 100 tips de oratoria que rotan cada día.
- * Costo: $0 (contenido estático)
+ * Estructura:
+ * - Título Técnico: Lenguaje de alto rendimiento.
+ * - Bio-Hack: Ejercicio físico corto (2 mins max).
+ * - Ciencia: Justificación neurobiológica.
  */
 
-export const DAILY_TIPS: string[] = [
-  // Respiración y calma (1-15)
-  "Antes de hablar, respira profundo 3 veces. Tu cerebro necesita oxígeno para pensar con claridad.",
-  "El nerviosismo es energía. No lo elimines, redirigelo hacia entusiasmo.",
-  "Llega 10 minutos antes. Familiarizarte con el espacio reduce la ansiedad.",
-  "Visualiza el éxito antes de empezar. Tu mente no distingue entre imaginación y realidad.",
-  "El 93% de la comunicación es no verbal. Tu postura importa más que tus palabras.",
-  "Párate con los pies separados al ancho de hombros. Te da estabilidad y proyecta confianza.",
-  "Antes de una presentación, haz power poses por 2 minutos. Cambia tu química cerebral.",
-  "El agua a temperatura ambiente es mejor que fría para tu voz antes de hablar.",
-  "Evita cafeína en exceso antes de presentar. Aumenta los temblores.",
-  "Si te tiemblan las manos, sostenlas detrás de ti o usa un objeto como apoyo.",
-  "El miedo escénico nunca desaparece del todo. Los mejores oradores lo aceptan y actúan igual.",
-  "Respira con el diafragma, no con el pecho. Da más poder a tu voz.",
-  "Un suspiro profundo antes de empezar relaja las cuerdas vocales.",
-  "Tensa y relaja los músculos de tu cuerpo antes de subir al escenario.",
-  "El silencio antes de empezar crea anticipación. No lo desperdicies hablando nervioso.",
+export interface DailyProtocol {
+  day: number;
+  phase: "HARDWARE" | "SOFTWARE" | "SYSTEM" | "COMBAT";
+  title: string;
+  action: string;
+  science: string;
+}
 
-  // Conexión con la audiencia (16-30)
-  "Mira a una persona diferente cada 3-5 segundos. Crea conexión real.",
-  "Sonríe al empezar. Es contagioso y relaja el ambiente.",
-  "Usa el nombre de alguien del público si lo conoces. Humaniza tu mensaje.",
-  "Pregunta algo al inicio. Activa la participación desde el primer momento.",
-  "Tu audiencia quiere que tengas éxito. Están de tu lado.",
-  "No hables AL público, habla CON el público. La diferencia es enorme.",
-  "Las anécdotas personales crean empatía. No tengas miedo de ser vulnerable.",
-  "Haz pausas después de puntos importantes. Deja que el mensaje aterrice.",
-  "Repite la idea clave 3 veces de formas diferentes. La repetición fija conceptos.",
-  "Termina con un llamado a la acción claro. ¿Qué quieres que hagan después?",
-  "Si alguien bosteza, no lo tomes personal. Puede estar cansado por otras razones.",
-  "Lee la energía del cuarto y ajusta tu tono. Flexibilidad es clave.",
-  "Los chistes funcionan si son naturales. Forzados, destruyen credibilidad.",
-  "Cuenta historias con estructura: situación, conflicto, resolución.",
-  "Las preguntas retóricas mantienen a la audiencia pensando.",
+export const THIRTY_DAY_PROTOCOL: DailyProtocol[] = [
+  // SEMANA 1: HARDWARE (Soporte Físico)
+  {
+    day: 1,
+    phase: "HARDWARE",
+    title: "Reseteo Diafragmático",
+    action: "Inhala 4s, sostén 4s, exhala 8s con siseo 'Ssss'. Repite 3 veces.",
+    science: "Activa el nervio vago para reducir cortisol inmediato."
+  },
+  {
+    day: 2,
+    phase: "HARDWARE",
+    title: "Desbloqueo Mandibular",
+    action: "Masajea la articulación temporomandibular (TMJ) mientras dices 'Maaa'.",
+    science: "La tensión en la TMJ oprime la laringe, agudizando la voz."
+  },
+  {
+    day: 3,
+    phase: "HARDWARE",
+    title: "Anclaje de Gravedad",
+    action: "Habla parado, separando pies. Siente peso en talones.",
+    science: "El cerebro asocia estabilidad física con seguridad psicológica."
+  },
+  {
+    day: 4,
+    phase: "HARDWARE",
+    title: "Resonancia de Pecho",
+    action: "Coloca mano en esternón. Di 'Mmmm' hasta sentir vibración allí.",
+    science: "Baja el tono percibido sin forzar cuerdas vocales."
+  },
+  {
+    day: 5,
+    phase: "HARDWARE",
+    title: "Limpieza de Canal",
+    action: "Gira cuello lentamente diciendo 'Uuuu'. Detecta cortes de voz.",
+    science: "Libera tensión cervical que estrangula el flujo de aire."
+  },
+  {
+    day: 6,
+    phase: "HARDWARE",
+    title: "Volumen Balístico",
+    action: "Lanza aire con '¡PA!' al diafragma. Cero garganta.",
+    science: "Entrena la proyección sin daño tisular."
+  },
+  {
+    day: 7,
+    phase: "HARDWARE",
+    title: "Calibración de Silencio",
+    action: "Grábate. Haz pausa de 3s completos entre frases.",
+    science: "El silencio demuestra estatus. La prisa demuestra sumisión."
+  },
 
-  // Voz y Ritmo (31-50)
-  "Varía tu velocidad. Más lento para énfasis, más rápido para emoción.",
-  "El silencio es tu herramienta más poderosa. Úsala después de frases clave.",
-  "Tu tono al final de la frase define si es afirmación o pregunta. Practica ambos.",
-  "Hablar demasiado rápido transmite nerviosismo. Respira y desacelera.",
-  "El volumen bajo atrae atención. No siempre hay que gritar.",
-  "Articula las consonantes finales. 'Importan' no es 'Importa'.",
-  "Grábate y escúchate. Es incómodo pero revelador.",
-  "Las muletillas ('eh', 'este', 'o sea') desaparecen cuando aceptas el silencio.",
-  "Tu voz natural es la más persuasiva. No imites a otros.",
-  "Calienta tu voz antes de hablar: tararear, escalas vocales.",
-  "Proyecta hacia la última fila. Incluso en reuniones pequeñas.",
-  "La entonación descendente al final transmite seguridad.",
-  "La entonación ascendente constante suena inseguro o dudoso.",
-  "Práctica tu apertura 10 veces. Es el momento más nervioso.",
-  "El cierre debe ser memorable. Prepáralo con cuidado.",
-  "Usa metáforas y comparaciones. Hacen lo abstracto tangible.",
-  "Los números solos no impactan. Dale contexto: 'eso equivale a...'",
-  "Tres es el número mágico. Lista de 3 puntos se recuerda mejor.",
-  "Menos es más. Una idea poderosa supera diez mediocres.",
-  "Si pierdes el hilo, haz una pausa, respira y resume lo último que dijiste.",
+  // SEMANA 2: SOFTWARE (Dicción y Velocidad)
+  {
+    day: 8,
+    phase: "SOFTWARE",
+    title: "Hiper-Articulación",
+    action: "Lee un mail exagerando 200% el movimiento de labios.",
+    science: "Despierta la memoria muscular facial dormida."
+  },
+  {
+    day: 9,
+    phase: "SOFTWARE",
+    title: "Control de Velocidad (Bpm)",
+    action: "Habla caminando lento. Una palabra por paso.",
+    science: "Sincroniza el ritmo motor con el ritmo verbal."
+  },
+  {
+    day: 10,
+    phase: "SOFTWARE",
+    title: "Eliminación de Relleno",
+    action: "Graba 1 min. Cada 'ehhh' cuesta 10 sentadillas.",
+    science: "Castigo físico leve recablea el circuito de hábito."
+  },
+  {
+    day: 11,
+    phase: "SOFTWARE",
+    title: "Ataque Consonántico",
+    action: "Enfatiza T, P, K al final de las palabras.",
+    science: "Los finales claros se perciben como pensamiento terminado/seguro."
+  },
+  {
+    day: 12,
+    phase: "SOFTWARE",
+    title: "Modulación Ondulatoria",
+    action: "Di una frase subiendo y bajando tono exageradamente.",
+    science: "Rompe la monotonía que duerme al córtex auditivo."
+  },
+  {
+    day: 13,
+    phase: "SOFTWARE",
+    title: "Lectura Vertical",
+    action: "Lee solo verbos y sustantivos de un texto.",
+    science: "Entrena al cerebro a priorizar palabras de valor."
+  },
+  {
+    day: 14,
+    phase: "SOFTWARE",
+    title: "Síntesis Ejecutiva",
+    action: "Resume tu día en 3 frases de menos de 10 palabras.",
+    science: "La brevedad es la métrica definitiva de autoridad."
+  },
 
-  // Lenguaje Corporal (51-65)
-  "Tus manos deben moverse naturalmente. Ni rígidas ni exageradas.",
-  "Caminar mientras hablas da dinamismo. Quietud absoluta aburre.",
-  "No cruces los brazos. Crea barrera psicológica con tu audiencia.",
-  "Inclínate ligeramente hacia adelante cuando escuches preguntas.",
-  "El contacto visual directo transmite confianza y honestidad.",
-  "Evita movimientos repetitivos (mecerse, tocarte el pelo). Distraen.",
-  "Tu expresión facial debe coincidir con tu mensaje.",
-  "Gestos amplios para audiencias grandes, sutiles para reuniones pequeñas.",
-  "Señalar a alguien puede percibirse como agresivo. Usa palma abierta.",
-  "La postura erguida no es rigidez. Es confianza relajada.",
-  "Si usas slides, no les des la espalda a tu audiencia.",
-  "Usa el espacio. Acércate para intimidad, aléjate para perspectiva.",
-  "Las cejas levantadas muestran apertura y entusiasmo.",
-  "Asentir mientras escuchas muestra que valoras la participación.",
-  "Tu energía física se transmite. Si estás aburrido, ellos lo estarán.",
+  // SEMANA 3: SYSTEM (Estructura y Persuasión)
+  {
+    day: 15,
+    phase: "SYSTEM",
+    title: "Estructura Tríada",
+    action: "Responde todo hoy con 3 puntos: 'Primero, Segundo, Por tanto'.",
+    science: "El cerebro procesa patrones de 3 con menor carga cognitiva."
+  },
+  {
+    day: 16,
+    phase: "SYSTEM",
+    title: "Inicio Explosivo",
+    action: "Empieza reuniones con un dato o conclusión, no con 'Hola'.",
+    science: "Aprovecha el 'Efecto de Primacía' atencional."
+  },
+  {
+    day: 17,
+    phase: "SYSTEM",
+    title: "Analogías Puente",
+    action: "Explica un problema técnico usando 'Es como...'.",
+    science: "Conecta nueva info con redes neuronales existentes."
+  },
+  {
+    day: 18,
+    phase: "SYSTEM",
+    title: "Cierre de Broche",
+    action: "Termina repitiendo tu primera frase con nueva entonación.",
+    science: "Crea sensación de completitud y maestría."
+  },
+  {
+    day: 19,
+    phase: "SYSTEM",
+    title: "Pregunta Retórica",
+    action: "Inserta '¿Por qué importa esto?' antes de tu punto clave.",
+    science: "Reactiva la atención del lóbulo frontal."
+  },
+  {
+    day: 20,
+    phase: "SYSTEM",
+    title: "Pausa Táctica",
+    action: "Pausa antes de responder una pregunta difícil. Cuenta a 2.",
+    science: "Señala reflexión profunda en lugar de reacción defensiva."
+  },
+  {
+    day: 21,
+    phase: "SYSTEM",
+    title: "Etiquetado Emocional",
+    action: "Di 'Parece que esto te preocupa' ante una objeción.",
+    science: "Desactiva la amígdala del interlocutor (Técnica FBI)."
+  },
 
-  // Preparación (66-80)
-  "Conoce a tu audiencia. ¿Qué saben? ¿Qué necesitan? ¿Qué les importa?",
-  "Practica en voz alta, no solo en tu mente. Son experiencias diferentes.",
-  "Grábate en video. Descubrirás tics que no sabías que tenías.",
-  "Ten un 'elevator pitch' de tu idea. 30 segundos máximo.",
-  "Prepara más material del que usarás. Te da flexibilidad.",
-  "Anticipa preguntas difíciles y prepara respuestas.",
-  "Conoce tu material tan bien que puedas improvisar.",
-  "El PowerPoint es apoyo, no muleta. Tú eres el show.",
-  "Menos texto en slides = más atención en ti.",
-  "Una imagen poderosa vale más que 10 bullets.",
-  "Ensaya con el equipo técnico antes si es posible.",
-  "Ten un plan B si la tecnología falla.",
-  "Lleva agua. La boca seca es enemiga de la voz.",
-  "Viste un nivel más formal que tu audiencia.",
-  "Duerme bien la noche anterior. El cansancio se nota.",
-
-  // Mentalidad (81-100)
-  "No busques ser perfecto. Busca ser auténtico.",
-  "Los errores te humanizan. No te destruyen.",
-  "Tu audiencia olvidará tus palabras exactas. Recordarán cómo los hiciste sentir.",
-  "Cada presentación es práctica para la siguiente.",
-  "El feedback negativo es data, no ataque personal.",
-  "Celebra tus pequeñas victorias. El progreso es gradual.",
-  "Compara con tu yo de ayer, no con los expertos de hoy.",
-  "La confianza viene de la competencia. Practica más.",
-  "El síndrome del impostor afecta a los mejores. No estás solo.",
-  "Tu mensaje importa. Por eso vale la pena el esfuerzo.",
-  "Hablar en público es una habilidad, no un talento. Se aprende.",
-  "Los oradores que admiras también tuvieron miedo al principio.",
-  "Un minuto de práctica diaria supera una hora mensual.",
-  "Grábate, escúchate, ajusta, repite. El ciclo del progreso.",
-  "Tu voz es única. Encuentra tu estilo, no copies.",
-  "La vulnerabilidad es fortaleza, no debilidad.",
-  "Agradece cada oportunidad de hablar. Muchos la desean.",
-  "El mejor momento para mejorar tu oratoria es ahora.",
-  "Cada vez que hablas, plantas una semilla. Algunas florecerán.",
-  "Hoy eres mejor orador que ayer. Mañana serás mejor que hoy.",
+  // SEMANA 4: COMBAT (Situaciones Reales)
+  {
+    day: 22,
+    phase: "COMBAT",
+    title: "Interrupción Asertiva",
+    action: "Usa 'Permíteme construir sobre eso...' para tomar la palabra.",
+    science: "Validación + Redirección evita conflicto de estatus."
+  },
+  {
+    day: 23,
+    phase: "COMBAT",
+    title: "Defensa de Espacio",
+    action: "Expande tus brazos sobre la mesa al hablar.",
+    science: "La territorialidad física aumenta testosterona (Power Posing)."
+  },
+  {
+    day: 24,
+    phase: "COMBAT",
+    title: "Mirada de Poder",
+    action: "Mira un ojo, luego el otro, luego la boca (Triángulo).",
+    science: "Mantiene conexión sin intimidación agresiva."
+  },
+  {
+    day: 25,
+    phase: "COMBAT",
+    title: "Gestión de 'No sé'",
+    action: "Responde: 'No tengo el dato ahora, te lo envío a las 5pm'.",
+    science: "Sustituye incertidumbre por compromiso de acción."
+  },
+  {
+    day: 26,
+    phase: "COMBAT",
+    title: "Voz de Medianoche",
+    action: "Baja volumen y tono para decir algo secreto/importante.",
+    science: "Obliga al oyente a inclinarse (compromiso físico)."
+  },
+  {
+    day: 27,
+    phase: "COMBAT",
+    title: "Recuperación de Error",
+    action: "Si te trabas, pausa, sonríe y repite lento. No pidas perdón.",
+    science: "El error no baja estatus; la disculpa excesiva sí."
+  },
+  {
+    day: 28,
+    phase: "COMBAT",
+    title: "Anclaje Pre-Meeting",
+    action: "Usa música alta 2 mins antes de entrar. Sube energía.",
+    science: "Priming emocional cambia el estado base."
+  },
+  {
+    day: 29,
+    phase: "COMBAT",
+    title: "Visualización Negativa",
+    action: "Imagina lo peor que puede pasar. Aceptalo. Y habla.",
+    science: "Inoculación contra el estrés (Stoicism tech)."
+  },
+  {
+    day: 30,
+    phase: "COMBAT",
+    title: "Celebración de Identidad",
+    action: "Graba tu presentación final. Compárala con el Día 1.",
+    science: "Consolidación dopaminérgica del nuevo auto-concepto."
+  }
 ];
 
-/**
- * Obtiene el tip del día basado en la fecha actual
- */
-export function getTipOfTheDay(): string {
-  const today = new Date();
-  // Usar día del año para rotar tips
-  const startOfYear = new Date(today.getFullYear(), 0, 0);
-  const diff = today.getTime() - startOfYear.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
-  
-  return DAILY_TIPS[dayOfYear % DAILY_TIPS.length];
+export function getDailyProtocol(): DailyProtocol {
+  // Lógica simple: Un procolo por día del mes (1-30)
+  // En producción, esto debería basarse en el "día de usuario" (días desde registro)
+  // Para MVP, usamos día del mes.
+  const dayOfMonth = new Date().getDate();
+  const index = (dayOfMonth - 1) % THIRTY_DAY_PROTOCOL.length;
+  return THIRTY_DAY_PROTOCOL[index];
 }
 
-/**
- * Obtiene el número del tip actual (para mostrar "Tip #X")
- */
-export function getTipNumber(): number {
-  const today = new Date();
-  const startOfYear = new Date(today.getFullYear(), 0, 0);
-  const diff = today.getTime() - startOfYear.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
-  
-  return (dayOfYear % DAILY_TIPS.length) + 1;
-}
-
-/**
- * Obtiene un tip aleatorio (para variedad)
- */
-export function getRandomTip(): string {
-  return DAILY_TIPS[Math.floor(Math.random() * DAILY_TIPS.length)];
-}
+// Mantener compatibilidad con llamadas legacy si las hay
+export const DAILY_TIPS = THIRTY_DAY_PROTOCOL.map(p => `${p.title}: ${p.action}`);

@@ -39,7 +39,8 @@ function buildTranscriptionWithSilences(
   return result.trim();
 }
 
-import { analyzePitch } from '../../infrastructure/audio/PitchAnalysis';
+import { analyzePitch, decodeAudio } from '../../infrastructure/audio/PitchAnalysis';
+import { analyzeSpectralCharacteristics } from '../../infrastructure/audio/SpectralAnalysis';
 
 export async function analyzeVoiceUseCase({
   audioBuffer,
@@ -59,15 +60,24 @@ export async function analyzeVoiceUseCase({
   // 3. Analizar Entonación Real (Pitch) 🎵
   console.log('[ANALYZE] Analyzing pitch & intonation...');
   const pitchMetrics = await analyzePitch(audioBuffer, transcriptionResult.segments);
-  
   console.log('[ANALYZE] Pitch Metrics:', pitchMetrics);
 
-  // Combinar métricas
+  // 4. Analizar Timbre Espectral (Nasalidad/Brillo) 🌈
+  console.log('[ANALYZE] Analyzing spectral characteristics...');
+  let spectralMetrics = { nasalityScore: 0, brightnessScore: 50, depthScore: 50 }; // Default
+  try {
+    const float32Audio = await decodeAudio(audioBuffer);
+    spectralMetrics = analyzeSpectralCharacteristics(float32Audio);
+    console.log('[ANALYZE] Spectral Metrics:', spectralMetrics);
+  } catch (err) {
+    console.warn('[ANALYZE] Failed to analyze spectral characteristics:', err);
+  }
+
+  // Combinar (Sobrescribimos las métricas)
   const metrics: VoiceMetrics = {
     ...textMetrics,
     ...pitchMetrics,
-    // Sobrescribir pitchVariation fake con una basada en rango si se desea, 
-    // pero mantenemos la calculada por ahora como "variación de duración"
+    ...spectralMetrics,
   };
 
   console.log('[ANALYZE] Final Metrics:', metrics);
