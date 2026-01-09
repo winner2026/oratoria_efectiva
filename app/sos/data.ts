@@ -1,8 +1,9 @@
 export type SituationId = 'EXPOSE' | 'RESPOND' | 'DEFEND' | 'SUMMARIZE';
 
-export const SITUATIONS: Record<SituationId, { label: string; color: string; structure: { title: string; desc: string }[]; prompts: string[]; placeholders: string[] }> = {
+export const SITUATIONS: Record<SituationId, { label: string; icon: string; color: string; structure: { title: string; desc: string }[]; prompts: string[]; placeholders: string[] }> = {
   EXPOSE: {
     label: 'EXPONER',
+    icon: 'campaign',
     color: 'bg-blue-600',
     structure: [
       { title: 'PROBLEMA', desc: 'Capta la atención.' },
@@ -22,6 +23,7 @@ export const SITUATIONS: Record<SituationId, { label: string; color: string; str
   },
   RESPOND: {
     label: 'RESPONDER',
+    icon: 'chat',
     color: 'bg-amber-600',
     structure: [
       { title: 'PUNTO', desc: 'Respuesta directa.' },
@@ -41,6 +43,7 @@ export const SITUATIONS: Record<SituationId, { label: string; color: string; str
   },
   DEFEND: {
     label: 'DEFENDER',
+    icon: 'shield',
     color: 'bg-red-600',
     structure: [
       { title: 'VALIDAR', desc: 'Reconoce la emoción.' },
@@ -60,6 +63,7 @@ export const SITUATIONS: Record<SituationId, { label: string; color: string; str
   },
   SUMMARIZE: {
     label: 'SINTETIZAR',
+    icon: 'bolt',
     color: 'bg-emerald-600',
     structure: [
       { title: '¿QUÉ?', desc: 'La idea central.' },
