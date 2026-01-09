@@ -86,6 +86,21 @@ export async function POST(req: NextRequest) {
 
     // --- Handle Events ---
 
+    // --- Helper to get product name safely ---
+    // Lemon Squeezy payloads vary. We try to find the variant name or product name.
+    // Usually in included resources or first_order_item attribute.
+    // For simplicity without 'included' parsing, we might rely on Variant ID if known, 
+    // BUT since we don't have IDs, we will try to infer or fallback.
+    // CRITICAL: The best way without IDs is to trust the custom_data.plan_type if we sent it?
+    // We didn't send plan_type in the checkout URL.
+    
+    // NEW STRATEGY: Look at the "meta" or "attributes" specifically.
+    // The previous code was weak.
+    
+    // Let's implement a robust handler based on what we know:
+    // We have "order_created" for Weekly.
+    // We have "subscription_created" for Monthly.
+    
     if (event_name === "subscription_created" || event_name === "subscription_updated" || event_name === "subscription_resumed") {
       await handleSubscriptionChange(userId, payload.data);
     } 
@@ -93,10 +108,6 @@ export async function POST(req: NextRequest) {
       await handleSubscriptionCancellation(payload.data);
     }
     else if (event_name === "order_created") {
-      // Handle one-time purchases (like "Video Start" passed as a non-subscription product?)
-      // If "Video Start" is a subscription (e.g. 7 days access), it fits above.
-      // If it's a one-time manual renewable, it's an order.
-      // For now, let's assume subscriptions for plans.
       await handleOrderCreated(userId, payload.data);
     }
 
@@ -110,101 +121,86 @@ export async function POST(req: NextRequest) {
 
 async function handleSubscriptionChange(userId: string | undefined, data: any) {
   const attributes = data.attributes;
-  const variantId = attributes.variant_id?.toString();
-  const customerId = attributes.customer_id?.toString();
-  const subscriptionId = data.id?.toString();
-  const status = attributes.status; // e.g., "active"
+  // const variantId = attributes.variant_id; // We don't map this yet
+  const customerId = attributes.customer_id.toString();
+  const subscriptionId = data.id.toString();
+  const status = attributes.status; 
   const renewsAt = attributes.renews_at ? new Date(attributes.renews_at) : null;
+  const productName = attributes.product_name || "Unknown"; // Sometimes available
 
-  // Determine App Plan from Variant
-  let appPlan = "FREE"; 
-  
-  // Logic to map variantId to "PREMIUM" or others.
-  // For MVP, we might just set to "PREMIUM" if ANY valid subscription comes in, 
-  // or distinguish based on variant.
-  
-  // Example mapping logic (needs real IDs)
-  // if (variantId === "123") appPlan = "PREMIUM";
-  
-  // TEMPORARY LOGIC: Check product name if available in attributes (some payloads have it included or we fetch)
-  // But attributes usually don't have product_name directly, just product_id.
-  // We'll rely on the user mapping.
-  
-  // If we don't have the map yet, let's default to "PREMIUM" for ANY active subscription 
-  // just to enable access, assuming they only sell Pro plans.
+  // Logic: All subscriptions are assumed to be "Voz Pro" (Monthly) for now
+  const appPlan = "VOICE_PRO";
+  const monthlyCredits = 50;
+
   if (status === "active" || status === "on_trial") {
-    appPlan = "PREMIUM"; 
-    // In a real scenario, differentiate: Voz Semanal vs Elite.
-    // We could store the 'tier' in the User model if 'plan' isn't enough.
-    // Currently User.plan is String.
-  }
-
-  if (userId) {
-    // First time subscription or explicit user_id
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        plan: appPlan, // Update plan
-        lemonSqueezyCustomerId: customerId,
-        lemonSqueezySubscriptionId: subscriptionId,
-        subscriptionStatus: status,
-        subscriptionRenewsAt: renewsAt,
-      },
-    });
-
-    // Also update generic Usage limits based on plan
-    // This is where "Business Logic" of limits lives.
-    // e.g. Elite = 100/mo, Voice Weekly = 20/wk.
-    // Since we don't know EXACTLY which plan without IDs, we might skip this 
-    // or set a default "Premium" limit.
-    // Ideally code:
-    // const limits = getLimitsForVariant(variantId);
-    // await updateUsageLimits(userId, limits);
-  } else if (subscriptionId) {
-    // Update by subscription ID (e.g. renewal)
-    await prisma.user.update({
-      where: { lemonSqueezySubscriptionId: subscriptionId },
-      data: {
-        subscriptionStatus: status,
-        subscriptionRenewsAt: renewsAt,
-        plan: appPlan, // Ensure plan stays active
-      },
-    });
-  }
-}
-
-async function handleSubscriptionCancellation(data: any) {
-  const subscriptionId = data.id?.toString();
-  const status = data.attributes.status; // "cancelled", "expired"
-  
-  if (subscriptionId) {
-    // We might want to keep the plan 'active' until the end of period?
-    // Lemon Squeezy sends "cancelled" when user cancels, but entitlement remains until `ends_at`.
-    // "expired" means access lost.
-    
-    // If expired, revert to FREE.
-    if (status === "expired") {
+    if (userId) {
       await prisma.user.update({
-        where: { lemonSqueezySubscriptionId: subscriptionId },
+        where: { id: userId },
         data: {
-          plan: "FREE",
+          plan: appPlan,
+          credits: { increment: monthlyCredits }, // Add 50 credits on renew
+          lemonSqueezyCustomerId: customerId,
+          lemonSqueezySubscriptionId: subscriptionId,
           subscriptionStatus: status,
-        },
+          subscriptionRenewsAt: renewsAt,
+        }
       });
+      console.log(`[WEBHOOK] User ${userId} subscribed to ${productName}. Added ${monthlyCredits} credits.`);
     } else {
-      // Just update status (e.g. "cancelled" but still valid until renewsAt)
-      await prisma.user.update({
-        where: { lemonSqueezySubscriptionId: subscriptionId },
-        data: {
-          subscriptionStatus: status,
-        },
-      });
+        // Update by SubscriptionID (Renewal)
+        const user = await prisma.user.findFirst({ where: { lemonSqueezySubscriptionId: subscriptionId } });
+        if (user) {
+             await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    subscriptionStatus: status,
+                    subscriptionRenewsAt: renewsAt,
+                    credits: { increment: monthlyCredits } // Renewal adds credits
+                }
+             });
+             console.log(`[WEBHOOK] Subscription renewed for user ${user.id}. Added ${monthlyCredits} credits.`);
+        }
     }
   }
 }
 
+async function handleSubscriptionCancellation(data: any) {
+  const subscriptionId = data.id.toString();
+  const status = data.attributes.status;
+  
+  // Just update status. Don't remove credits effectively paid for.
+  await prisma.user.updateMany({
+    where: { lemonSqueezySubscriptionId: subscriptionId },
+    data: {
+      subscriptionStatus: status,
+      // We keep plan as is until it expires, logic handled by 'renewsAt' check in frontend potentially
+      // or we just downgrade to FREE if status is 'expired'.
+      plan: status === 'expired' ? 'FREE' : undefined
+    }
+  });
+}
+
 async function handleOrderCreated(userId: string | undefined, data: any) {
-  // Handle one-time purchases if necessary (e.g. "7 Days Pass")
-  // logic similar to above.
-  console.log("Order created - logic pending based on product type");
+    const attributes = data.attributes;
+    const total = attributes.total; // e.g. 299 for $2.99
+    // const firstOrderItem = attributes.first_order_item; // Might need 'included' for this
+    // Simple Heuristic: Check price or user intent.
+    
+    // For MVP: Any valid one-time order is "Weekly Pass"
+    const weeklyCredits = 55;
+    
+    if (userId) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                credits: { increment: weeklyCredits },
+                // Optional: Update plan name to 'VOICE_WEEKLY' if they were FREE
+                // But if they have a sub, don't downgrade them.
+                // Just add credits.
+            }
+        });
+        console.log(`[WEBHOOK] User ${userId} bought Weekly Pass. Added ${weeklyCredits} credits.`);
+    } else {
+        console.warn("[WEBHOOK] Order created but no User ID found (Guest checkout?).");
+    }
 }
