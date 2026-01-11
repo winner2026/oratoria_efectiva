@@ -321,16 +321,8 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
             {/* FORCE TAILWIND CLASSES (Hidden) */}
             <div className="hidden ring-4 ring-green-500 z-50 bg-green-500 text-black"></div>
             
-            {/* DEBUG UI */}
-            {debugInfo && (
-                <div className="fixed top-2 left-2 z-[100] bg-black/80 text-[10px] text-green-400 font-mono p-2 rounded pointer-events-none">
-                    <p>RMS: {debugInfo.rms.toFixed(4)}</p>
-                    <p>Clarity: {debugInfo.clarity.toFixed(2)}</p>
-                    <p>Freq Cap: 600Hz</p>
-                </div>
-            )}
             
-            <div className={`bg-[#1a242d] border border-slate-700 w-full ${isStandalone ? 'max-w-5xl h-[100dvh] sm:h-[85vh]' : 'max-w-4xl h-full sm:h-auto'} sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col landscape:h-[100dvh] landscape:rounded-none landscape:border-0`}>
+            <div className={`bg-[#1a242d] border border-slate-700 w-full ${isStandalone ? 'max-w-5xl h-[100dvh] sm:h-[85vh]' : 'max-w-4xl h-full sm:h-auto'} sm:rounded-3xl overflow-y-auto shadow-2xl flex flex-col landscape:h-[100dvh] landscape:rounded-none landscape:border-0 landscape:overflow-hidden`}>
                 
                 {/* Header - Compact in Landscape */}
                 <div className="bg-[#283039] p-3 sm:p-4 flex justify-between items-center border-b border-slate-700 landscape:py-2">
