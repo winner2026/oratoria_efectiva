@@ -124,7 +124,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                     "A7": "A7.mp3", "C8": "C8.mp3"
                 },
                 release: 1,
-                volume: 0,
+                volume: 12, // Volumen significativamente más alto
                 baseUrl: "https://tonejs.github.io/audio/salamander/"
             }).connect(eq);
             
@@ -353,9 +353,9 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                             <div className="bg-blue-900/10 border border-blue-500/20 rounded-2xl p-4 sm:p-5 text-center flex-1 flex flex-col justify-center landscape:flex-row landscape:items-center landscape:gap-4 landscape:p-2 landscape:text-left">
                                 <span className="material-symbols-outlined text-4xl sm:text-5xl text-blue-400 mb-2 sm:mb-4 mx-auto landscape:mx-0 landscape:mb-0">graphic_eq</span>
                                 <div className="landscape:flex-1">
-                                    <h3 className="text-white font-bold mb-1 sm:mb-2 text-base sm:text-xl landscape:text-xs landscape:mb-0">Detector de Rango</h3>
-                                    <p className="text-slate-400 text-[10px] sm:text-sm mb-4 sm:mb-6 leading-relaxed landscape:hidden">
-                                        Encuentra tu centro tonal. Sostén un "Aaaa" cómodo.
+                                    <h3 className="text-white font-bold mb-0 text-sm sm:text-xl landscape:text-xs">Detector de Rango</h3>
+                                    <p className="text-slate-400 text-[10px] sm:text-sm mb-2 sm:mb-6 leading-relaxed landscape:hidden">
+                                        Sostén un "Aaaa" cómodo.
                                     </p>
                                 </div>
                                 
@@ -406,12 +406,12 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                     </button>
                                 </div>
  
-                                <div className="flex-1 rounded-2xl bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/30 p-4 flex flex-col items-center justify-center text-center landscape:p-2 landscape:flex-row landscape:gap-3">
-                                    <h4 className="text-[8px] sm:text-xs font-black text-indigo-400 uppercase tracking-widest mb-1 sm:mb-2 landscape:mb-0 landscape:rotate-[-90deg] landscape:text-[7px]">Tip</h4>
-                                    <p className="text-white font-medium text-xs sm:text-lg leading-tight italic max-w-[200px] landscape:max-w-none">
+                                <div className="flex-1 rounded-2xl bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/30 p-2 sm:p-4 flex flex-col items-center justify-center text-center landscape:p-2 landscape:flex-row landscape:gap-3">
+                                    <h4 className="text-[8px] sm:text-xs font-black text-indigo-400 uppercase tracking-widest mb-0.5 landscape:mb-0 landscape:rotate-[-90deg] landscape:text-[7px]">Tip</h4>
+                                    <p className="text-white font-medium text-[10px] sm:text-lg leading-tight italic max-w-[200px] landscape:max-w-none">
                                         "{suggestion}"
                                     </p>
-                                    <button onClick={nextSuggestion} className="mt-2 sm:mt-4 text-[8px] sm:text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full text-indigo-200 transition-colors landscape:mt-0">
+                                    <button onClick={nextSuggestion} className="mt-1 sm:mt-4 text-[8px] sm:text-xs bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded-full text-indigo-200 transition-colors landscape:mt-0">
                                         Cambiar
                                     </button>
                                 </div>
@@ -428,8 +428,8 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                     </Link>
                                 )}
                     {/* Piano Keys Container */}
-                     <div className="flex-1 bg-[#101418] relative overflow-x-auto custom-scrollbar flex items-start sm:items-center py-4 snap-x snap-mandatory">
-                          <div className="flex relative h-48 sm:h-64 select-none min-w-max px-[25vw] sm:px-0 landscape:h-[calc(100vh-140px)]">
+                     <div className="flex-1 bg-[#101418] relative overflow-x-auto custom-scrollbar flex items-start sm:items-center py-4 snap-x snap-mandatory touch-pan-x">
+                          <div className="flex relative h-48 sm:h-64 select-none min-w-max px-[20vw] sm:px-0 landscape:h-[calc(100vh-140px)]">
                               {NOTES.map((n, i) => {
                                   const isSafe = safeRange && i >= safeRange[0] && i <= safeRange[1];
                                   const isActive = activeNote === n.note;
@@ -447,18 +447,17 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                           <div 
                                               key={n.note}
                                               ref={el => { keyRefs.current[i] = el }}
-                                              onPointerDown={(e) => {
-                                                  e.preventDefault();
-                                                  playTone(n.freq, n.note);
-                                              }}
+                                               onPointerDown={(e) => {
+                                                   playTone(n.freq, n.note);
+                                               }}
                                               style={{
                                                   backgroundColor: isDetected ? '#15803d' : isScaleMember ? '#d1fae5' : isActive ? '#bfdbfe' : 'white',
                                                   transform: isDetected ? 'scale(0.95)' : 'none',
                                                   boxShadow: isDetected ? '0 0 15px #15803d' : 'none',
                                                   borderColor: isDetected ? '#166534' : undefined
                                               }}
-                                               className={`
-                                                   relative w-14 sm:w-16 h-48 sm:h-64 border border-slate-900 rounded-b-lg active:scale-[0.98] transition-all duration-100 flex items-end justify-center pb-4 cursor-pointer touch-none snap-center landscape:h-full landscape:w-20
+                                                className={`
+                                                   relative w-14 sm:w-16 h-48 sm:h-64 border border-slate-900 rounded-b-lg active:scale-[0.98] transition-all duration-100 flex items-end justify-center pb-4 cursor-pointer snap-center landscape:h-full landscape:w-20
                                                    ${isSafe ? 'shadow-[inset_0_-20px_40px_rgba(34,197,94,0.3)]' : ''}
                                                    ${isDetected ? 'z-50 text-white' : ''}
                                                `}
@@ -477,7 +476,6 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                               key={n.note}
                                               ref={el => { keyRefs.current[i] = el }}
                                               onPointerDown={(e) => {
-                                                e.preventDefault();
                                                 playTone(n.freq, n.note);
                                               }}
                                               style={{
@@ -486,8 +484,8 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                                   boxShadow: isDetected ? '0 0 15px #15803d' : 'none',
                                                   borderColor: isDetected ? '#166534' : undefined
                                               }}
-                                               className={`
-                                                   w-10 sm:w-12 h-28 sm:h-40 -mx-5 sm:-mx-6 z-20 rounded-b-lg border border-slate-800 active:scale-[0.98] transition-all duration-100 cursor-pointer flex items-end justify-center pb-2 touch-none snap-center landscape:h-[60%] landscape:w-12
+                                                className={`
+                                                   w-10 sm:w-12 h-28 sm:h-40 -mx-5 sm:-mx-6 z-20 rounded-b-lg border border-slate-800 active:scale-[0.98] transition-all duration-100 cursor-pointer flex items-end justify-center pb-2 snap-center landscape:h-[60%] landscape:w-12
                                                    ${isSafe ? 'shadow-[inset_0_-20px_40px_rgba(34,197,94,0.5)]' : ''}
                                                    ${isDetected ? 'z-50' : ''}
                                                `}
