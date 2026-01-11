@@ -235,21 +235,21 @@ export default function ResultsPage() {
              </div>
           </div>
 
-          {/* 🆕 WARMUP CTA */}
-          <Link href="/warmup">
+          {/* 🆕 GYM CTA */}
+          <Link href="/gym">
              <div className="mb-12 group cursor-pointer">
-                 <div className="bg-gradient-to-r from-purple-900/40 to-blue-900/40 border border-purple-500/30 rounded-[28px] p-5 flex items-center justify-between hover:bg-white/5 transition-all">
+                 <div className="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-[28px] p-5 flex items-center justify-between hover:bg-white/5 transition-all shadow-xl">
                     <div className="flex items-center gap-4">
-                        <div className="size-14 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-                             <span className="material-symbols-outlined text-2xl">piano</span>
+                        <div className="size-14 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                             <span className="material-symbols-outlined text-2xl font-bold">fitness_center</span>
                         </div>
                         <div>
-                             <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">Próximo paso</p>
-                             <h4 className="text-lg font-bold text-white">Ir al Gimnasio Vocal</h4>
-                             <p className="text-xs text-slate-400">Calienta tu voz y mejora tu rango.</p>
+                             <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Próximo paso</p>
+                             <h4 className="text-lg font-bold text-white">Biblioteca Pro (365+)</h4>
+                             <p className="text-xs text-slate-400">Ejercicios de dicción, aire y actitud.</p>
                         </div>
                     </div>
-                    <span className="material-symbols-outlined text-slate-500 group-hover:text-white transition-colors">arrow_forward_ios</span>
+                    <span className="material-symbols-outlined text-slate-500 group-hover:text-white transition-colors">arrow_forward</span>
                  </div>
              </div>
           </Link>

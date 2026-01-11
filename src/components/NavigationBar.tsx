@@ -36,8 +36,8 @@ const NavigationBar = () => {
   }, []);
 
   const navItems = [
-    { label: 'Inicio', icon: 'home', href: '/listen' }, // Apunta a listen
-    ...(showVideo ? [{ label: 'Gimnasio', icon: 'fitness_center', href: '/gym' }] : []),
+    { label: 'Inicio', icon: 'home', href: '/listen' }, 
+    { label: 'Gimnasio', icon: 'fitness_center', href: '/gym' },
     { label: 'Cursos', icon: 'map', href: '/courses' },
     { label: 'Progreso', icon: 'trending_up', href: '/my-sessions' },
   ];

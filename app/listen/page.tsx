@@ -266,85 +266,104 @@ export default function ListenPage() {
                         </div>
                     </button>
                     
-                    {/* WARMUP BUTTON (New Aesthetic) */}
-                    <Link
-                      href="/warmup"
-                      className="flex items-center gap-5 overflow-hidden rounded-[24px] p-5 bg-white/[0.03] border border-white/5 hover:bg-white/[0.07] transition-all group"
-                    >
-                      <div className="size-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-                        <span className="material-symbols-outlined text-2xl">piano</span>
-                      </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="text-white text-sm font-bold">Gimnasio Vocal</h3>
-                        <p className="text-slate-500 text-[10px] font-medium tracking-wide">Calentamiento inteligente</p>
-                      </div>
-                      <span className="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors">arrow_forward</span>
-                    </Link>
+                    {/* GYM & WARMUP SECTION */}
+                    <div className="grid grid-cols-1 gap-4 w-full">
+                        {/* 1. VOCAL GYM (Library) - ALWAYS VISIBLE */}
+                        <Link
+                          href="/gym"
+                          className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[28px] p-6 bg-gradient-to-br from-blue-600/20 to-indigo-900/20 border border-blue-500/30 hover:from-blue-600/30 hover:to-indigo-900/40 transition-all shadow-xl text-left"
+                        >
+                          <div className="size-14 rounded-2xl bg-blue-600/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                            <span className="material-symbols-outlined text-3xl font-bold">fitness_center</span>
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Biblioteca</span>
+                              {planType === 'FREE' && <span className="text-[8px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold">365+ Ejercicios</span>}
+                            </div>
+                            <h3 className="text-white text-lg font-bold">Gimnasio Vocal</h3>
+                            <p className="text-slate-500 text-xs font-medium">Buscador y Rutinas diarias.</p>
+                          </div>
+                          <span className="material-symbols-outlined text-slate-700 group-hover:text-blue-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
+                        </Link>
+
+                        {/* 2. WARMUP PIANO */}
+                        <Link
+                          href="/warmup"
+                          className="flex items-center gap-5 overflow-hidden rounded-[24px] p-4 bg-white/[0.03] border border-white/5 hover:bg-white/[0.07] transition-all group"
+                        >
+                          <div className="size-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                            <span className="material-symbols-outlined text-xl">piano</span>
+                          </div>
+                          <div className="flex-1 text-left">
+                            <h3 className="text-white text-xs font-bold uppercase tracking-wider">Calentamiento de Voz</h3>
+                            <p className="text-slate-500 text-[10px] font-medium tracking-wide italic">"Afinación y resonancia"</p>
+                          </div>
+                          <span className="material-symbols-outlined text-slate-700 text-sm group-hover:text-white transition-colors">arrow_forward</span>
+                        </Link>
+                    </div>
 
                 </div>
               ) : (
                 // PREMIUM VIEW
-                 <div className="grid grid-cols-1 gap-4 w-full">
-                    {/* 1. VOCAL MASTER (Audio Only) */}
-                    <button
-                      onClick={() => router.push("/practice?mode=voice")}
-                      className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[24px] p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all shadow-lg text-left"
-                    >
-                      <div className="size-14 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                        <span className="material-symbols-outlined text-3xl font-bold">mic</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Nivel 1</span>
-                          <span className="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-bold">Starter</span>
-                        </div>
-                        <h3 className="text-white text-lg font-bold">Analizador Vocal</h3>
-                        <p className="text-slate-500 text-xs font-medium">Tono, ritmo y muletillas.</p>
-                      </div>
-                      <span className="material-symbols-outlined text-slate-700 group-hover:text-blue-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
-                    </button>
+                  <div className="grid grid-cols-1 gap-4 w-full">
+                     {/* 1. VOCAL MASTER (Audio Only) */}
+                     <button
+                       onClick={() => router.push("/practice?mode=voice")}
+                       className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[24px] p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all shadow-lg text-left"
+                     >
+                       <div className="size-14 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                         <span className="material-symbols-outlined text-3xl font-bold">mic</span>
+                       </div>
+                       <div className="flex-1">
+                         <div className="flex items-center gap-2 mb-0.5">
+                           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Nivel 1</span>
+                           <span className="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-bold">Starter</span>
+                         </div>
+                         <h3 className="text-white text-lg font-bold">Analizador Vocal</h3>
+                         <p className="text-slate-500 text-xs font-medium">Tono, ritmo y muletillas.</p>
+                       </div>
+                       <span className="material-symbols-outlined text-slate-700 group-hover:text-blue-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
+                     </button>
 
-                    {/* 2. ELITE PRESENCE (Video + Audio) */}
-                    <button
-                      onClick={() => router.push("/practice?mode=video")}
-                      className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[24px] p-6 bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 transition-all shadow-2xl shadow-blue-500/20 text-left border border-white/10"
-                    >
-                      <div className="size-14 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-inner">
-                        <span className="material-symbols-outlined text-3xl font-bold">videocam</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-100/60">Nivel 2</span>
-                          <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold">Elite</span>
-                        </div>
-                        <h3 className="text-white text-lg font-bold">Entrenamiento Elite</h3>
-                        <p className="text-blue-100/60 text-xs font-medium">Gestos, mirada y postura.</p>
-                      </div>
-                      {/* Premium Glow Effect */}
-                      <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <span className="material-symbols-outlined text-6xl">stars</span>
-                      </div>
-                      <span className="material-symbols-outlined text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all">arrow_forward</span>
-                    </button>
+                     {/* 2. ELITE PRESENCE (Video + Audio) */}
+                     <button
+                       onClick={() => router.push("/practice?mode=video")}
+                       className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[24px] p-6 bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 transition-all shadow-2xl shadow-blue-500/20 text-left border border-white/10"
+                     >
+                       <div className="size-14 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-inner">
+                         <span className="material-symbols-outlined text-3xl font-bold">videocam</span>
+                       </div>
+                       <div className="flex-1">
+                         <div className="flex items-center gap-2 mb-0.5">
+                           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-100/60">Nivel 2</span>
+                           <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold">Elite</span>
+                         </div>
+                         <h3 className="text-white text-lg font-bold">Entrenamiento Elite</h3>
+                         <p className="text-blue-100/60 text-xs font-medium">Gestos, mirada y postura.</p>
+                       </div>
+                       {/* Premium Glow Effect */}
+                       <div className="absolute top-0 right-0 p-4 opacity-10">
+                         <span className="material-symbols-outlined text-6xl">stars</span>
+                       </div>
+                       <span className="material-symbols-outlined text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all">arrow_forward</span>
+                     </button>
 
-                    {/* 3. VOCAL GYM (Library) */}
-                    <Link
-                      href="/gym"
-                      className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[24px] p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all shadow-lg text-left"
-                    >
-                      <div className="size-14 rounded-2xl bg-green-600/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
-                        <span className="material-symbols-outlined text-3xl font-bold">fitness_center</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-green-400">Práctica Libre</span>
-                        </div>
-                        <h3 className="text-white text-lg font-bold">Gimnasio Vocal</h3>
-                        <p className="text-slate-500 text-xs font-medium">Buscador de ejercicios (365+)</p>
-                      </div>
-                      <span className="material-symbols-outlined text-slate-700 group-hover:text-green-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
-                    </Link>
-                 </div>
+                     {/* WARMUP / GYM QUICK ACCESS FOR PREMIUM TOO */}
+                     <Link
+                       href="/gym"
+                       className="group relative flex w-full items-center gap-5 overflow-hidden rounded-[24px] p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all shadow-lg text-left"
+                     >
+                       <div className="size-14 rounded-2xl bg-green-600/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                         <span className="material-symbols-outlined text-3xl font-bold">fitness_center</span>
+                       </div>
+                       <div className="flex-1">
+                         <h3 className="text-white text-lg font-bold">Gimnasio Vocal</h3>
+                         <p className="text-slate-500 text-xs font-medium">Biblioteca de 365+ ejercicios.</p>
+                       </div>
+                       <span className="material-symbols-outlined text-slate-700 group-hover:text-green-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
+                     </Link>
+                  </div>
               )}
 
               {/* Subtle Stats */}
