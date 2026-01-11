@@ -124,7 +124,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                     "A7": "A7.mp3", "C8": "C8.mp3"
                 },
                 release: 1,
-                volume: -4,
+                volume: 0,
                 baseUrl: "https://tonejs.github.io/audio/salamander/"
             }).connect(eq);
             
@@ -200,11 +200,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                      
                      // Declarative UI handles highlighting now based on 'detectedNoteIndex'
                      
-                     // Auto-scroll
-                     const keyElement = keyRefs.current[closestIndex];
-                     if (keyElement) {
-                         keyElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                     }
+                     // We removed scrollIntoView here to allow manual movement while pitch is indicated
                  }
             } else {
                 setInstantPitch(0);
@@ -262,6 +258,12 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                 setDetectedNoteIndex(null); 
                 pitchBufferRef.current = [];
                 
+                // Center Piano for exercise start (A2 - index 12/13)
+                const midKey = keyRefs.current[12];
+                if (midKey) {
+                    midKey.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                }
+
                 startPitchLoop();
 
                 // Auto-stop after 5 seconds (Exact user request)
