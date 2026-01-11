@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { VOICE_EXERCISES } from '@/domain/training/VoiceExercises';
 import ExerciseCard from '@/components/ExerciseCard';
 import { getCategoryLabel } from '@/domain/training/CategoryLabels';
@@ -10,21 +11,19 @@ import { getCategoryLabel } from '@/domain/training/CategoryLabels';
 const CATEGORIES = ['ALL', 'PROJECTION', 'BREATHING', 'ARTICULATION', 'INTONATION', 'MINDSET', 'RELAXATION', 'IMPROVISATION', 'VOCABULARY'];
 
 export default function GymPage() {
+  const { data: session, status } = useSession();
   const [filter, setFilter] = useState('ALL');
-
   const [planType, setPlanType] = useState<string>('FREE');
   const router = useRouter();
 
   React.useEffect(() => {
+    if (status === "loading") return;
+    
     if (typeof window !== 'undefined') {
       const storedPlan = localStorage.getItem('user_plan') || 'FREE';
       setPlanType(storedPlan);
-
-      // 🔒 PROTECCIÓN:
-      // El contenido se limita más abajo vía 'isFullAccess'.
-      // No bloqueamos la entrada, solo limitamos la vista.
     }
-  }, [router]);
+  }, [session, status]);
 
   const isPremium = planType === 'PREMIUM';
   const isStarter = planType === 'STARTER';
@@ -39,10 +38,8 @@ export default function GymPage() {
   let upsellMessage = "";
 
   if (planType === 'FREE') {
-    displayExercises = filteredExercises.slice(0, 3);
-    showUpsell = filteredExercises.length > 3;
-    upsellTitle = `Desbloquea ${VOICE_EXERCISES.length}+ Ejercicios`;
-    upsellMessage = "Los usuarios Premium tienen acceso a la biblioteca completa de oratoria y lenguaje corporal.";
+    displayExercises = filteredExercises;
+    showUpsell = false; // No bloqueamos contenido que no cuesta
   } else if (planType === 'STARTER') {
     // STARTER: Only Audio exercises
     displayExercises = filteredExercises.filter(ex => ex.requiredMode === 'AUDIO');
@@ -51,8 +48,8 @@ export default function GymPage() {
     const hasVideoExercises = filteredExercises.some(ex => ex.requiredMode === 'VIDEO');
     if (hasVideoExercises) {
         showUpsell = true;
-        upsellTitle = "Desbloquea el Gimnasio de Video";
-        upsellMessage = "Sube a Premium para acceder a ejercicios de Presencia y Lenguaje Corporal con cámara.";
+        upsellTitle = "Desbloquear Radar de Video";
+        upsellMessage = "Eleva tu suscripción a Dominancia Elite para activar el escáner de presencia y lenguaje corporal.";
     }
   }
 
@@ -65,7 +62,7 @@ export default function GymPage() {
           <Link href="/listen" className="text-slate-400 hover:text-white">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <h1 className="font-bold text-lg">Gimnasio Vocal 🏋️</h1>
+          <h1 className="font-bold text-lg uppercase tracking-widest text-blue-400">Arsenal Pro</h1>
           <div className="w-6"></div> {/* Spacer balance */}
         </div>
         
@@ -104,10 +101,10 @@ export default function GymPage() {
 
         {/* Library Grid */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            Biblioteca 
+          <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
+            Activación de Poder 🚀
             <span className="text-sm font-normal text-slate-500">
-                {planType === 'FREE' ? 'Muestra Gratis' : `(${displayExercises.length})`}
+                {planType === 'FREE' ? 'Nivel Base' : `(${displayExercises.length})`}
             </span>
           </h2>
           
@@ -130,7 +127,7 @@ export default function GymPage() {
                                     <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase tracking-wider border border-blue-500/20">
                                         Nuevo
                                     </span>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Respiración</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Soporte de Aire</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">Soporte SSSS (Diafragma)</h3>
                                 <p className="text-xs text-slate-400 line-clamp-2">
@@ -175,7 +172,7 @@ export default function GymPage() {
                                     <span className="px-2 py-0.5 rounded-md bg-violet-500/20 text-violet-300 text-[10px] font-black uppercase tracking-wider border border-violet-500/20">
                                         Nuevo
                                     </span>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Articulación</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dicción Ejecutiva</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-violet-300 transition-colors">Trabalenguas Progresivos</h3>
                                 <p className="text-xs text-slate-400 line-clamp-2">
@@ -220,7 +217,7 @@ export default function GymPage() {
                                     <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-500/20">
                                         Nuevo
                                     </span>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Improvisación</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Agilidad Mental</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-amber-300 transition-colors">Minuto de Oro</h3>
                                 <p className="text-xs text-slate-400 line-clamp-2">
@@ -265,7 +262,7 @@ export default function GymPage() {
                                     <span className="px-2 py-0.5 rounded-md bg-green-500/20 text-green-300 text-[10px] font-black uppercase tracking-wider border border-green-500/20">
                                         Nuevo
                                     </span>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Entonación</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Rango de Dominancia</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-green-300 transition-colors">Afinador de Voz</h3>
                                 <p className="text-xs text-slate-400 line-clamp-2">
@@ -310,7 +307,7 @@ export default function GymPage() {
                                     <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-300 text-[10px] font-black uppercase tracking-wider border border-red-500/20">
                                         Nuevo
                                     </span>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Proyección</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Proyección de Poder</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-red-300 transition-colors">Dinamómetro Vocal</h3>
                                 <p className="text-xs text-slate-400 line-clamp-2">
@@ -356,9 +353,9 @@ export default function GymPage() {
                </div>
                <Link 
                  href="/upgrade"
-                 className="inline-block w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all"
+                 className="inline-block w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-2xl transition-all uppercase tracking-[0.2em] shadow-lg shadow-blue-900/20 active:scale-95"
                >
-                 Subir de Nivel
+                 Obtener Acceso Elite
                </Link>
             </div>
           )}

@@ -14,56 +14,46 @@ const PLAN_CONTENT: Record<string, {
   cta: string;
   ctaLink: string;
 }> = {
+  "starter": {
+    title: "¡Pase STARTER Activado!",
+    subtitle: "Tu hardware vocal está ahora bajo monitoreo de élite.",
+    icon: "bolt",
+    color: "blue",
+    features: [
+      "100 Auditorías IA / mes",
+      "Protocolo Elite de 21 Días",
+      "Arsenal de Tácticas Ilimitado",
+      "Historial de evolución biometríca"
+    ],
+    cta: "Activar mi Centro de Mando",
+    ctaLink: "/listen"
+  },
+  "premium": {
+    title: "¡Rango PREMIUM Desbloqueado!",
+    subtitle: "Has alcanzado el nivel máximo de inteligencia vocal.",
+    icon: "diamond",
+    color: "amber",
+    features: [
+      "Auditorías IA Ilimitadas",
+      "Análisis Espectral Elite (Brillo, Resonancia)",
+      "Métricas de Status Inconsciente",
+      "Protocolo de Mando de 30 Días",
+      "Soporte Prioritario"
+    ],
+    cta: "Entrar al Centro de Control",
+    ctaLink: "/listen"
+  },
   "voice-weekly": {
-    title: "¡Pase Semanal Activado!",
-    subtitle: "Tienes 7 días de acceso total a nuestro motor de IA auditiva.",
+    title: "¡Pase de Entrenamiento Listo!",
+    subtitle: "Prepárate para dominar cada conversación.",
     icon: "mic",
     color: "blue",
     features: [
-      "50 Análisis de voz listos",
-      "Detección de muletillas activada",
-      "Feedback de tono y ritmo"
+      "Análisis de voz activado",
+      "Detector de muletillas",
+      "Feedback ejecutivo"
     ],
-    cta: "Empezar mi primer análisis",
-    ctaLink: "/practice?mode=voice"
-  },
-  "voice-monthly": {
-    title: "¡Bienvenido al Club Pro!",
-    subtitle: "Tu voz está a punto de convertirse en tu mejor activo.",
-    icon: "record_voice_over",
-    color: "blue",
-    features: [
-      "100 Análisis mensuales",
-      "Prioridad en procesamiento",
-      "Historial ilimitado"
-    ],
-    cta: "Ir al Gimnasio de Voz",
-    ctaLink: "/practice?mode=voice"
-  },
-  "video-starter": {
-    title: "¡Pack de Video Semanal Listo!",
-    subtitle: "Cámara, acción y... ¡feedback inmediato!",
-    icon: "videocam",
-    color: "purple",
-    features: [
-      "70 Análisis (Video + Voz)",
-      "Lectura de lenguaje corporal",
-      "Análisis de contacto visual"
-    ],
-    cta: "Probar Análisis de Video",
-    ctaLink: "/practice?mode=video"
-  },
-  "video-premium": {
-    title: "¡Eres Miembro Elite!",
-    subtitle: "La experiencia completa de transformación comunicativa.",
-    icon: "diamond",
-    color: "purple",
-    features: [
-      "250 Análisis mensuales",
-      "Coach IA disponible 24/7",
-      "Acceso antes que nadie a novedades"
-    ],
-    cta: "Entrar a mi Dashboard Elite",
+    cta: "Ir al Dashboard",
     ctaLink: "/listen"
   }
 };
@@ -85,13 +75,21 @@ export default function SuccessPage() {
     <main className="min-h-screen bg-[#0B1120] text-white font-display flex flex-col items-center justify-center p-6 relative overflow-hidden">
       
       {/* Background Glows */}
-      <div className={`absolute top-[-20%] left-[-10%] w-[600px] h-[600px] ${content.color === 'purple' ? 'bg-purple-600/20' : 'bg-blue-600/20'} rounded-full blur-[120px] pointer-events-none`} />
+      <div className={`absolute top-[-20%] left-[-10%] w-[600px] h-[600px] 
+        ${content.color === 'purple' ? 'bg-purple-600/20' : 
+          content.color === 'amber' ? 'bg-amber-600/20' : 'bg-blue-600/20'} 
+        rounded-full blur-[120px] pointer-events-none`} />
       
       <div className="z-10 max-w-lg w-full text-center">
         
         {/* Animated Icon */}
-        <div className={`mx-auto w-24 h-24 rounded-full ${content.color === 'purple' ? 'bg-purple-500/20' : 'bg-blue-500/20'} flex items-center justify-center mb-8 animate-bounce-slow`}>
-           <span className={`material-symbols-outlined text-5xl ${content.color === 'purple' ? 'text-purple-400' : 'text-blue-400'}`}>
+        <div className={`mx-auto w-24 h-24 rounded-full 
+          ${content.color === 'purple' ? 'bg-purple-500/20' : 
+            content.color === 'amber' ? 'bg-amber-500/20' : 'bg-blue-500/20'} 
+          flex items-center justify-center mb-8 animate-bounce-slow`}>
+           <span className={`material-symbols-outlined text-5xl 
+             ${content.color === 'purple' ? 'text-purple-400' : 
+               content.color === 'amber' ? 'text-amber-400' : 'text-blue-400'}`}>
              {content.icon}
            </span>
         </div>
@@ -121,7 +119,9 @@ export default function SuccessPage() {
           className={`w-full py-5 rounded-xl font-bold text-lg shadow-lg hover:scale-[1.02] transition-all animate-pulse-soft
             ${content.color === 'purple' 
               ? 'bg-purple-600 hover:bg-purple-500 shadow-purple-900/30 text-white' 
-              : 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/30 text-white'
+              : content.color === 'amber'
+                ? 'bg-amber-600 hover:bg-amber-500 shadow-amber-900/30 text-white'
+                : 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/30 text-white'
             }`}
         >
           {content.cta}

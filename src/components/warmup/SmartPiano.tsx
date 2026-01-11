@@ -333,8 +333,8 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                              <span className="material-symbols-outlined text-sm sm:text-base">piano</span>
                         </div>
                         <div>
-                             <h2 className="text-white font-bold text-sm sm:text-lg leading-tight">Calentamiento Vocal</h2>
-                             <p className="text-slate-400 text-[10px] sm:text-xs">Tone.js Engine • Classical Piano Samples</p>
+                             <h2 className="text-white font-bold text-sm sm:text-lg leading-tight">Bio-Calibración de Resonadores</h2>
+                             <p className="text-slate-400 text-[10px] sm:text-xs">Motor de Frecuencias • Escáner de Armónicos</p>
                         </div>
                     </div>
                     {!isStandalone && onClose && (
@@ -351,11 +351,11 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                         
                         {!safeRange ? (
                             <div className="bg-blue-900/10 border border-blue-500/20 rounded-2xl p-4 sm:p-5 text-center flex-1 flex flex-col justify-center landscape:flex-row landscape:items-center landscape:gap-4 landscape:p-2 landscape:text-left">
-                                <span className="material-symbols-outlined text-4xl sm:text-5xl text-blue-400 mb-2 sm:mb-4 mx-auto landscape:mx-0 landscape:mb-0">graphic_eq</span>
+                                <span className="material-symbols-outlined text-4xl sm:text-5xl text-blue-400 mb-2 sm:mb-4 mx-auto landscape:mx-0 landscape:mb-0">neurology</span>
                                 <div className="landscape:flex-1">
-                                    <h3 className="text-white font-bold mb-0 text-sm sm:text-xl landscape:text-xs">Detector de Rango</h3>
+                                    <h3 className="text-white font-bold mb-0 text-sm sm:text-xl landscape:text-xs">Frecuencia Fundamental</h3>
                                     <p className="text-slate-400 text-[10px] sm:text-sm mb-2 sm:mb-6 leading-relaxed landscape:hidden">
-                                        Sostén un "Aaaa" cómodo.
+                                        Detectando base de autoridad.
                                     </p>
                                 </div>
                                 
@@ -374,23 +374,23 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                         </div>
                                     </div>
                                 ) : (
-                                    <button 
+                                        <button 
                                         onClick={startCalibration}
-                                        className="w-full landscape:w-auto py-2 sm:py-4 px-6 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-base"
+                                        className="w-full landscape:w-auto py-2 sm:py-4 px-6 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-base uppercase tracking-widest"
                                     >
-                                        <span className="material-symbols-outlined text-sm sm:text-base">mic</span>
-                                        Calibrar
+                                        <span className="material-symbols-outlined text-sm sm:text-base">biometrics</span>
+                                        Sincronizar
                                     </button>
                                 )}
                             </div>
                         ) : (
                             <div className="flex flex-col sm:h-full gap-4 landscape:flex-row landscape:w-full landscape:items-center">
                                 <div className="bg-green-900/20 border border-green-500/30 rounded-2xl p-4 sm:p-5 text-center animate-fade-in relative overflow-hidden landscape:p-2 landscape:flex landscape:items-center landscape:gap-3">
-                                    <span className="material-symbols-outlined text-2xl sm:text-4xl text-green-400 mb-1 sm:mb-2 landscape:mb-0">check_circle</span>
+                                    <span className="material-symbols-outlined text-2xl sm:text-4xl text-green-400 mb-1 sm:mb-2 landscape:mb-0">verified_user</span>
                                     <div className="landscape:text-left">
-                                        <h3 className="text-white font-bold text-xs sm:text-sm mb-0">Rango Detectado</h3>
+                                        <h3 className="text-white font-bold text-xs sm:text-sm mb-0">Hardware Estable</h3>
                                         <p className="text-green-200 text-[10px] sm:text-xs font-mono">
-                                            Tono: <span className="font-bold text-white tracking-widest">{NOTES[detectedNoteIndex!].note}</span>
+                                            Base: <span className="font-bold text-white tracking-widest">{NOTES[detectedNoteIndex!].note}</span>
                                         </p>
                                     </div>
                                     

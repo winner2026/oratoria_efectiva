@@ -24,15 +24,15 @@ export type PlanFeatures = {
 
 export const PLAN_CONFIGS: Record<PlanType, PlanFeatures> = {
   FREE: {
-    maxAnalysesTotal: 3,
+    maxAnalysesTotal: 1,
     maxAnalysesPerMonth: -1,
-    protocolDays: 7,
+    protocolDays: 30,
     hasVideoAnalysis: false,
     hasSpectralAnalysis: false,
     hasPostureMetrics: false,
-    hasCourses: false,
+    hasCourses: true,
     hasHistory: true,
-    hasReRecord: false
+    hasReRecord: true
   },
   STARTER: {
     maxAnalysesTotal: -1,
@@ -49,9 +49,9 @@ export const PLAN_CONFIGS: Record<PlanType, PlanFeatures> = {
     maxAnalysesTotal: -1,
     maxAnalysesPerMonth: 250,
     protocolDays: 30,
-    hasVideoAnalysis: true,
+    hasVideoAnalysis: false,
     hasSpectralAnalysis: true,
-    hasPostureMetrics: true,
+    hasPostureMetrics: false,
     hasCourses: true,
     hasHistory: true,
     hasReRecord: true

@@ -25,7 +25,7 @@ export default function CoursesPage() {
           <Link href="/listen" className="text-slate-400 hover:text-white">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <h1 className="font-bold text-lg">Cursos 🗺️</h1>
+          <h1 className="font-black text-lg uppercase tracking-[0.2em] text-amber-500">MANDO</h1>
           <div className="w-6"></div>
         </div>
       </header>
@@ -33,12 +33,12 @@ export default function CoursesPage() {
       {/* Main Content */}
       <main className="pt-24 mobile-container space-y-8 animate-fade-in">
         
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
-            La Ruta del Héroe
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-600 uppercase tracking-tighter">
+            Ruta de Maestría
           </h2>
-          <p className="text-slate-400 text-sm">
-            No son trucos sueltos. Es tu transformación.
+          <p className="text-slate-500 text-sm font-medium tracking-wide">
+            Protocolos de entrenamiento avanzado para el 1% ejecutivo.
           </p>
         </div>
 
@@ -125,8 +125,8 @@ export default function CoursesPage() {
               
               {!hasCourseAccess && (
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4/5">
-                   <Link href="/upgrade" className="block w-full text-center bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest py-2 rounded-full shadow-lg border border-amber-400/50">
-                      Desbloquear con Starter
+                   <Link href="/upgrade" className="block w-full text-center bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] py-3 rounded-full shadow-xl border border-white/10 active:scale-95 transition-all">
+                      Desbloquear Acceso Elite
                    </Link>
                 </div>
               )}

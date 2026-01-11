@@ -68,17 +68,19 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white font-display pb-32">
       {/* Header */}
-      <header className="p-6 flex items-center gap-4 bg-slate-900 border-b border-slate-800">
-        <div className="size-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-bold shadow-lg">
-          {user.name.charAt(0).toUpperCase()}
-        </div>
-        <div>
-          <h1 className="text-xl font-bold">{user.name}</h1>
-          <p className="text-sm text-slate-400">{user.email}</p>
-          <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-bold uppercase tracking-wide text-blue-400">
-            <span className={`w-1.5 h-1.5 rounded-full ${user.plan === 'FREE' ? 'bg-slate-500' : 'bg-green-500 animate-pulse'}`}/>
-            {user.plan === 'FREE' ? 'Plan Básico' : `Plan ${user.plan}`}
+      <header className="p-4 flex items-center justify-between bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+        <div className="flex items-center gap-4">
+          <Link href="/listen" className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+            <span className="material-symbols-outlined">arrow_back</span>
+          </Link>
+          <div className="flex flex-col">
+            <h1 className="text-sm font-black uppercase tracking-widest text-white">{user.name}</h1>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">{user.email}</p>
           </div>
+        </div>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-[9px] font-black uppercase tracking-widest text-blue-400 shadow-xl">
+          <span className={`size-1.5 rounded-full ${user.plan === 'FREE' ? 'bg-slate-500' : 'bg-blue-500 animate-pulse'}`}/>
+          {user.plan === 'FREE' ? 'Nivel Base' : `Plan ${user.plan}`}
         </div>
       </header>
 

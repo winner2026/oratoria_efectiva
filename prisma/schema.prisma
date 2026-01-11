@@ -29,7 +29,7 @@ model User {
   role          String?   // "student", "professional", "executive"
   goal          String?   // "fear", "diction", "leadership"
   credits       Int      @default(3)
-  plan          String   @default("FREE") // "FREE" | "PREMIUM"
+  plan          String   @default("FREE") // "FREE" | "STARTER" | "PREMIUM"
   magicToken    String?  @unique // Token para acceso sin password
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -106,4 +106,48 @@ model VoiceSession {
   @@map("voice_sessions")
   @@index([userId])
   @@index([createdAt(sort: Desc)])
+}
+
+// --- SECURITY HARDENING MODELS ---
+
+// 1. Wallet Drainer Protection
+// Tracks unique devices across multiple accounts
+model DeviceIntegrity {
+  id              String   @id @default(uuid())
+  fingerprintHash String   @unique // High-entropy hash (Canvas + WebGL + IP + UA)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Track usage independent of User ID
+  freeAnalysesUsed Int     @default(0)
+  isBlocked        Boolean @default(false)
+  
+  // Audit trail
+  lastIp          String?
+  linkedEmails    String[] // Emails associated with this device
+  
+  @@map("device_integrity")
+}
+
+// 2. Anti-Replay Protection for Webhooks
+model WebhookEvent {
+  id        String   @id @default(uuid())
+  eventId   String   @unique // The unique ID from Lemon Squeezy header/body
+  provider  String   // "lemon_squeezy"
+  processedAt DateTime @default(now())
+  status    String   // "success", "failed", "ignored"
+  
+  @@map("webhook_events")
+}
+
+// 3. Honeypot & IP Ban List
+model SuspiciousActivity {
+  id        String   @id @default(uuid())
+  ip        String
+  endpoint  String   // e.g. "/admin-login", "/wp-admin"
+  reason    String   // "HONEYPOT_TRIGGER", "EXCESSIVE_LOGIN_FAIL"
+  severity  String   // "LOW", "HIGH", "CRITICAL"
+  createdAt DateTime @default(now())
+  
+  @@map("suspicious_activity")
 }

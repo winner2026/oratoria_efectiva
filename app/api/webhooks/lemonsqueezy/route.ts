@@ -69,6 +69,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid Signature" }, { status: 401 });
     }
 
+    // 🛡️ REPLAY PROTECTION: Hash the body to create a unique Event ID
+    const eventId = crypto.createHash('sha256').update(rawBody).digest('hex');
+    
+    // Check if we already processed this event
+    const existingEvent = await prisma.webhookEvent.findUnique({
+      where: { eventId }
+    });
+
+    if (existingEvent) {
+      console.log(`[WEBHOOK] Ignored duplicate event ${eventId}`);
+      return NextResponse.json({ received: true, status: "already_processed" });
+    }
+
     const payload = JSON.parse(rawBody) as LemonSqueezyWebhookPayload;
     const { event_name, custom_data } = payload.meta;
     const { attributes, id: subscriptionId } = payload.data;
@@ -113,6 +126,15 @@ export async function POST(req: NextRequest) {
     // but could be used for one-time purchases if we had them. 
     // For now, we focus on subscription handling.
 
+    // ✅ Log successful processing
+    await prisma.webhookEvent.create({
+      data: {
+        eventId,
+        provider: "lemon_squeezy",
+        status: "success"
+      }
+    });
+
     return NextResponse.json({ received: true });
 
   } catch (error: any) {
@@ -147,25 +169,52 @@ async function handleSubscriptionChange(userId: string | undefined, data: any) {
     let targetUserId = userId;
 
     if (!targetUserId) {
-        const existingUser = await prisma.user.findFirst({ 
-            where: { lemonSqueezySubscriptionId: subscriptionId } 
-        });
-        targetUserId = existingUser?.id;
+        // 📧 FALLBACK: Find by email if user_id is missing (e.g. bought from direct link)
+        const customerEmail = attributes.user_email;
+        if (customerEmail) {
+            const userByEmail = await prisma.user.findUnique({ where: { email: customerEmail } });
+            targetUserId = userByEmail?.id;
+        }
+
+        // 🔍 EXTENDED FALLBACK: Find by existing subscription ID
+        if (!targetUserId) {
+            const existingUser = await prisma.user.findFirst({ 
+                where: { lemonSqueezySubscriptionId: subscriptionId } 
+            });
+            targetUserId = existingUser?.id;
+        }
     }
 
-    if (targetUserId) {
-      // 1. Update User Plan
-      await prisma.user.update({
-        where: { id: targetUserId },
-        data: {
+    // 🚀 UPSERT Strategy: Update if exists, Create if new 
+    // This handles the "Ghost User" case (bought before ever entering the app)
+    const customerEmail = attributes.user_email;
+    
+    // We only proceed if we have a way to identify the user (ID or Email)
+    if (targetUserId || customerEmail) {
+      await prisma.user.upsert({
+        where: targetUserId ? { id: targetUserId } : { email: customerEmail },
+        update: {
           plan: appPlan,
           lemonSqueezyCustomerId: customerId,
           lemonSqueezySubscriptionId: subscriptionId,
           subscriptionStatus: status,
           subscriptionRenewsAt: renewsAt,
-          // We NO LONGER increment credits. We rely on Usage table limits.
+        },
+        create: {
+          email: customerEmail,
+          name: attributes.user_name || "Miembro Pro",
+          plan: appPlan,
+          lemonSqueezyCustomerId: customerId,
+          lemonSqueezySubscriptionId: subscriptionId,
+          subscriptionStatus: status,
+          subscriptionRenewsAt: renewsAt,
         }
       });
+
+      // Update targetUserId after upsert to ensure usage sync
+      const finalUser = await prisma.user.findUnique({ where: { email: customerEmail }});
+      if (!finalUser) return;
+      targetUserId = finalUser.id;
 
       // 2. Update Usage Record (Reset Monthly Limits if it's a new cycle)
       // We check if we need to reset based on `renewsAt` or just doing an upsert.

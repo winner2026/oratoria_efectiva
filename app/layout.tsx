@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   description: "Mejora tu forma de hablar y comunica con autoridad",
 };
 
+import { Suspense } from "react";
 import { Providers } from "./providers";
 import NavigationBar from "@/components/NavigationBar";
 
@@ -36,7 +37,6 @@ export default function RootLayout({
       <body className="min-h-screen bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased" suppressHydrationWarning>
         <Providers>
           {children}
-          <NavigationBar />
         </Providers>
       </body>
     </html>

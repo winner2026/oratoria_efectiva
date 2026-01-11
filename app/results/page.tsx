@@ -168,6 +168,35 @@ export default function ResultsPage() {
              </div>
           </div>
 
+          {/* ✨ CEO REPHRASE: El momento de mayor valor */}
+          {result.rephrase_optimized && (
+            <div className="mb-10 animate-fade-in-up">
+              <h3 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] px-2 mb-4 text-center font-mono">
+                 Optimización de Mensaje (CEO Mode)
+              </h3>
+              <div className="bg-gradient-to-br from-blue-600/20 via-blue-900/10 to-transparent border border-blue-500/30 rounded-[32px] p-8 relative overflow-hidden shadow-[0_20px_50px_-10px_rgba(59,130,246,0.3)]">
+                 <div className="absolute top-0 right-0 p-6 opacity-20">
+                    <span className="material-symbols-outlined text-7xl text-blue-500">auto_fix_high</span>
+                 </div>
+                 
+                 <div className="relative z-10">
+                   <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.2em] mb-3">Tu discurso re-diseñado:</p>
+                   <p className="text-2xl text-white font-black italic leading-snug tracking-tight">
+                      "{result.rephrase_optimized}"
+                   </p>
+                   
+                   {reductionPercent > 5 && (
+                      <div className="mt-6 pt-6 border-t border-white/5 flex items-center gap-4 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                          <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-base">compress</span> -{reductionPercent}% Relleno innecesario</span>
+                          <span className="size-1 bg-slate-800 rounded-full"></span>
+                          <span className="flex items-center gap-1.5 text-blue-400"><span className="material-symbols-outlined text-base">bolt</span> 100% Impacto Directo</span>
+                      </div>
+                   )}
+                 </div>
+              </div>
+            </div>
+          )}
+
           {/* 2. Diagnosis (Premium Card) */}
           <div className="relative p-6 rounded-[32px] bg-white/[0.03] border border-white/5 backdrop-blur-md mb-8 overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700">
@@ -186,30 +215,7 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          {/* 3. ✨ NEW: MESSAGE RE-ENGINEERING (The WOW Moment) */}
-          {result.rephrase_optimized && (
-            <div className="mb-10 animate-fade-in-up">
-              <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] px-2 mb-4 text-center">
-                 Reformulación del Mensaje
-              </h3>
-              <div className="bg-gradient-to-b from-amber-500/10 to-transparent border border-amber-500/20 rounded-[32px] p-6 relative overflow-hidden">
-                 <div className="absolute top-0 right-0 p-4 opacity-20">
-                    <span className="material-symbols-outlined text-6xl text-amber-500">auto_fix_high</span>
-                 </div>
-                 
-                 <p className="text-[10px] text-amber-300 font-bold uppercase tracking-wider mb-2">Versión Optimizada (Nivel CEO)</p>
-                 <p className="text-lg text-white font-medium italic leading-relaxed relative z-10">
-                    "{result.rephrase_optimized}"
-                 </p>
-                 
-                 {reductionPercent > 5 && (
-                    <div className="mt-4 pt-4 border-t border-amber-500/20 flex gap-3 text-amber-200/50 text-xs">
-                        <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">remove_circle</span> -{reductionPercent}% Palabras ("Economía Verbal")</span>
-                    </div>
-                 )}
-              </div>
-            </div>
-          )}
+
 
           {/* 3. Action Step (The Payoff) */}
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-emerald-600 rounded-[32px] p-0.5 shadow-2xl shadow-blue-500/20 mb-10 transform hover:scale-[1.02] transition-transform">
@@ -268,7 +274,7 @@ export default function ResultsPage() {
                 {/* Columna 1: Velocidad */}
                 <div className="space-y-4">
                     <MetricRow 
-                      label="Velocidad (Cadencia)" 
+                      label="Cadencia de Mando" 
                       value={`${result.metrics?.wordsPerMinute || 0} ppm`} 
                       desc="Rango ejecutivo: 130-150 ppm." 
                       status={ (result.metrics?.wordsPerMinute || 0) > 170 ? 'exceso' : (result.metrics?.wordsPerMinute || 0) < 110 ? 'bajo' : 'optimo' }
@@ -280,9 +286,9 @@ export default function ResultsPage() {
                       status='neutro'
                     />
                      <MetricRow 
-                      label="Pausas Estratégicas" 
+                      label="Control del Silencio" 
                       value={String(result.metrics?.strategicPauses || 0)} 
-                      desc="Silencios poderosos (>1s)." 
+                      desc="Pausas de alto estatus (>1s)." 
                       status={ (result.metrics?.strategicPauses || 0) > 0 ? 'optimo' : 'bajo' }
                     />
                 </div>
@@ -296,9 +302,9 @@ export default function ResultsPage() {
                       status={ (result.metrics?.energyStability || 0) > 0.7 ? 'optimo' : 'bajo' }
                     />
                     <MetricRow 
-                      label="Variación Tonal" 
+                      label="Índice de Dominancia" 
                       value={`${Math.round((result.metrics?.pitchVariation || 0.2) * 100)}%`} 
-                      desc="Evita la monotonía." 
+                      desc="Estabilidad del registro tonal." 
                       status={ (result.metrics?.pitchVariation || 0) > 0.15 ? 'optimo' : 'bajo' }
                     />
                     <MetricRow 

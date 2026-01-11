@@ -14,22 +14,18 @@ export async function GET(req: NextRequest) {
        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 1. Fetch Basic Metrics
-    const totalUsers = await prisma.user.count();
-    const totalSessions = await prisma.voiceSession.count();
+    // 2. Breakdown by Plan
+    const freeUsers = await prisma.user.count({ where: { plan: 'FREE' } });
+    const starterUsers = await prisma.user.count({ where: { plan: 'STARTER' } });
+    const premiumUsers = await prisma.user.count({ where: { plan: 'PREMIUM' } });
 
-    // 2. Active Users (Users with >= 1 session linked)
+    // Active Users (Users with >= 1 session linked)
     const activeUsersResult = await prisma.voiceSession.groupBy({
       by: ['userId'],
       where: { user: { isNot: null } },
       _count: { id: true }
     });
     const activeUsersCount = activeUsersResult.length;
-
-    // 3. Premium Users
-    const premiumUsers = await prisma.user.count({
-      where: { plan: { not: 'FREE' } }
-    });
 
     // 4. Usage by Plan (Rentabilidad)
     // We need to join Usage with Plan info which is in Usage table or User table.
@@ -50,25 +46,29 @@ export async function GET(req: NextRequest) {
        count: g._count.id
     }));
 
+    const totalUsers = freeUsers + starterUsers + premiumUsers;
+
     // Calculate Computed Rates
     const activationRate = totalUsers > 0 
       ? ((activeUsersCount / totalUsers) * 100).toFixed(1) + "%"
       : "0%";
     
     const conversionRate = activeUsersCount > 0
-      ? ((premiumUsers / activeUsersCount) * 100).toFixed(1) + "%"
+      ? (((starterUsers + premiumUsers) / activeUsersCount) * 100).toFixed(1) + "%"
       : "0%";
 
     return NextResponse.json({
       totalUsers,
-      activeUsers: activeUsersCount,
+      freeUsers,
+      starterUsers,
       premiumUsers,
+      activeUsers: activeUsersCount,
       conversionRate,
       activationRate,
       // Mocks for data we don't track yet but UI needs
       technicalErrors: 0, 
-      exerciseStarts: 0, // Need to track gym clicks
-      resultsShared: 0, // Need to track share clicks
+      exerciseStarts: 0, 
+      resultsShared: 0, 
       avgUsageByPlan
     });
 

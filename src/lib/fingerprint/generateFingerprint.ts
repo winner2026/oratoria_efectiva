@@ -14,8 +14,11 @@ export function generateFingerprint(
   ip: string | null,
   userAgent: string | null
 ): string {
-  // La huella siempre se calcula en el backend con IP + User-Agent.
+  // Si hay un userId (ej. email ya autenticado), lo usamos como componente principal
+  // para que la historia sea persistente entre dispositivos. 
+  // Si no hay userId, usamos IP+UA como fallback.
   const components = [
+    _userId || 'no-id',
     ip || 'unknown-ip',
     userAgent || 'unknown-ua',
   ].join('|');
@@ -25,7 +28,9 @@ export function generateFingerprint(
     .digest('hex')
     .substring(0, 36);
 
-  return `fp-${hash}`;
+  // Si hay un userId real, el prefijo cambia para distinguir
+  const prefix = _userId ? 'usr' : 'fp';
+  return `${prefix}-${hash}`;
 }
 
 export function normalizeUserAgent(userAgent: string | null): string {

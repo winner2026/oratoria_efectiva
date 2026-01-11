@@ -2,7 +2,6 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState, useEffect, useCallback, Suspense } from "react";
-import { getOrCreateAnonymousUserId } from "@/lib/anonymousUser";
 import { logEvent } from "@/lib/events/logEvent";
 import Link from "next/link";
 import Script from "next/script";
@@ -10,6 +9,7 @@ import AudioVisualizer from "@/components/AudioVisualizer";
 import AudioLevelMeter from "@/components/AudioLevelMeter";
 import { getRandomTip, VocalTip, getCategoryColor } from "@/lib/tips/vocalHygieneTips";
 import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
 
 const SmartPiano = dynamic(() => import("@/components/warmup/SmartPiano"), {
     ssr: false,
@@ -66,9 +66,12 @@ function PracticeContent() {
   const [recordingStream, setRecordingStream] = useState<MediaStream | null>(null);
   const [isMicEnabled, setIsMicEnabled] = useState(false);
 
+  const { data: session, status } = useSession();
 
   // Detectar modo incógnito y generar userId
   useEffect(() => {
+    if (status === "loading") return;
+
     const checkAccess = async () => {
       const { shouldBlockAccess } = await import("@/lib/detectIncognito");
       const shouldBlock = await shouldBlockAccess();
@@ -79,13 +82,14 @@ function PracticeContent() {
         return;
       }
 
-      const id = getOrCreateAnonymousUserId();
-      setUserId(id);
+      if (session?.user?.email) {
+        setUserId(session.user.email);
+      }
       setIsCheckingIncognito(false);
     };
 
     checkAccess();
-  }, []);
+  }, [session, status]);
 
 
   const [loadingMessage, setLoadingMessage] = useState("Analizando...");
@@ -198,10 +202,6 @@ function PracticeContent() {
       };
 
       mediaRecorder.onstop = async () => {
-        if (countdownIntervalRef.current) {
-          clearInterval(countdownIntervalRef.current);
-        }
-        
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         const recordingDuration = recordingStartTimeRef.current ? (Date.now() - recordingStartTimeRef.current) / 1000 : 0;
 
@@ -212,10 +212,29 @@ function PracticeContent() {
           setIsRecording(false);
           return;
         }
+
+        // 🔍 PROCESAMIENTO LOCAL (CERO COSTE)
+        try {
+            const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const buffer = await context.decodeAudioData(await blob.arrayBuffer());
+            const data = buffer.getChannelData(0);
+            let sumSq = 0;
+            let lastVal = 0;
+            let stabSum = 0;
+            for(let i=0; i<data.length; i++) {
+                sumSq += data[i]*data[i];
+                stabSum += Math.abs(data[i]-lastVal);
+                lastVal = data[i];
+            }
+            const rms = Math.sqrt(sumSq/data.length)*100;
+            const stab = Math.max(0, 100 - (stabSum/data.length)*200);
+            finalMetricsRef.current = { rms: Math.round(rms*2), stability: Math.round(stab) };
+        } catch(e) {
+            finalMetricsRef.current = { rms: 50, stability: 50 };
+        }
         
         setAudioBlob(blob);
         setShowReview(true);
-        // releaseMediaResources() ya fue llamado en stopRecording, pero aquí asegura limpieza
         releaseMediaResources();
       };
 
@@ -299,11 +318,15 @@ function PracticeContent() {
           metrics: currentExercise.targetMetrics
       }) : '';
 
+      // 🕵️ DEVICE FINGERPRINT (Hacker Defense)
+      const deviceFp = await import("@/lib/fingerprint/clientFingerprint").then(m => m.getDeviceFingerprint());
+
       const response = await fetch("/api/analysis", {
         method: "POST",
         body: formData,
         headers: {
-            'X-Exercise-Context': contextString ? encodeURIComponent(contextString) : ''
+            'X-Exercise-Context': contextString ? encodeURIComponent(contextString) : '',
+            'X-Device-Fingerprint': deviceFp
         },
         signal: controller.signal,
       });
@@ -429,33 +452,69 @@ function PracticeContent() {
 
   // --- REVIEW VIEW ---
   if (showReview && audioBlob) {
+    const localRms = finalMetricsRef.current?.rms || 0;
+    const localStab = finalMetricsRef.current?.stability || 0;
+
     return (
-      <main className="min-h-[100dvh] bg-[#101922] flex flex-col items-center justify-center p-6 text-white text-center font-display">
-        <div className="size-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
-          <span className="material-symbols-outlined text-4xl text-green-500">check_circle</span>
+      <main className="min-h-[100dvh] bg-[#05080a] flex flex-col items-center justify-center p-6 text-white text-center font-display">
+        <div className="size-16 rounded-2xl bg-blue-600/20 flex items-center justify-center mb-6 border border-blue-500/30">
+          <span className="material-symbols-outlined text-3xl text-blue-400">biometrics</span>
         </div>
-        <h2 className="text-2xl font-bold mb-2">¡Grabación completada!</h2>
-        <p className="text-[#9dabb9] mb-8 max-w-xs mx-auto">
-          Tu grabación está lista para ser analizada por la Inteligencia Artificial.
+        
+        <h2 className="text-3xl font-black mb-2 uppercase tracking-tight">Reporte de Hardware</h2>
+        <p className="text-slate-500 mb-8 max-w-xs mx-auto text-sm font-medium">
+          Pulsa "Deep Audit" para un análisis experto por IA.
         </p>
+
+        {/* Local Metrics Grid */}
+        <div className="grid grid-cols-2 gap-4 w-full max-w-xs mb-6">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Dominancia</span>
+                <div className="text-2xl font-black text-blue-400">%{localRms}</div>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Estabilidad</span>
+                <div className="text-2xl font-black text-emerald-400">%{localStab}</div>
+            </div>
+        </div>
+
+        {/* 🔒 DEEP AUDIT PREVIEW (FOMO) */}
+        <div className="w-full max-w-xs mb-10 space-y-2">
+            <div className="flex items-center justify-between px-4 py-3 bg-black/40 border border-white/5 rounded-xl opacity-60">
+                <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm text-slate-500 italic">lock</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Detección de Muletillas</span>
+                </div>
+                <span className="text-[8px] font-black text-slate-600">REQ. IA</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3 bg-black/40 border border-white/5 rounded-xl opacity-60">
+                <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm text-slate-500 italic">lock</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Versión Nivel CEO</span>
+                </div>
+                <span className="text-[8px] font-black text-slate-600">REQ. IA</span>
+            </div>
+        </div>
 
         <div className="w-full max-w-xs space-y-4">
           <button 
             onClick={handleStartAnalysis}
-            className="w-full h-14 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
+            className="group w-full h-16 bg-white text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center gap-0 uppercase tracking-widest active:scale-95"
           >
-            <span className="material-symbols-outlined">analytics</span>
-            Solicitar análisis
+            <span className="text-[11px]">Deep Audit (Sincronizar IA)</span>
+            <span className="text-[8px] opacity-70">Consumirá 1 Crédito de Auditoría</span>
           </button>
           
           <button 
             onClick={handleResetRecording}
-            className="w-full h-14 bg-[#283039] hover:bg-[#3b4754] text-white font-medium rounded-2xl transition-all border border-[#3b4754] flex items-center justify-center gap-3"
+            className="w-full h-14 bg-transparent hover:bg-white/5 text-slate-400 font-bold rounded-2xl transition-all border border-white/10 flex items-center justify-center gap-3 active:scale-95"
           >
-            <span className="material-symbols-outlined">refresh</span>
-            Volver a grabar
+            <span className="material-symbols-outlined text-lg">refresh</span>
+            Perfeccionar y Regrabar
           </button>
         </div>
+
+
       </main>
     );
   }

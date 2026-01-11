@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { getOrCreateAnonymousUserId } from '@/lib/anonymousUser';
 
 interface Session {
@@ -40,12 +41,13 @@ const levelColors = {
 };
 
 const levelLabels = {
-  LOW: 'Baja',
-  MEDIUM: 'Media',
-  HIGH: 'Alta',
+  LOW: 'Crítico',
+  MEDIUM: 'Moderado',
+  HIGH: 'Consistente',
 };
 
 export default function MySessionsPage() {
+  const { data: session, status } = useSession();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [usage, setUsage] = useState<Usage | null>(null);
@@ -54,9 +56,15 @@ export default function MySessionsPage() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      setLoading(false);
+      return;
+    }
+
     const fetchSessions = async () => {
       try {
-        const userId = getOrCreateAnonymousUserId();
+        const userId = session?.user?.email || "";
         const response = await fetch(`/api/my-sessions?userId=${userId}`);
         const data = await response.json();
 
@@ -76,7 +84,7 @@ export default function MySessionsPage() {
     };
 
     fetchSessions();
-  }, []);
+  }, [session, status]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -104,7 +112,7 @@ export default function MySessionsPage() {
           <Link href="/listen" className="text-slate-400 hover:text-white">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <h1 className="font-bold text-lg">Mi Progreso 📈</h1>
+          <h1 className="font-black text-lg uppercase tracking-widest text-blue-500">Auditoría</h1>
           <div className="w-6"></div>
         </div>
       </header>
@@ -137,50 +145,49 @@ export default function MySessionsPage() {
           <>
             {/* Stats Cards */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800">
-                <p className="text-slate-400 text-sm">Total Sesiones</p>
+              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-sm">
+                <p className="text-slate-500 text-[9px] font-black uppercase tracking-widest mb-1">Total Auditorías</p>
                 <p className="text-4xl font-black text-white">{stats.totalSessions}</p>
               </div>
-              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800">
-                <p className="text-slate-400 text-sm">Score Promedio</p>
-                <p className="text-4xl font-black text-blue-400">{stats.avgScore}</p>
+              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-sm">
+                <p className="text-slate-500 text-[9px] font-black uppercase tracking-widest mb-1">Score de Dominancia</p>
+                <p className="text-4xl font-black text-blue-500">{stats.avgScore}</p>
               </div>
             </div>
 
             {/* Plan Usage Card */}
             {usage && (
-              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800">
-                <div className="flex justify-between items-center mb-2">
-                   <h3 className="text-lg font-bold">Tu Actividad</h3>
+              <div className="bg-gradient-to-br from-blue-950/20 to-black/40 rounded-3xl p-8 border border-white/10 backdrop-blur-md">
+                <div className="flex justify-between items-center mb-6">
+                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400">Capacidad Operativa</h3>
                    {usage.limit === -1 
-                     ? <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold uppercase">Ilimitado</span>
-                     : <span className="text-xs text-slate-400">Renueva: {usage.resetDate ? new Date(usage.resetDate).toLocaleDateString() : 'Pronto'}</span>
+                     ? <span className="text-[9px] bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-blue-500/30">Pase Elite</span>
+                     : <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Reinicio: {usage.resetDate ? new Date(usage.resetDate).toLocaleDateString() : 'Pendiente'}</span>
                    }
                 </div>
                 
                 {usage.limit !== -1 ? (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                       <span className="text-slate-400">Análisis realizados</span>
-                       <span className="font-mono text-white">{usage.current}</span>
+                  <div className="space-y-4">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                       <span className="text-slate-500">Créditos de Escáner</span>
+                       <span className="text-white">{usage.current} / {usage.limit}</span>
                     </div>
-                    {/* Barra visual sutil para feedback, sin números explícitos */}
-                    <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mt-2">
+                    <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                        <div 
                          className={`h-full transition-all duration-1000 ${
-                           usage.isLimitReached ? 'bg-red-500' : 'bg-blue-500'
-                         }`}
+                           usage.isLimitReached ? 'bg-red-500' : 'bg-blue-600'
+                         } shadow-[0_0_15px_rgba(37,99,235,0.4)]`}
                          style={{ width: `${Math.min((usage.current / usage.limit) * 100, 100)}%` }}
                        />
                     </div>
                     {usage.isLimitReached && (
-                      <p className="text-xs text-red-400 mt-2 font-bold">
-                        Has alcanzado tu límite de uso justo. <Link href="/upgrade" className="underline">Ver opciones</Link>
+                      <p className="text-[10px] text-red-400 mt-4 font-black uppercase tracking-widest text-center">
+                        Capacidad Agotada. <Link href="/upgrade" className="text-white underline">Expandir Licencia</Link>
                       </p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-emerald-400 text-sm">¡Tienes acceso total! Sigue practicando.</p>
+                  <p className="text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Operación Ilimitada Activa</p>
                 )}
               </div>
             )}

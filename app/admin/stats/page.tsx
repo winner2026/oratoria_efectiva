@@ -131,34 +131,35 @@ export default function AdminStatsPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <StatCard 
-              title="Usuarios" 
-              value={stats?.totalUsers || 0} 
-              subtitle="Tráfico Total" 
-              target="Crecer +10% semanal"
+              title="Leads (Free)" 
+              value={stats?.freeUsers || 0} 
+              subtitle="Nivel Base" 
+              target="Conversion Target"
               onClick={() => setExplanation({
-                title: "Tráfico de Entrada",
-                text: "Si este número sube y la Tasa de Conversión se mantiene, el negocio crece. Si este número sube pero los errores técnicos también, estás desperdiciando dinero en publicidad."
+                title: "Usuarios Gratuitos",
+                text: "Usuarios que han probado la herramienta pero aún no han comprado. Tu misión es convertirlos a Starter o Premium."
               })}
             />
             <StatCard 
-              title="Activos" 
-              value={stats?.activeUsers || 0} 
-              subtitle="Usaron la IA" 
-              target="Mín. 30% del Total"
+              title="Starter" 
+              value={stats?.starterUsers || 0} 
+              subtitle="Plan Sprint" 
+              target="Growth Target"
+              positive={ (stats?.starterUsers || 0) > 0 }
               onClick={() => setExplanation({
-                title: "Activación de Usuarios",
-                text: "Un usuario activo es quien ya grabó y probó el producto. Si este número es bajo comparado al Total, tu página de inicio no está convenciendo a la gente de probar la herramienta."
+                title: "Usuarios Starter",
+                text: "Clientes que han pagado por el plan intermedio. Han dado el primer paso hacia la oratoria profesional."
               })}
             />
             <StatCard 
               title="Premium" 
               value={stats?.premiumUsers || 0} 
-              subtitle="Clientes" 
+              subtitle="Elite Ejecutivo" 
               target="Target: 3% de Activos"
               positive={ (stats?.premiumUsers || 0) > 0 }
               onClick={() => setExplanation({
-                title: "Conversión a Pago",
-                text: "Usuarios que valoran tanto la herramienta que pagan. Un 3% es el estándar de oro en aplicaciones Pro. Si es < 1%, debemos revisar los precios o la oferta."
+                title: "Usuarios Premium",
+                text: "Tus mejores clientes. Aquellos que han invertido en el análisis avanzado y acceso total."
               })}
             />
             <StatCard 
@@ -169,7 +170,7 @@ export default function AdminStatsPage() {
               urgent={ (stats?.technicalErrors || 0) > 0 }
               onClick={() => setExplanation({
                 title: "Salud Técnica",
-                text: "Si ves Rojo aquí, significa que hay usuarios queriendo usar tu app pero su navegador o dispositivo falla. Cada error aquí es un cliente perdido por frustración."
+                text: "Si ves Rojo aquí, significa que hay problemas técnicos bloqueando la experiencia."
               })}
             />
           </div>
