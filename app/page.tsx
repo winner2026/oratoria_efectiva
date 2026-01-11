@@ -63,7 +63,7 @@ export default function LandingPage() {
              Vocal Intelligence Protocol v2.5
           </div>
 
-          <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[1.1] md:leading-[1.05] text-white uppercase italic break-words">
+          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tight leading-[1.1] md:leading-[1.05] text-white uppercase italic break-words">
             Tu voz es tu <br className="md:hidden" />
             <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-indigo-400 to-amber-500 whitespace-nowrap md:whitespace-normal pr-4 pb-2 inline-block">Mayor Activo</span> <br /> 
             o tu mayor traición.
@@ -90,7 +90,7 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Image / Interface Mockup */}
-        <div className="mt-20 relative max-w-5xl mx-auto w-full group">
+        <div className="mt-12 relative max-w-5xl mx-auto w-full group">
            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-amber-600 rounded-[40px] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
            <div className="relative bg-[#0A0F14] rounded-[32px] overflow-hidden border border-white/10 shadow-2xl">
               <img 
@@ -104,7 +104,7 @@ export default function LandingPage() {
       </section>
 
       {/* SECCIÓN 2: AGITACIÓN DEL PROBLEMA */}
-      <section className="py-32 px-6 bg-white/[0.02] border-y border-white/5">
+      <section className="py-20 px-6 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="space-y-6">
             <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-tight">
@@ -138,8 +138,8 @@ export default function LandingPage() {
       </section>
 
       {/* SECCIÓN 3: LA SOLUCIÓN (BENEFICIOS) */}
-      <section className="py-40 px-6 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto text-center mb-24 space-y-4">
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto text-center mb-20 space-y-4">
            <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-tight">Tecnología de <br className="md:hidden" /> <span className="text-blue-500">Grado Militar</span></h2>
            <p className="text-slate-500 uppercase tracking-widest font-black text-xs">Para comunicación civil de alto nivel</p>
         </div>
@@ -161,10 +161,10 @@ export default function LandingPage() {
       </section>
 
       {/* SECCIÓN 5: PRICING (PLANES) */}
-      <section className="py-40 px-6 bg-[#07090C]">
+      <section className="py-24 px-6 bg-[#07090C]">
         <div className="max-w-6xl mx-auto flex flex-col items-center">
-          <header className="text-center mb-20 space-y-4">
-            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tight">Selecciona tu <span className="italic text-slate-500">Rango</span></h2>
+          <header className="text-center mb-16 space-y-4">
+            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tight leading-snug">Selecciona tu <br className="md:hidden" /> <span className="italic text-slate-500">Rango</span></h2>
             <p className="text-slate-400 max-w-xl mx-auto">No es una mensualidad, es una inversión en tu capacidad de negociación.</p>
           </header>
 
@@ -246,9 +246,9 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER FINAL CTA */}
-      <section className="py-40 px-6 text-center">
+      <section className="py-24 px-6 text-center">
          <div className="max-w-4xl mx-auto space-y-12">
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter italic">
+            <h2 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter italic leading-snug">
                No nazcas líder. <br /> <span className="text-blue-500">Constrúyelo.</span>
             </h2>
             <p className="text-slate-500 font-mono text-sm max-w-xl mx-auto uppercase">
