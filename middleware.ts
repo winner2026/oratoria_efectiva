@@ -13,6 +13,6 @@ export const config = {
      * 5. /public/* (static assets)
      * 6. Favicon, icons, etc.
      */
-    "/((?!api/auth|_next|favicon.ico|public|auth/login|$|waitlist|offer).*)",
+    "/((?!api/auth|_next|favicon.ico|public|auth/login$|waitlist|offer|upgrade|$|logo-app.png).*)",
   ],
 }

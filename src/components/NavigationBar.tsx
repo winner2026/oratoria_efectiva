@@ -1,7 +1,6 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const NavigationBar = () => {
@@ -54,7 +53,22 @@ const NavigationBar = () => {
 
   return (
     <>
-
+      {/* GLOBAL TOP HEADER FOR APP */}
+      <header className="fixed top-0 left-0 w-full p-4 md:p-6 z-40 bg-gradient-to-b from-[#0A0F14] to-transparent pointer-events-none flex items-center justify-between">
+          <div className="flex items-center gap-3 pointer-events-auto">
+             <div className="relative size-8 md:size-10 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 p-1.5 shadow-2xl">
+                <Image 
+                   src="/logo-app.png" 
+                   alt="Oratoria Pro Logo" 
+                   fill 
+                   className="object-contain p-0.5"
+                />
+             </div>
+             <span className="font-black tracking-tighter text-xs md:text-sm uppercase text-white/50">
+                Oratoria <span className="text-blue-500">Pro</span>
+             </span>
+          </div>
+      </header>
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 pb-safe">
         <div className="max-w-md mx-auto px-4 h-20 flex items-center justify-between">
