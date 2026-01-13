@@ -34,7 +34,7 @@ function calculateProjectionScore(volumeHistory: number[]): { score: number; sta
     }
 
     // Filter out complete silence (mic not picking up anything)
-    const validVolumes = volumeHistory.filter(v => v > 5);
+    const validVolumes = volumeHistory.filter(v => v > 3);
     if (validVolumes.length < 20) {
         return { score: 0, stats: { samples: validVolumes.length, avgVolume: 0, timeInOptimal: 0, consistency: 0, peakVolume: 0 }};
     }
@@ -105,7 +105,8 @@ export default function ProjectionPage() {
   
   const [maxVolume, setMaxVolume] = useState(0);
   const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
-  const [phase, setPhase] = useState<'idle' | 'active' | 'results'>('idle');
+  const [phase, setPhase] = useState<'idle' | 'countdown' | 'active' | 'results'>('idle');
+  const [countdownVal, setCountdownVal] = useState(5);
   const [timeLeft, setTimeLeft] = useState(EXERCISE_DURATION);
   const [finalScore, setFinalScore] = useState(0);
   const [finalStats, setFinalStats] = useState<VolumeStats | null>(null);
@@ -138,13 +139,30 @@ export default function ProjectionPage() {
       };
   }, [stopListening]);
   
-  // Start exercise
+  // Start exercise (Countdown)
   const startExercise = useCallback(() => {
+      setPhase('countdown');
+      setCountdownVal(5);
+      
+      // Intentar iniciar audio para pedir permisos
+      startListening(); 
+
+      let count = 5;
+      const interval = setInterval(() => {
+          count--;
+          setCountdownVal(count);
+          if (count <= 0) {
+              clearInterval(interval);
+              beginSession();
+          }
+      }, 1000);
+  }, [startListening]);
+
+  const beginSession = () => {
       setPhase('active');
       setTimeLeft(EXERCISE_DURATION);
       setVolumeHistory([]);
       setMaxVolume(0);
-      startListening();
       
       // Timer
       timerRef.current = setInterval(() => {
@@ -163,8 +181,7 @@ export default function ProjectionPage() {
       sampleIntervalRef.current = setInterval(() => {
           setVolumeHistory(prev => [...prev, volumeRef.current]);
       }, 100);
-      
-  }, [startListening, stopListening]);
+  };
   
   // Continuously update volume history while active
   useEffect(() => {
@@ -367,7 +384,9 @@ export default function ProjectionPage() {
 
             {/* Current Value Display */}
             <div className="text-center space-y-2 h-24">
-                {phase === 'active' ? (
+                {phase === 'countdown' ? (
+                     <div className="text-8xl font-black text-amber-500 animate-bounce-in">{countdownVal}</div>
+                ) : phase === 'active' ? (
                     <>
                         <div className={`text-2xl font-black uppercase tracking-wider ${zone.color} animate-bounce-in`}>
                             {zone.label}

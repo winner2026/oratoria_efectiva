@@ -201,7 +201,8 @@ export default function IntonationPage() {
   
   const [history, setHistory] = useState<number[]>([]);
   const [fullPitchHistory, setFullPitchHistory] = useState<number[]>([]);
-  const [phase, setPhase] = useState<'idle' | 'active' | 'results'>('idle');
+  const [phase, setPhase] = useState<'idle' | 'countdown' | 'active' | 'results'>('idle');
+  const [countdownVal, setCountdownVal] = useState(5);
   const [timeLeft, setTimeLeft] = useState(EXERCISE_DURATION);
   const [finalStats, setFinalStats] = useState<IntonationStats | null>(null);
   
@@ -224,14 +225,30 @@ export default function IntonationPage() {
       };
   }, [stopListening]);
   
-  // Start exercise
+  // Start exercise (Countdown)
   const startExercise = useCallback(() => {
+      setPhase('countdown');
+      setCountdownVal(5);
+      
+      startListening(); // Init audio to get permissions
+
+      let count = 5;
+      const interval = setInterval(() => {
+          count--;
+          setCountdownVal(count);
+          if (count <= 0) {
+              clearInterval(interval);
+              beginSession();
+          }
+      }, 1000);
+  }, [startListening]);
+
+  const beginSession = () => {
       setPhase('active');
       setTimeLeft(EXERCISE_DURATION);
       setHistory([]);
       setFullPitchHistory([]);
-      startListening();
-      
+
       timerRef.current = setInterval(() => {
           setTimeLeft(prev => {
               if (prev <= 1) {
@@ -243,7 +260,7 @@ export default function IntonationPage() {
               return prev - 1;
           });
       }, 1000);
-  }, [startListening, stopListening]);
+  };
   
   // End exercise when timer hits 0
   useEffect(() => {
@@ -275,9 +292,9 @@ export default function IntonationPage() {
         const currentPitch = pitchRef.current;
         const currentClarity = clarityRef.current;
         
-        // Lower clarity threshold (0.5) for natural speech detection
+        // Lower clarity threshold (0.3) for natural speech detection on mobile
         // Speech has lower clarity than singing
-        const val = (currentClarity > 0.5 && currentPitch > 0) ? currentPitch : 0;
+        const val = (currentClarity > 0.3 && currentPitch > 0) ? currentPitch : 0;
         
         // For visualization (last 100 points)
         setHistory(prev => {
@@ -525,6 +542,14 @@ export default function IntonationPage() {
         <div className="relative w-full h-[250px] md:h-[400px] bg-slate-900 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
              
              {/* Overlay Content */}
+             {phase === 'countdown' && (
+                 <div className="absolute inset-0 flex items-center justify-center bg-transparent z-10 animate-bounce-in">
+                      <div className="text-9xl font-black text-amber-500 drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
+                          {countdownVal}
+                      </div>
+                 </div>
+             )}
+
              {phase === 'idle' && (
                  <div className="absolute inset-0 flex items-center justify-center bg-transparent z-10">
                       <button 

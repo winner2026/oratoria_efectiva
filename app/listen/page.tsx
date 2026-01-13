@@ -109,9 +109,11 @@ export default function ListenPage() {
               {protocolAccess && (
                 protocolAccess.isLocked ? (
                   <div className="bg-gradient-to-br from-amber-900/10 to-black/40 border border-amber-500/20 rounded-[28px] p-6 relative overflow-hidden backdrop-blur-md">
-                    <div className="absolute top-0 right-0 bg-amber-600/20 px-3 py-1 rounded-bl-2xl border-l border-b border-amber-500/10">
-                        <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Día {new Date().getDate()}/30</span>
-                    </div>
+                    {planType !== 'FREE' && (
+                        <div className="absolute top-0 right-0 bg-amber-600/20 px-3 py-1 rounded-bl-2xl border-l border-b border-amber-500/10">
+                            <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Día {new Date().getDate()}/30</span>
+                        </div>
+                    )}
                     <div className="opacity-30 blur-[1px] mb-4">
                         <h3 className="text-lg font-bold text-white leading-tight">Misión Bloqueada</h3>
                         <p className="text-slate-500 text-xs mt-1">Requiere actualización de estatus.</p>
@@ -122,9 +124,11 @@ export default function ListenPage() {
                   </div>
                 ) : (
                   <div className="bg-white/[0.03] border border-white/10 rounded-[28px] p-6 relative overflow-hidden backdrop-blur-sm group hover:bg-white/[0.05] transition-all">
-                    <div className="absolute top-0 right-0 bg-blue-600/10 px-3 py-1 rounded-bl-2xl border-l border-b border-blue-500/10">
-                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Día {protocolAccess.protocol.day}/30</span>
-                    </div>
+                    {planType !== 'FREE' && (
+                        <div className="absolute top-0 right-0 bg-blue-600/10 px-3 py-1 rounded-bl-2xl border-l border-b border-blue-500/10">
+                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Día {protocolAccess.protocol.day}/30</span>
+                        </div>
+                    )}
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">{protocolAccess.protocol.phase}</span>
                     <h3 className="text-xl font-black text-white leading-tight mb-3">{protocolAccess.protocol.title}</h3>
                     <p className="text-slate-400 text-sm font-medium leading-relaxed italic border-l border-blue-500/50 pl-4 mb-5">

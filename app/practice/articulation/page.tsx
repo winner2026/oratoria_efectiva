@@ -209,8 +209,8 @@ export default function ArticulationPage() {
 
   const startLevel = () => {
       setPhase("countdown");
-      let count = 3;
-      setStatusMessage("3");
+      let count = 5;
+      setStatusMessage("5");
       setMatchedIndices(new Set());
       
       const interval = setInterval(() => {

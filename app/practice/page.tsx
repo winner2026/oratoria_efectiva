@@ -65,6 +65,9 @@ function PracticeContent() {
   const [showPiano, setShowPiano] = useState(false);
   const [recordingStream, setRecordingStream] = useState<MediaStream | null>(null);
   const [isMicEnabled, setIsMicEnabled] = useState(false);
+  
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [countdownVal, setCountdownVal] = useState(5);
 
   const { data: session, status } = useSession();
 
@@ -138,9 +141,8 @@ function PracticeContent() {
   }, [isCheckingIncognito, showIncognitoWarning]);
 
   const startRecording = async () => {
-
-
     try {
+      // 1. Obtener/Validar Stream
       let stream = recordingStream;
       if (!stream) {
          stream = await navigator.mediaDevices.getUserMedia({ 
@@ -152,8 +154,30 @@ function PracticeContent() {
          });
          setRecordingStream(stream);
       }
+      
+      // 2. Iniciar Cuenta Regresiva
+      setIsCountingDown(true);
+      setCountdownVal(5);
+      
+      let count = 5;
+      const interval = setInterval(() => {
+          count--;
+          setCountdownVal(count);
+          if (count <= 0) {
+              clearInterval(interval);
+              setIsCountingDown(false);
+              beginRecording(stream as MediaStream); // Go!
+          }
+      }, 1000);
 
-      // 🔒 SINCRONIZAR ESTADO DE BOTONES CON EL NUEVO STREAM
+    } catch (error: any) {
+      console.error("Error accessing media devices:", error);
+      alert("No se pudo acceder al micrófono. Por favor, permite el acceso.");
+    }
+  };
+
+  const beginRecording = (stream: MediaStream) => {
+      // 🔒 SINCRONIZAR ESTADO DE BOTONES CON EL STREAM
       stream.getAudioTracks().forEach(track => track.enabled = true);
       // Ensure state matches reality
       setIsMicEnabled(true);
@@ -171,7 +195,7 @@ function PracticeContent() {
         }
       }
 
-      // Solo grabar pistas de audio para reducir tamaño (el video no se sube)
+      // Solo grabar pistas de audio
       const audioStream = new MediaStream(stream.getAudioTracks());
       const mediaRecorder = new MediaRecorder(audioStream, options);
       
@@ -213,7 +237,7 @@ function PracticeContent() {
           return;
         }
 
-        // 🔍 PROCESAMIENTO LOCAL (CERO COSTE)
+        // 🔍 PROCESAMIENTO LOCAL
         try {
             const context = new (window.AudioContext || (window as any).webkitAudioContext)();
             const buffer = await context.decodeAudioData(await blob.arrayBuffer());
@@ -240,10 +264,6 @@ function PracticeContent() {
 
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (error: any) {
-      console.error("Error accessing media devices:", error);
-      alert("No se pudo acceder al micrófono. Por favor, permite el acceso.");
-    }
   };
 
   // Helper para liberar recursos
@@ -587,6 +607,14 @@ function PracticeContent() {
 
   return (
     <main className="fixed inset-0 bg-black font-display text-white overflow-hidden z-[999]">
+      {/* COUNTDOWN OVERLAY */}
+      {isCountingDown && (
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-xl z-[1000] flex items-center justify-center animate-bounce-in pointer-events-none">
+              <div className="text-[15rem] md:text-[25rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-orange-600 drop-shadow-[0_0_80px_rgba(245,158,11,0.5)]">
+                  {countdownVal}
+              </div>
+          </div>
+      )}
       <div className="absolute inset-0 z-0 bg-black flex items-center justify-center overflow-hidden">
         
         {/* 🎙️ MEDIDOR DE VOLUMEN (Vertical Extenso) - SOLO EN VIDEO MODE */}

@@ -107,8 +107,8 @@ export default function ImprovisationPage() {
       setVolume(avg);
 
       // Silence Logic
-      // Threshold: 10 (adjust based on sensitivity, usually ~5-10 is background noise)
-      if (avg < 15) {
+      // Threshold: 8 (adjust based on sensitivity, usually ~5-10 is background noise)
+      if (avg < 8) {
           silenceTimeRef.current += 16; // approx 60fps frame time
       } else {
           silenceTimeRef.current = Math.max(0, silenceTimeRef.current - 50); // Recover quickly if speaking
@@ -129,8 +129,8 @@ export default function ImprovisationPage() {
       getRandomTopic();
       setPhase("countdown");
       // Countdown animation handled visually, logic simpler
-      let count = 3;
-      setFeedback("3");
+      let count = 5;
+      setFeedback("5");
       
       startAudio().then(() => {
           const interval = setInterval(() => {

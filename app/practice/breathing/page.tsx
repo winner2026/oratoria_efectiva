@@ -3,17 +3,20 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AudioVisualizer from "@/components/AudioVisualizer";
 
 export default function BreathingExercisePage() {
   const router = useRouter();
   
   // Estados del ejercicio
-  const [phase, setPhase] = useState<"intro" | "recording" | "results">("intro");
+  const [phase, setPhase] = useState<"intro" | "countdown" | "recording" | "results">("intro");
+  const [countdownVal, setCountdownVal] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [stabilityScore, setStabilityScore] = useState(100);
   const [volume, setVolume] = useState(0);
   const [feedback, setFeedback] = useState<"stable" | "shaky" | "quiet">("quiet");
+  const [stream, setStream] = useState<MediaStream | null>(null);
   
   // Refs para Audio
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -26,7 +29,7 @@ export default function BreathingExercisePage() {
   const volumeHistoryRef = useRef<number[]>([]);
 
   // Constantes
-  const MIN_VOLUME_THRESHOLD = 15;
+  const MIN_VOLUME_THRESHOLD = 5; // Bajar umbral para micrófonos sensibles, especialmente móbiles
   const GOAL_TIME = 20;     // Meta de segundos
   const GOAL_STABILITY = 80; // Meta de estabilidad
 
@@ -44,6 +47,7 @@ export default function BreathingExercisePage() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStreamRef.current = stream;
+      setStream(stream);
       
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       audioContextRef.current = audioContext;
@@ -54,17 +58,25 @@ export default function BreathingExercisePage() {
       source.connect(analyser);
       analyserRef.current = analyser;
       
-      setPhase("recording");
-      setIsActive(false);
-      setSeconds(0);
-      setStabilityScore(100);
-      volumeHistoryRef.current = [];
-      startTimeRef.current = null; // Reset explicit
-
-      // Dar un pequeño delay para que el contexto arranque bien
-      setTimeout(() => {
-          analyzeLoop();
-      }, 100);
+      // START COUNTDOWN
+      setPhase("countdown");
+      setCountdownVal(5);
+      
+      let count = 5;
+      const interval = setInterval(() => {
+          count--;
+          setCountdownVal(count);
+          if (count <= 0) {
+              clearInterval(interval);
+              setPhase("recording");
+              setIsActive(false);
+              setSeconds(0);
+              setStabilityScore(100);
+              volumeHistoryRef.current = [];
+              startTimeRef.current = null;
+              analyzeLoop();
+          }
+      }, 1000);
       
     } catch (err) {
       console.error("Error micrófono:", err);
@@ -81,6 +93,7 @@ export default function BreathingExercisePage() {
         mediaStreamRef.current.getTracks().forEach(t => t.stop());
         mediaStreamRef.current = null;
     }
+    setStream(null);
     if (audioContextRef.current) {
         audioContextRef.current.close().catch(() => {});
         audioContextRef.current = null;
@@ -211,7 +224,17 @@ export default function BreathingExercisePage() {
              </div>
          )}
 
-         {phase === "recording" && (
+          {phase === "countdown" && (
+             <div className="flex flex-col items-center justify-center min-h-[50vh] animate-bounce-in">
+                 <div className="text-xl text-blue-400 font-bold uppercase tracking-widest mb-4">Prepárate</div>
+                 <div className="text-9xl font-black text-white drop-shadow-[0_0_50px_rgba(59,130,246,0.5)]">
+                     {countdownVal}
+                 </div>
+                 <p className="text-slate-400 mt-4">Inhala profundo...</p>
+             </div>
+          )}
+
+          {phase === "recording" && (
              <div className="w-full max-w-lg flex flex-col items-center gap-12">
                  
                  <div className="relative size-48 md:size-64 flex items-center justify-center">
@@ -252,6 +275,14 @@ export default function BreathingExercisePage() {
                          </div>
                      )}
                  </div>
+
+                 <div className="w-full max-w-xs h-20 flex items-center justify-center">
+                    {stream && <AudioVisualizer stream={stream} isActive={true} />}
+                 </div>
+
+                 {volume > 1 && volume < MIN_VOLUME_THRESHOLD && !isActive && (
+                    <p className="text-xs text-orange-400 animate-pulse">¡Te escucho pero muy bajo! Acerca el micrófono.</p>
+                 )}
 
                  <button 
                     onClick={stopExercise}
