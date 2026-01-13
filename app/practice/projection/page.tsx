@@ -14,10 +14,10 @@ const EXERCISE_DURATION = 30; // seconds
 // Volume zones (0-100 scale after our *400 multiplier)
 const ZONES = {
     SILENCE: { min: 0, max: 10 },
-    WHISPER: { min: 10, max: 40 },
-    CONVERSATION: { min: 40, max: 70 },  // Good
-    PROJECTION: { min: 70, max: 90 },    // Excellent
-    SATURATION: { min: 90, max: 100 },   // Too loud
+    WHISPER: { min: 10, max: 35 },        // Reduced range slightly
+    CONVERSATION: { min: 35, max: 75 },   // Widened Optimal Zone (was 40-70)
+    PROJECTION: { min: 75, max: 95 },     // Widened Projection Zone (was 70-90)
+    SATURATION: { min: 95, max: 100 },    // Higher threshold for saturation (was 90)
 };
 
 interface VolumeStats {
@@ -51,7 +51,8 @@ function calculateProjectionScore(volumeHistory: number[]): { score: number; sta
     const squaredDiffs = validVolumes.map(v => Math.pow(v - avgVolume, 2));
     const stdDev = Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / validVolumes.length);
     // Lower stdDev = better consistency. 0-20 stdDev is good.
-    const consistency = Math.max(0, 100 - (stdDev * 2.5));
+    // Relaxed penalty: multipier lowered from 2.5 to 1.5
+    const consistency = Math.max(0, 100 - (stdDev * 1.5));
     
     // Composite score:
     // 50% weight on time in optimal zone

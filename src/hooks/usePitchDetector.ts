@@ -28,20 +28,30 @@ export function usePitchDetector() {
     }
     rms = Math.sqrt(rms / size);
     
-    // Threshold to avoid noise
-    if (rms < 0.01) return { freq: 0, clarity: 0, rms };
+    // Threshold to avoid noise - Lowered for mobile sensitivity (was 0.01)
+    if (rms < 0.002) return { freq: 0, clarity: 0, rms };
 
-    // 2. Autocorrelation
-    // Trim buffer to avoid start/end noise if needed, but standard wide buffer is ok.
+    // 2. Autocorrelation (Optimized for robust detection)
     // Constrain search range for human voice (approx 50Hz to 1000Hz)
     
+    // Safer trimming: only trim if we have enough data
     let r1 = 0, r2 = size - 1;
     const thres = 0.2;
+    
+    // Scan from front
     for (let i = 0; i < size / 2; i++) {
         if (Math.abs(buf[i]) < thres) { r1 = i; break; }
     }
+    
+    // Scan from back
     for (let i = 1; i < size / 2; i++) {
         if (Math.abs(buf[size - i]) < thres) { r2 = size - i; break; }
+    }
+    
+    // Safety check: if trimming removes too much, use full buffer
+    if ((r2 - r1) < size * 0.4) {
+        r1 = 0;
+        r2 = size - 1;
     }
 
     // Simple autocorrelation
