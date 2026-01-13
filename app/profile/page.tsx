@@ -36,8 +36,8 @@ export default function ProfilePage() {
       .catch(err => {
          console.error("Error loading profile:", err);
          // Fallback basic info
-         const name = localStorage.getItem("user_name") || "Usuario";
-         const email = localStorage.getItem("user_email") || "";
+         const name = localStorage.getItem("user_name") || "Agente Anónimo";
+         const email = localStorage.getItem("user_email") || "ID Desconocido";
          setUser({ 
              name, 
              email, 
@@ -50,113 +50,157 @@ export default function ProfilePage() {
   }, [router]);
 
   const handleLogout = () => {
-    if (confirm("¿Seguro que quieres cerrar sesión?")) {
+    if (confirm("¿Confirmar desconexión de red segura?")) {
       localStorage.clear();
       window.location.href = "/";
     }
   };
 
   const handleManageSubscription = () => {
-      // Redirigir siempre a /upgrade por ahora
-      // En el futuro, aquí iría la lógica del Portal de Cliente si es PREMIUM
       router.push("/upgrade");
   };
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Cargando perfil...</div>;
+  // 🛡️ PLAN MAPPING
+  const getPlanLabel = (plan: string) => {
+    if (plan === 'STARTER') return 'ACCESO TÁCTICO';
+    if (plan === 'PREMIUM' || plan === 'ELITE') return 'RANGO SOBERANO';
+    return 'ACCESO CIVIL (LIMITADO)';
+  };
+
+  const getPlanColor = (plan: string) => {
+    if (plan === 'STARTER') return 'text-blue-400 border-blue-500/50 bg-blue-500/10';
+    if (plan === 'PREMIUM' || plan === 'ELITE') return 'text-amber-500 border-amber-500/50 bg-amber-500/10';
+    return 'text-slate-500 border-slate-700 bg-slate-800/50';
+  };
+
+  if (loading) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-slate-500 text-xs font-mono uppercase animate-pulse">Cargando expediente...</div>;
   if (!user) return null;
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white font-display pb-32">
+    <main className="min-h-screen bg-[#050505] text-white font-display pb-32 selection:bg-blue-500/30">
+        
+      {/* 🌌 BACKGROUND FX */}
+      <div className="fixed inset-0 z-0 opacity-20 pointer-events-none">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-900/20 blur-[100px] rounded-full" />
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-slate-800/20 blur-[100px] rounded-full" />
+      </div>
+
       {/* Header */}
-      <header className="p-4 flex items-center justify-between bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <Link href="/listen" className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all">
-            <span className="material-symbols-outlined">arrow_back</span>
-          </Link>
-          <div className="flex flex-col">
-            <h1 className="text-sm font-black uppercase tracking-widest text-white">{user.name}</h1>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">{user.email}</p>
-          </div>
-        </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-[9px] font-black uppercase tracking-widest text-blue-400 shadow-xl">
-          <span className={`size-1.5 rounded-full ${user.plan === 'FREE' ? 'bg-slate-500' : 'bg-blue-500 animate-pulse'}`}/>
-          {user.plan === 'FREE' ? 'Nivel Base' : `Plan ${user.plan}`}
+      <header className="p-6 relative z-10 flex items-center justify-between border-b border-white/5 backdrop-blur-sm sticky top-0">
+        <Link href="/listen" className="size-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+             <span className="material-symbols-outlined">arrow_back</span>
+        </Link>
+        <div className="text-right">
+             <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Expediente</h2>
+             <p className="text-sm font-bold font-mono tracking-tighter text-white">#{user.email.split('@')[0].toUpperCase()}</p>
         </div>
       </header>
 
-      <div className="p-6 space-y-8 max-w-md mx-auto">
+      <div className="p-6 space-y-10 max-w-md mx-auto relative z-10">
         
-        {/* Sección: Uso y Saldo (VERIFICACIÓN) */}
-        <section>
-          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Métricas de Entrenamiento</h2>
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-               <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
-                 <span className="material-symbols-outlined">bolt</span>
-               </div>
-               <div>
-                 <p className="font-bold text-lg">{user.credits} Sesiones</p>
-                 <p className="text-xs text-slate-500 font-mono">
-                    Histórico: <strong className="text-slate-300">{user.totalUsage} Optimizaciones</strong>
-                 </p>
-               </div>
+        {/* ID CARD */}
+        <div className="relative group">
+            <div className={`absolute inset-0 bg-gradient-to-r ${user.plan === 'ELITE' || user.plan === 'PREMIUM' ? 'from-amber-500/20 to-orange-500/20' : 'from-blue-500/20 to-purple-500/20'} blur-xl rounded-3xl opacity-50`}></div>
+            <div className="relative bg-[#0A0F14] border border-white/10 rounded-[24px] p-6 overflow-hidden">
+                <div className="flex items-start justify-between mb-8">
+                    <div className="size-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                        <span className="text-2xl font-black text-slate-400">{user.name.charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div className={`px-3 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest ${getPlanColor(user.plan)}`}>
+                        {getPlanLabel(user.plan)}
+                    </div>
+                </div>
+                
+                <div className="space-y-1">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Identidad del Operador</p>
+                    <h1 className="text-2xl font-black text-white">{user.name}</h1>
+                    <p className="text-sm text-slate-400 font-mono">{user.email}</p>
+                </div>
+
+                {/* DECORATIVE BARCODE */}
+                <div className="mt-6 flex gap-1 opacity-20">
+                    {[...Array(20)].map((_, i) => (
+                        <div key={i} className="h-4 w-1 bg-white" style={{ opacity: Math.random() }}></div>
+                    ))}
+                </div>
             </div>
-            <Link href="/upgrade">
-              <button className="px-4 py-2 bg-white text-slate-950 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors">
-                Recargar
-              </button>
-            </Link>
-          </div>
-        </section>
+        </div>
 
-        {/* Sección: Suscripción */}
-        <section>
-          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Suscripción</h2>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-800">
-             <button 
+        {/* METRICS GRID */}
+        <div className="grid grid-cols-2 gap-4">
+            <div className="bg-[#0F1318] border border-white/5 p-5 rounded-[20px] flex flex-col justify-between h-32 hover:border-blue-500/30 transition-colors group">
+                <div className="p-2 bg-blue-500/10 w-fit rounded-lg text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                    <span className="material-symbols-outlined text-lg">mic</span>
+                </div>
+                <div>
+                     <span className="text-3xl font-black text-white block">{user.totalUsage}</span>
+                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Intervenciones (Total)</span>
+                </div>
+            </div>
+            
+            <div className="bg-[#0F1318] border border-white/5 p-5 rounded-[20px] flex flex-col justify-between h-32 hover:border-emerald-500/30 transition-colors group">
+                <div className="p-2 bg-emerald-500/10 w-fit rounded-lg text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                    <span className="material-symbols-outlined text-lg">bolt</span>
+                </div>
+                <div>
+                     <span className="text-3xl font-black text-white block">{user.credits}</span>
+                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Créditos Tácticos</span>
+                </div>
+                {user.plan === 'FREE' && (
+                    <Link href="/upgrade" className="absolute top-4 right-4 text-emerald-500 animate-pulse">
+                        <span className="material-symbols-outlined text-sm">add_circle</span>
+                    </Link>
+                )}
+            </div>
+        </div>
+
+
+        {/* SETTINGS LIST */}
+        <section className="space-y-4">
+            <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] px-2">Configuración de Sistema</h3>
+            
+            <button 
                onClick={handleManageSubscription}
-               className="w-full flex items-center justify-between p-4 hover:bg-slate-800/50 transition-colors text-left"
-             >
-               <div className="flex items-center gap-3">
-                 <span className="material-symbols-outlined text-slate-400">credit_card</span>
-                 <span className="text-sm font-medium">Gestionar Pagos</span>
-               </div>
-               <span className="material-symbols-outlined text-slate-600 text-sm">arrow_forward_ios</span>
-             </button>
-          </div>
-          <p className="text-[10px] text-slate-600 mt-2 px-2">
-            Gestionado de forma segura por Lemon Squeezy.
-          </p>
+               className="w-full flex items-center justify-between p-5 bg-[#0F1318] border border-white/5 rounded-[20px] hover:bg-white/5 transition-all group active:scale-[0.98]"
+            >
+                <div className="flex items-center gap-4">
+                    <div className="size-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
+                        <span className="material-symbols-outlined">credit_card</span>
+                    </div>
+                    <div className="text-left">
+                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Credenciales de Acceso</span>
+                        <span className="text-[10px] text-slate-500 font-medium">Gestionar plan y facturación</span>
+                    </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-600">chevron_right</span>
+            </button>
+
+            <button 
+               onClick={() => router.push('/gym')}
+               className="w-full flex items-center justify-between p-5 bg-[#0F1318] border border-white/5 rounded-[20px] hover:bg-white/5 transition-all group active:scale-[0.98]"
+            >
+                <div className="flex items-center gap-4">
+                    <div className="size-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
+                        <span className="material-symbols-outlined">fitness_center</span>
+                    </div>
+                    <div className="text-left">
+                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Arsenal Pro</span>
+                        <span className="text-[10px] text-slate-500 font-medium">Historial de entrenamiento</span>
+                    </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-600">chevron_right</span>
+            </button>
         </section>
 
-        {/* Sección: Zona de Peligro & Cuenta */}
-        <section>
-          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Cuenta</h2>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-800">
-             <a 
-               href="mailto:soporte@oratoriaefectiva.in?subject=Solicitud de Baja&body=Hola, deseo eliminar mi cuenta permanentemente."
-               className="w-full flex items-center justify-between p-4 hover:bg-red-500/5 transition-colors text-left group"
-             >
-               <div className="flex items-center gap-3">
-                 <span className="material-symbols-outlined text-red-400 group-hover:text-red-500">delete_forever</span>
-                 <span className="text-sm font-medium text-slate-300 group-hover:text-red-400 transition-colors">Eliminar mi cuenta</span>
-               </div>
-             </a>
-
-             <button 
-               onClick={handleLogout}
-               className="w-full flex items-center justify-between p-4 hover:bg-slate-800/50 transition-colors text-left text-red-500"
-             >
-               <div className="flex items-center gap-3">
-                 <span className="material-symbols-outlined">logout</span>
-                 <span className="text-sm font-bold">Cerrar Sesión</span>
-               </div>
-             </button>
-          </div>
-        </section>
-        
-        <div className="text-center pt-8">
-           <p className="text-[10px] text-slate-700 font-mono">ID: {user.email}</p>
+        {/* DANGER ZONE (Minimalist) */}
+        <div className="pt-8 border-t border-white/5 flex justify-between items-center">
+            <button onClick={handleLogout} className="text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm">power_settings_new</span>
+                Desconectar
+            </button>
+            <a href="mailto:soporte@soberana.io" className="text-[10px] font-bold text-slate-600 hover:text-slate-400 uppercase tracking-widest transition-colors">
+                Reportar Fallo
+            </a>
         </div>
 
       </div>

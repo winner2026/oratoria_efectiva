@@ -46,19 +46,19 @@ export const SITUATIONS: Record<SituationId, { label: string; icon: string; colo
     icon: 'shield',
     color: 'bg-red-600',
     structure: [
-      { title: 'VALIDAR', desc: 'Reconoce la emoción.' },
-      { title: 'RE-ENFOCAR', desc: 'Cambia la perspectiva.' },
-      { title: 'SOLUCIÓN', desc: 'Salida positiva.' }
+      { title: 'VALIDACIÓN NEUTRA', desc: 'Desarma sin ceder.' },
+      { title: 'PUENTE DE SOBERANÍA', desc: 'Mueve de emoción a lógica.' },
+      { title: 'DEVOLUCIÓN DE MARCO', desc: 'Recupera el control.' }
     ],
     prompts: [
-      'Entiendo que te preocupa...',
-      'Sin embargo, el punto real es...',
-      'Por eso sugiero avanzar así...'
+      'Es un punto de vista interesante para poner sobre la mesa...',
+      '...sin embargo, para decidir debemos mirar el dato estructural, que es [X].',
+      '¿Cómo crees que ese factor altera el KPI principal que discutimos?'
     ],
     placeholders: [
-      'Ej: Entiendo tu frustración con el plazo...',
-      'Ej: Pero el bloqueo es técnico, no humano...',
-      'Ej: Revisemos el sprint mañana mismo.'
+      'No te defiendas. Valida la existencia de la pregunta.',
+      'Mueve la conversación a tu terreno lógico.',
+      'Termina con una pregunta. Tú controlas el tiempo.'
     ]
   },
   SUMMARIZE: {

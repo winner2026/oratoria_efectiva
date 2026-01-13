@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
@@ -15,19 +15,19 @@ export default function SOSPage() {
     router.push(`/sos/${id}/anchor`);
   };
 
-  // Mapeo situacional para "Santiago"
+  // Mapeo situacional Nivel Black Ops
   const situationalTitles: Record<string, string> = {
-    EXPOSE: "Tengo que presentar",
-    RESPOND: "Tengo que improvisar",
-    DEFEND: "Me están atacando",
-    SUMMARIZE: "Tengo que cerrar"
+    EXPOSE: "Algoritmo de Impacto",
+    RESPOND: "Puente Neural",
+    DEFEND: "Escudo de Neutralización",
+    SUMMARIZE: "Anclaje de Código"
   };
 
   const situationalSubtitles: Record<string, string> = {
-    EXPOSE: "Pitch, Reporte o Discurso",
-    RESPOND: "Preguntas y Respuestas (Q&A)",
-    DEFEND: "Objeciones o Críticas Hostiles",
-    SUMMARIZE: "Conclusiones Memorables"
+    EXPOSE: "Estructura de Pitch Invasivo",
+    RESPOND: "Improvisación Bajo Fuego",
+    DEFEND: "Defensa ante Ataques Hostiles",
+    SUMMARIZE: "Cierre de Memoria Ejecutiva"
   };
 
   return (
@@ -54,7 +54,7 @@ export default function SOSPage() {
               ¿Cuál es la <span className="text-red-500">emergencia</span>?
             </h1>
             <p className="text-gray-400 text-sm max-w-xs mx-auto">
-              Selecciona tu situación actual. Te daremos la estructura de supervivencia en 60 segundos.
+              Selecciona tu situación actual. Desplegaremos el algoritmo de respuesta en 60 segundos.
             </p>
          </header>
          

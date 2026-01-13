@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Chrome, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -15,40 +15,79 @@ function LoginForm() {
   };
 
   return (
-    <main className="min-h-[100dvh] bg-[#0A0F14] flex flex-col items-center justify-center p-6 relative overflow-hidden font-display">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+    <main className="min-h-[100dvh] bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden font-display selection:bg-blue-500/30">
+      
+      {/* 🕶️ TACTICAL BACKGROUND GRID */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" 
+           style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+      />
+      
+      {/* GLOW FX */}
+      <div className="absolute top-[-20%] right-[-20%] w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-indigo-900/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Logo / Title */}
-      <div className="mb-10 text-center relative z-10 animate-fade-in">
-        <Link href="/" className="text-2xl font-black text-white tracking-tighter mb-2 inline-block">
-          ORATORIA<span className="text-blue-500">EFECTIVA</span>
-        </Link>
-        <p className="text-gray-400 text-sm font-medium">Inicia sesión para continuar tu entrenamiento</p>
+      {/* 🛡️ SECURITY HEADER */}
+      <div className="absolute top-8 left-0 w-full flex justify-between px-8 opacity-30 pointer-events-none">
+          <span className="text-[10px] font-mono tracking-widest text-white">SECURE CONNECTION // TLS 1.3</span>
+          <span className="text-[10px] font-mono tracking-widest text-white animate-pulse">SYSTEM ONLINE</span>
       </div>
 
-      {/* Login Card */}
-      <div className="mobile-container !px-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative z-10 animate-slide-up">
+      <div className="relative z-10 w-full max-w-sm">
         
-        {/* Google Login Button */}
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-black font-bold py-4 px-6 rounded-2xl transition-all mb-4 group"
-        >
-          <Chrome size={20} className="text-blue-600 group-hover:scale-110 transition-transform" />
-          Continuar con Google
-        </button>
+        {/* LOGO & IDENTITY */}
+        <div className="text-center mb-12 space-y-4">
+            <div className="flex justify-center mb-6">
+                <div className="size-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.3)]">
+                    <span className="material-symbols-outlined text-3xl text-white">graphic_eq</span>
+                </div>
+            </div>
+            
+            <h1 className="text-3xl font-black text-white tracking-widest uppercase mb-1">
+                SOBERANA
+            </h1>
+            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] bg-blue-900/10 inline-block px-3 py-1 rounded-full border border-blue-500/20">
+                Reserva Federal de Autoridad
+            </p>
+        </div>
 
-        <p className="mt-6 text-center text-gray-500 text-xs">
-           Al continuar, aceptas nuestros <Link href="/terms" className="underline hover:text-white">términos</Link>.
+        {/* ACCESS TERMINAL */}
+        <div className="bg-[#0A0F14]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+            
+            {/* Corner Markers */}
+            <div className="absolute top-0 left-0 size-4 border-l-2 border-t-2 border-blue-500/50 rounded-tl-lg" />
+            <div className="absolute top-0 right-0 size-4 border-r-2 border-t-2 border-blue-500/50 rounded-tr-lg" />
+            <div className="absolute bottom-0 left-0 size-4 border-l-2 border-b-2 border-blue-500/50 rounded-bl-lg" />
+            <div className="absolute bottom-0 right-0 size-4 border-r-2 border-b-2 border-blue-500/50 rounded-br-lg" />
+
+            <div className="text-center space-y-6">
+                <div>
+                     <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-2">Identificación Requerida</h2>
+                     <p className="text-xs text-slate-500 leading-relaxed">
+                         Acceso restringido a operadores de Nivel 1.
+                         <br/>Por favor, verifique su credencial biométrica.
+                     </p>
+                </div>
+
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+                <button
+                    onClick={handleGoogleLogin}
+                    className="w-full relative group/btn overflow-hidden rounded-xl bg-white text-black font-black py-4 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                    <div className="relative z-10 flex items-center justify-center gap-3">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="G" />
+                        <span className="uppercase tracking-widest text-xs">Acceder con Google</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        {/* FOOTER */}
+        <p className="mt-8 text-center text-[10px] text-slate-600 uppercase tracking-widest font-medium">
+             Proto-Arquitectura por Soberana Labs &copy; 2026
         </p>
-      </div>
 
-      {/* Footer */}
-      <footer className="mt-12 text-gray-600 text-xs font-medium tracking-tight relative z-10">
-        &copy; 2026 Oratoria Efectiva. Todos los derechos reservados.
-      </footer>
+      </div>
     </main>
   );
 }
@@ -56,7 +95,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#0A0F14] flex items-center justify-center">
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <Loader2 className="text-blue-500 animate-spin" size={32} />
       </div>
     }>

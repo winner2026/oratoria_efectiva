@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { VoiceExercise } from '@/domain/training/VoiceExercises';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 interface ExerciseCardProps {
   exercise: VoiceExercise;
+  locked?: boolean;
 }
 
-const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise }) => {
+const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -40,6 +42,60 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise }) => {
     }
   };
 
+  // 🔒 RENDER BLOQUEADO (CONVERSIÓN BLACK OPS)
+  if (locked) {
+    return (
+      <div className="group relative bg-[#080b0f] border border-slate-800/50 rounded-3xl overflow-hidden opacity-60 hover:opacity-100 transition-all duration-300">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05]"></div>
+        
+        {/* BLURRED CONTENT PREVIEW */}
+        <div className="p-6 relative filter blur-[2px] group-hover:blur-[4px] transition-all duration-500">
+             <div className="flex justify-between items-start mb-4 opacity-50 grayscale">
+                <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center">
+                     <span className="material-symbols-outlined">{getCategoryIcon(exercise.category)}</span>
+                   </div>
+                   <div>
+                      <h4 className="font-bold text-slate-300">{exercise.title}</h4>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Protocolo {exercise.tier}</p>
+                   </div>
+                </div>
+             </div>
+             <p className="text-sm text-slate-600 line-clamp-2">Este contenido está encriptado para personal no autorizado. Requiere nivel de acceso superior.</p>
+        </div>
+        
+        {/* LOCK OVERLAY (EL CIERRE DE TRATO) */}
+        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 text-center backdrop-blur-sm">
+            
+            <span className="material-symbols-outlined text-amber-500 text-4xl mb-2 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+                verified_user
+            </span>
+            
+            <h5 className="text-xs font-black text-white uppercase tracking-[0.2em] mb-2">
+                Acceso Restringido
+            </h5>
+            
+            <p className="text-[10px] text-slate-300 font-medium mb-6 leading-relaxed max-w-[200px]">
+                No necesitas más consejos. Necesitas <span className="text-amber-400">Reingeniería de Poder</span>.
+            </p>
+
+            <Link href="/upgrade" className="w-full">
+                <button className="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[9px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-amber-900/40 hover:scale-105 transition-transform border border-amber-400/20">
+                    Reclamar mi Soberanía Vocal
+                </button>
+            </Link>
+        </div>
+
+        {/* STATIC LOCK ICON (Always visible when not hovering) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 group-hover:opacity-0 transition-opacity">
+             <span className="material-symbols-outlined text-slate-600 text-3xl">lock</span>
+        </div>
+
+      </div>
+    );
+  }
+
+  // 🔓 RENDER NORMAL
   return (
     <div 
       className={`group relative bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)] ${isExpanded ? 'ring-1 ring-blue-500/30 shadow-2xl shadow-blue-900/20' : ''}`}
@@ -56,8 +112,13 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise }) => {
                 {isCompleted && <span className="text-[10px] text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded font-black tracking-wider uppercase">Hecho</span>}
               </h4>
               
-              {/* FIXED BADGES CONTAINER */}
               <div className="flex items-center gap-2 mt-1">
+                {(exercise.targetMetrics?.includes('volume') || exercise.intensity === 'HIGH') && (
+                     <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-500 border border-red-500/30 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[10px]">local_fire_department</span>
+                        INTENSO
+                     </span>
+                )}
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${getDifficultyColor(exercise.difficulty)}`}>
                   {exercise.difficulty}
                 </span>
@@ -65,6 +126,11 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise }) => {
                     <span className="material-symbols-outlined text-[10px]">{exercise.requiredMode === 'VIDEO' ? 'videocam' : 'mic'}</span>
                     {exercise.requiredMode === 'VIDEO' ? 'Cámara' : 'Voz'}
                 </span>
+                {exercise.tier === 'ELITE' && (
+                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                        ELITE
+                    </span>
+                )}
               </div>
 
             </div>
@@ -79,7 +145,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise }) => {
           </button>
         </div>
 
-        <p className="text-sm text-slate-400 leading-relaxed mb-4">
+        <p className="text-sm text-slate-400 leading-relaxed mb-4 line-clamp-2 group-hover:line-clamp-none transition-all">
           {exercise.description}
         </p>
 
@@ -113,17 +179,18 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise }) => {
             <div className="pt-2 flex gap-3">
               <Link 
                 href={`/practice?exercise=${exercise.id}`}
-                onClick={() => {
+                 onClick={() => {
                   const { logEvent } = require('@/lib/events/logEvent');
                   logEvent("exercise_started", { 
                     exerciseId: exercise.id, 
                     title: exercise.title,
-                    category: exercise.category 
+                    tier: exercise.tier 
                   });
                 }}
-                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-2xl font-bold text-sm text-center transition-all shadow-lg shadow-blue-900/20 active:scale-95"
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-2xl font-bold text-sm text-center transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
               >
-                Practicar ahora
+                <span className="material-symbols-outlined text-lg">play_arrow</span>
+                Iniciar Práctica
               </Link>
             </div>
           </div>
