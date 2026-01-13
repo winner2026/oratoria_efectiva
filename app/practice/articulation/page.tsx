@@ -78,9 +78,9 @@ export default function ArticulationPage() {
   const currentLevel = LEVELS[levelIndex];
   const currentExercise = currentLevel.exercises[exerciseIndex];
   
-  // WPM Formula: 107 + (GlobalIndex * 2)
+  // WPM Formula: 90 + (GlobalIndex * 2)
   const globalIndex = (levelIndex * 5) + exerciseIndex;
-  const targetWpm = 107 + (globalIndex * 2);
+  const targetWpm = 90 + (globalIndex * 2);
 
   const [phase, setPhase] = useState<"intro" | "countdown" | "reading" | "result">("intro");
   
@@ -130,10 +130,17 @@ export default function ArticulationPage() {
   }, [levelIndex, exerciseIndex]);
 
   const normalize = (str: string) => {
-      return str.toLowerCase()
+      let s = str.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/[.,¿?¡!]/g, "")
         .trim();
+      
+      // Phonetic Fixes for Spanish Voice Recognition quirks
+      s = s.replace(/\berre\b/g, "r"); // "erre" -> "r"
+      s = s.replace(/\bere\b/g, "r");   // "ere" -> "r"
+      s = s.replace(/\bve\b/g, "b");     // "v" -> "b" confusion
+      
+      return s;
   };
 
   const getLevenshteinDistance = (a: string, b: string) => {
@@ -160,44 +167,58 @@ export default function ArticulationPage() {
       const targetWords = normalize(currentExercise.text).split(/\s+/);
       const inputWords = normalize(currentText).split(/\s+/);
 
-      const newMatched = new Set<number>();
+      // 🔒 Keep previous matches to prevent flickering if API changes "R con R" -> "Reconocer"
+      const newMatched = new Set(matchedIndices); 
       let inputCursor = 0;
-      let hits = 0;
+      let hits = matchedIndices.size; // Start count from preserved
 
+      // Re-scan everything to find NEW matches or re-confirm old ones to update cursor
+      // We process strictly in order to update inputCursor correctly
       for (let i = 0; i < targetWords.length; i++) {
         const targetWord = targetWords[i];
         
-        // Search window: Look ahead in input (limit to 20 words for performance/context)
-        const searchWindow = inputWords.slice(inputCursor, inputCursor + 20);
-        
+        // Search window: Look ahead in input (Unbounded to handle noise/retries)
+        // Previously limited to 25, which caused the cursor to get stuck if many words were missed.
+        const searchWindow = inputWords.slice(inputCursor);
         let foundIndex = -1;
         
-        // Fuzzy Search in Window
         for (let j = 0; j < searchWindow.length; j++) {
             const inputWord = searchWindow[j];
             const dist = getLevenshteinDistance(targetWord, inputWord);
             
-            // Tolerance: More permissible for short repeated words like "Pepe"
+            // Adaptive Tolerance
             let threshold = 0;
-            if (targetWord.length >= 3) threshold = 1;
-            if (targetWord.length >= 4) threshold = 2; // "Pepe" (4) now gets 2 edits
-            if (targetWord.length >= 8) threshold = 3;
+            if (targetWord.length >= 3) threshold = 2; 
+            if (targetWord.length >= 5) threshold = 3; 
+            if (targetWord.length >= 8) threshold = 4;
 
             if (dist <= threshold) {
                 foundIndex = j;
-                break; // Take first close match
+                break; 
             }
         }
 
         if (foundIndex !== -1) {
              const realIndex = inputCursor + foundIndex;
-             newMatched.add(i);
-             inputCursor = realIndex + 1; // Advance cursor past this match
-             hits++;
+             if (!newMatched.has(i)) {
+                 newMatched.add(i);
+                 hits++; // Only increment for NEW matches to avoid double counting
+             }
+             inputCursor = realIndex + 1; 
+        } else {
+            // Not found in current input. 
+            // If it was previously matched (in newMatched), we assume it was "passed" 
+            // and we try to look for the NEXT word from the current cursor?
+            // No, if we didn't find "A", we can't advance cursor past "A".
+            // We just leave inputCursor where it is and try to match "B" in the SAME window.
+            // This enables "Skipping" a problematic word while keeping the flow!
         }
       }
       
       setMatchedIndices(newMatched);
+      
+      // Recalculate hits based on Set size (most accurate progress)
+      hits = newMatched.size;
 
       const acc = Math.round((hits / targetWords.length) * 100);
       setAccuracy(acc);

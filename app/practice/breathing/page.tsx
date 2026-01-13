@@ -159,10 +159,10 @@ export default function BreathingExercisePage() {
   const isSuccess = seconds >= GOAL_TIME && stabilityScore >= GOAL_STABILITY;
 
   const getLevel = (secs: number) => {
-      if (secs >= 45) return { name: "LEGENDARIO", color: "text-purple-400", bg: "bg-purple-500" };
-      if (secs >= 30) return { name: "PRO", color: "text-blue-400", bg: "bg-blue-500" };
-      if (secs >= 15) return { name: "INTERMEDIO", color: "text-green-400", bg: "bg-green-500" };
-      return { name: "NOVATO", color: "text-slate-400", bg: "bg-slate-500" };
+      if (secs >= 30) return { name: "LEGENDARIO (MASTER)", color: "text-purple-400", bg: "bg-purple-500" };
+      if (secs >= 20) return { name: "ORADOR SÓLIDO", color: "text-green-400", bg: "bg-green-500" };
+      if (secs >= 15) return { name: "ACEPTABLE", color: "text-yellow-400", bg: "bg-yellow-500" };
+      return { name: "INSUFICIENTE", color: "text-red-400", bg: "bg-red-500" };
   };
 
   return (
@@ -304,16 +304,24 @@ export default function BreathingExercisePage() {
                      </div>
                  </div>
 
-                 <div className="text-center mb-8">
-                     <h2 className="text-3xl font-black text-white mb-2">
-                         {isSuccess ? "¿OBJETIVO ALCANZADO?" : "INTENTO FALLIDO"} 
-                     </h2>
-                     <p className="text-slate-400 text-sm">
-                         {isSuccess 
-                           ? "¡Excelente control! Has superado las métricas mínimas." 
-                           : "No has alcanzado el mínimo de tiempo o estabilidad necesarios."}
-                     </p>
-                 </div>
+                  <div className="text-center mb-8">
+                      <div className={`text-xl font-black mb-2 ${getLevel(seconds).color}`}>
+                          {getLevel(seconds).name}
+                      </div>
+                      <h2 className="text-3xl font-black text-white mb-2">
+                          {isSuccess ? "OBJETIVO SUPERADO" : "INTENTO FINALIZADO"} 
+                      </h2>
+                      <p className="text-slate-400 text-sm">
+                          {seconds >= 30 
+                             ? "¡Increíble! Tienes pulmones de cantante de ópera."
+                             : seconds >= 20
+                             ? "¡Muy bien! Tienes el aire suficiente para oratoria."
+                             : seconds >= 15
+                             ? "Casi. Un poco más de práctica y llegarás al nivel ideal."
+                             : "Te falta aire. Necesitas practicar respiración diafragmática."
+                          }
+                      </p>
+                  </div>
 
                  <div className="grid grid-cols-2 gap-4 mb-8">
                      {/* Tiempo Card */}
