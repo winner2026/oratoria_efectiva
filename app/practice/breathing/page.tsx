@@ -166,9 +166,9 @@ export default function BreathingExercisePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-display flex flex-col relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-[#050505] text-white font-display flex flex-col relative">
       
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1/2 bg-blue-900/10 blur-[100px]" />
           <div className="absolute bottom-0 right-0 w-full h-1/2 bg-purple-900/10 blur-[100px]" />
       </div>
@@ -215,6 +215,17 @@ export default function BreathingExercisePage() {
                      <span className="text-white font-bold">Si tiemblas o cortas antes, fallarás.</span>
                  </p>
 
+                 <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 text-left space-y-2 mx-2">
+                     <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider">
+                         <span className="material-symbols-outlined text-sm">mic</span>
+                         ¿Para qué usamos el micrófono?
+                     </div>
+                     <p className="text-[11px] text-slate-400 leading-relaxed">
+                         Para darte <strong>feedback visual</strong> de tu exhalación ("Sssss"). El sistema detecta si tu aire es estable o tembloroso en tiempo real.
+                         <span className="block mt-1.5 text-blue-400/60 font-medium">🔒 No se graba ni se sube tu voz. Análisis 100% local.</span>
+                     </p>
+                 </div>
+
                  <button 
                    onClick={startExercise}
                    className="w-full py-4 bg-white text-black font-black text-lg rounded-2xl hover:scale-[1.02] transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)]"
@@ -235,9 +246,9 @@ export default function BreathingExercisePage() {
           )}
 
           {phase === "recording" && (
-             <div className="w-full max-w-lg flex flex-col items-center gap-12">
+             <div className="w-full max-w-lg flex-1 flex flex-col items-center justify-evenly py-4 min-h-[400px]">
                  
-                 <div className="relative size-48 md:size-64 flex items-center justify-center">
+                 <div className="relative size-40 sm:size-56 md:size-64 flex items-center justify-center shrink-0 my-4">
                      <div 
                         className={`absolute inset-0 rounded-full transition-all duration-100 ${isActive ? 'opacity-100' : 'opacity-20'}`}
                         style={{
@@ -248,45 +259,45 @@ export default function BreathingExercisePage() {
                         }}
                      />
                      <div className="relative z-10 text-center">
-                         <span className="text-5xl md:text-7xl font-black font-mono tracking-tighter tabular-nums text-white drop-shadow-2xl">
+                         <span className="text-4xl sm:text-6xl md:text-7xl font-black font-mono tracking-tighter tabular-nums text-white drop-shadow-2xl">
                              {seconds.toFixed(1)}
                          </span>
-                         <span className="block text-[10px] font-bold uppercase tracking-[0.3em] text-blue-400 mt-2">
+                         <span className="block text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.3em] text-blue-400 mt-1 sm:mt-2">
                              Segundos
                          </span>
                      </div>
                  </div>
 
-                 <div className="text-center space-y-2 h-16">
+                 <div className="text-center space-y-2 h-12 sm:h-16 shrink-0 flex flex-col justify-center">
                      {!isActive ? (
-                         <p className="text-xl text-slate-400 animate-pulse">
+                         <p className="text-base sm:text-xl text-slate-400 animate-pulse px-4">
                              Estoy escuchando... Haz "Sssss"
                          </p>
                      ) : (
                          <div className="space-y-1">
-                             <div className={`text-2xl font-bold transition-colors ${
+                             <div className={`text-xl sm:text-2xl font-bold transition-colors ${
                                  feedback === "stable" ? "text-green-400" : "text-orange-400 animate-pulse"
                              }`}>
                                  {feedback === "stable" ? "ESTABLE ✨" : "INESTABLE ⚠️"}
                              </div>
-                             <p className="text-xs text-slate-500 uppercase tracking-widest">
+                             <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-widest">
                                  {sensitivityFeedback(feedback)}
                              </p>
                          </div>
                      )}
                  </div>
 
-                 <div className="w-full max-w-xs h-20 flex items-center justify-center">
+                 <div className="w-full max-w-[200px] sm:max-w-xs h-12 sm:h-20 flex items-center justify-center shrink-0">
                     {stream && <AudioVisualizer stream={stream} isActive={true} />}
                  </div>
 
                  {volume > 1 && volume < MIN_VOLUME_THRESHOLD && !isActive && (
-                    <p className="text-xs text-orange-400 animate-pulse">¡Te escucho pero muy bajo! Acerca el micrófono.</p>
+                    <p className="text-[10px] text-orange-400 animate-pulse absolute bottom-20">¡Acerca el micrófono!</p>
                  )}
 
                  <button 
                     onClick={stopExercise}
-                    className="px-8 py-3 rounded-full bg-white/10 border border-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-all text-sm font-bold uppercase tracking-widest"
+                    className="px-8 py-3 rounded-full bg-white/10 border border-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-all text-xs sm:text-sm font-bold uppercase tracking-widest shrink-0 mt-2"
                  >
                      Terminar
                  </button>

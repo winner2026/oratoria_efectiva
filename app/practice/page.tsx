@@ -52,6 +52,29 @@ function PracticeContent() {
     }
   }, [exerciseId]);
 
+  // 🛡️ SECURITY GATING: PREVENT UNAUTHORIZED ACCESS
+  useEffect(() => {
+    if (!currentExercise) return; // Generic scanner has its own backend limit check
+
+    const checkPlanAccess = () => {
+        const userPlan = localStorage.getItem('user_plan') || 'FREE';
+        
+        // Define hierarchy
+        const tiers = { 'FREE': 0, 'STARTER': 1, 'ELITE': 2, 'PREMIUM': 2 };
+        const userLevel = tiers[userPlan as keyof typeof tiers] || 0;
+        
+        const exerciseTier = currentExercise.tier;
+        const reqLevel = tiers[exerciseTier as keyof typeof tiers] || 0;
+
+        if (userLevel < reqLevel) {
+            // Access Denied
+            router.replace('/upgrade'); 
+        }
+    };
+    
+    checkPlanAccess();
+  }, [currentExercise, router]);
+
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -759,7 +782,7 @@ function PracticeContent() {
 
       {/* 🔝 Top UI Overlay */}
       <div className="absolute top-0 w-full z-10 flex items-center justify-between p-4 pt-safe bg-gradient-to-b from-black/80 to-transparent">
-        <Link href="/listen">
+        <Link href={exerciseId ? "/gym" : "/listen"}>
           <button className="flex size-10 items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all text-white shadow-lg">
             <span className="material-symbols-outlined text-xl">arrow_back_ios_new</span>
           </button>

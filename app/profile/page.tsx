@@ -175,6 +175,38 @@ export default function ProfilePage() {
                 <span className="material-symbols-outlined text-slate-600">chevron_right</span>
             </button>
 
+            {/* AUDITORÍA (Locked for FREE) */}
+            <button 
+               onClick={() => router.push(user.plan === 'FREE' ? '/upgrade' : '/my-sessions')}
+               className={`w-full flex items-center justify-between p-5 border rounded-[20px] transition-all group active:scale-[0.98] ${
+                   user.plan === 'FREE' 
+                   ? 'bg-[#0F1318]/50 border-slate-800' 
+                   : 'bg-[#0F1318] border-white/5 hover:bg-white/5'
+               }`}
+            >
+                <div className="flex items-center gap-4">
+                    <div className={`size-10 rounded-xl flex items-center justify-center transition-colors relative ${
+                        user.plan === 'FREE' ? 'bg-slate-900 text-slate-600' : 'bg-slate-800 text-slate-400 group-hover:text-white'
+                    }`}>
+                        <span className="material-symbols-outlined">query_stats</span>
+                        {user.plan === 'FREE' && (
+                            <div className="absolute -top-1 -right-1 bg-slate-900 rounded-full p-0.5 border border-slate-700 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-[10px] text-slate-500">lock</span>
+                            </div>
+                        )}
+                    </div>
+                    <div className="text-left">
+                        <span className={`text-sm font-bold block ${user.plan === 'FREE' ? 'text-slate-500' : 'text-slate-200 group-hover:text-white'}`}>
+                             {user.plan === 'FREE' ? 'Auditoría (Bloqueado)' : 'Auditoría de Sesiones'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-medium">
+                            {user.plan === 'FREE' ? 'Requiere Acceso Profesional' : 'Historial y Analítica'}
+                        </span>
+                    </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-600">chevron_right</span>
+            </button>
+
             <button 
                onClick={() => router.push('/gym')}
                className="w-full flex items-center justify-between p-5 bg-[#0F1318] border border-white/5 rounded-[20px] hover:bg-white/5 transition-all group active:scale-[0.98]"

@@ -164,11 +164,18 @@ export default function ListenPage() {
             {/* 3. NAVEGACIÓN SECUNDARIA (GRID) */}
             <section className="grid grid-cols-2 gap-4">
                {/* Centro de Auditoría */}
-               <Link href="/my-sessions" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
-                  <div className="size-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-4 group-hover:scale-110 transition-transform">
+               <Link href={planType === 'FREE' ? "/upgrade" : "/my-sessions"} className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
+                  <div className={`size-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative ${planType === 'FREE' ? 'bg-slate-800/50 text-slate-600' : 'bg-blue-500/10 text-blue-400'}`}>
                      <span className="material-symbols-outlined text-2xl">query_stats</span>
+                     {planType === 'FREE' && (
+                        <div className="absolute -top-2 -right-2 bg-slate-900 rounded-full p-1 border border-slate-700 shadow-sm flex items-center justify-center">
+                            <span className="material-symbols-outlined text-[10px] text-slate-400">lock</span>
+                        </div>
+                     )}
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-1">Auditoría</h4>
+                  <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
+                     Auditoría
+                  </h4>
                   <p className="text-[10px] text-slate-500 font-medium">Historial de sesiones.</p>
                </Link>
 

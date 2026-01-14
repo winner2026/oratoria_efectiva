@@ -429,7 +429,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                 )}
                     {/* Piano Keys Container */}
                      <div className="flex-1 bg-[#101418] relative overflow-x-auto custom-scrollbar flex items-start sm:items-center py-4 snap-x snap-mandatory touch-pan-x">
-                          <div className="flex relative h-48 sm:h-64 select-none min-w-max px-[20vw] sm:px-0 landscape:h-[calc(100vh-140px)]">
+                          <div className="flex relative h-48 sm:h-40 select-none min-w-max px-[20vw] sm:px-0 landscape:h-[calc(100vh-140px)] sm:landscape:h-40">
                               {NOTES.map((n, i) => {
                                   const isSafe = safeRange && i >= safeRange[0] && i <= safeRange[1];
                                   const isActive = activeNote === n.note;
@@ -457,7 +457,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                                   borderColor: isDetected ? '#166534' : undefined
                                               }}
                                                 className={`
-                                                   relative w-14 sm:w-16 h-48 sm:h-64 border border-slate-900 rounded-b-lg active:scale-[0.98] transition-all duration-100 flex items-end justify-center pb-4 cursor-pointer snap-center landscape:h-full landscape:w-20
+                                                   relative w-14 sm:w-16 h-48 sm:h-40 border border-slate-900 rounded-b-lg active:scale-[0.98] transition-all duration-100 flex items-end justify-center pb-4 cursor-pointer snap-center landscape:h-full landscape:w-20
                                                    ${isSafe ? 'shadow-[inset_0_-20px_40px_rgba(34,197,94,0.3)]' : ''}
                                                    ${isDetected ? 'z-50 text-white' : ''}
                                                `}
@@ -485,7 +485,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                                   borderColor: isDetected ? '#166534' : undefined
                                               }}
                                                 className={`
-                                                   w-10 sm:w-12 h-28 sm:h-40 -mx-5 sm:-mx-6 z-20 rounded-b-lg border border-slate-800 active:scale-[0.98] transition-all duration-100 cursor-pointer flex items-end justify-center pb-2 snap-center landscape:h-[60%] landscape:w-12
+                                                   w-10 sm:w-12 h-28 sm:h-28 -mx-5 sm:-mx-6 z-20 rounded-b-lg border border-slate-800 active:scale-[0.98] transition-all duration-100 cursor-pointer flex items-end justify-center pb-2 snap-center landscape:h-[60%] landscape:w-12
                                                    ${isSafe ? 'shadow-[inset_0_-20px_40px_rgba(34,197,94,0.5)]' : ''}
                                                    ${isDetected ? 'z-50' : ''}
                                                `}

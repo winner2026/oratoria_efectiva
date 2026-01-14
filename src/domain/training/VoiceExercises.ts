@@ -1,5 +1,5 @@
 
-import type { VoiceExercise } from "./VoiceExercises";
+
 
 export type ExerciseMode = 'AUDIO' | 'VIDEO';
 export type UserLevel = 'FREE' | 'STARTER' | 'ELITE';
@@ -20,6 +20,8 @@ export type VoiceExercise = {
   tier: UserLevel;
   dimension: BiometricDimension;
   isCore?: boolean; 
+  customRoute?: string;
+  intensity?: 'LOW' | 'MEDIUM' | 'HIGH';
 };
 
 export const VOICE_EXERCISES: VoiceExercise[] = [
@@ -43,7 +45,46 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     benefit: 'Aumenta tu capacidad pulmonar y estabilidad (Soporte Vital).',
     tier: 'FREE',
     dimension: 'SUPPORT',
-    isCore: true
+    isCore: true,
+    customRoute: '/practice/breathing'
+  },
+  {
+    id: 'instant-playback',
+    title: 'Auditoría de Auto-Escucha',
+    description: 'Grabadora de retorno inmediato. La herramienta #1 para corregir tu percepción vocal.',
+    category: 'INTONATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['pitchRange'],
+    requiredMode: 'AUDIO',
+    steps: [
+      'Graba una frase corta (5-10s).',
+      'Escúchala inmediatamente por auriculares.',
+      'Detecta muletillas y tono monótono al instante.'
+    ],
+    benefit: 'Entrena tu oído para escucharte como te escuchan los demás.',
+    tier: 'FREE',
+    dimension: 'AUTHORITY',
+    isCore: true,
+    customRoute: '/practice/instant-playback'
+  },
+  {
+    id: 'timed-reading',
+    title: 'Lectura Cronometrada',
+    description: 'Entrena tu fluidez siguiendo un ritmo visual constante. Adiós a los titubeos.',
+    category: 'ARTICULATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['wordsPerMinute', 'rhythmConsistency'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Sigue el texto resaltado con tu voz.',
+        'No te detengas ni te aceleres, mantén el ritmo.',
+        'Respira en las pausas marcadas.'
+    ],
+    benefit: 'Sincroniza tu cerebro y tu lengua a una velocidad profesional.',
+    tier: 'FREE',
+    dimension: 'AGILITY',
+    isCore: true,
+    customRoute: '/practice/reading'
   },
   {
     id: 'tongue-twisters',
@@ -61,44 +102,46 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     benefit: 'Evita que se te "coman" las sílabas al hablar rápido.',
     tier: 'FREE',
     dimension: 'AGILITY',
-    isCore: true
+    isCore: true,
+    customRoute: '/practice/articulation'
   },
   {
     id: 'news-anchor',
-    title: 'El Locutor de Noticias',
-    description: 'Practica la autoridad mediante el descenso de tono al final de las frases.',
+    title: 'Entonación Dinámica', // Changed from 'El Locutor de Noticias' to match visualizer capabilities
+    description: 'Combate la monotonía. Aprende a variar tu tono (picos y valles) para mantener la atención.',
     category: 'INTONATION',
     difficulty: 'BEGINNER',
-    targetMetrics: ['fallingIntonationScore', 'pitchRange'],
+    targetMetrics: ['pitchRange', 'rhythmConsistency'],
     requiredMode: 'AUDIO',
     steps: [
-      'Lee una frase con tono serio y pausado.',
-      'Termina cada frase con un tono claramente hacia abajo.',
-      'Proyecta seguridad; evita subir el tono al final (duda).'
+      'Lee una frase evitando sonar plano (robot).',
+      'Sube el tono en las palabras más importantes.',
+      'Baja el tono en los conectores y cierres.'
     ],
-    benefit: 'Proyecta convicción y liderazgo de inmediato.',
+    benefit: 'Una voz melódica retiene al cerebro de tu audiencia.',
     tier: 'FREE',
     dimension: 'AUTHORITY',
-    isCore: true
+    isCore: true,
+    customRoute: '/practice/intonation'
   },
   {
     id: 'anxiety-breathing',
     title: 'Protocolo Anti-Pánico (SOS)',
-    description: 'Botón de emergencia para bajar pulsaciones antes de subir al escenario.',
+    description: 'Botón de emergencia. Usa el Biofeedback para estabilizar tu sistema nervioso.',
     category: 'MINDSET',
     difficulty: 'BEGINNER',
     targetMetrics: ['rhythmConsistency', 'energyStability'],
     requiredMode: 'AUDIO',
     steps: [
-      'Inhala profundamente contando hasta 4.',
-      'Retén el aire contando hasta 4.',
-      'Exhala lentamente contando hasta 4.',
-      'Repite 3 veces para hackear tu sistema nervioso.'
+      'Sigue el círculo visualizador en pantalla.',
+      'Inhala profundo y suelta el aire con un "Sssss" constante.',
+      'Mantén la señal visual marcada como "ESTABLE".'
     ],
     benefit: 'Elimina el temblor de voz y la taquicardia al instante.',
     tier: 'FREE',
     dimension: 'MINDSET',
-    isCore: true
+    isCore: true,
+    customRoute: '/practice/breathing'
   },
 
   // =================================================================
@@ -120,7 +163,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     benefit: 'Tu voz llenará la sala sin esfuerzo físico.',
     tier: 'STARTER',
     dimension: 'RESONANCE',
-    isCore: false
+    isCore: false,
+    customRoute: '/practice/projection'
   },
   {
     id: 'emotional-reading',
@@ -143,15 +187,15 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   {
     id: 'pen-horizontal',
     title: 'El Bolígrafo Horizontal',
-    description: 'El ejercicio clásico para una dicción perfecta instantánea.',
+    description: 'El ejercicio clásico para una dicción perfecta. Entrena con resistencia, graba con libertad.',
     category: 'ARTICULATION',
     difficulty: 'ADVANCED',
     targetMetrics: ['score_claridad'],
     requiredMode: 'AUDIO',
     steps: [
-      'Coloca un bolígrafo entre tus dientes.',
-      'Lee esforzándote por vocalizar a pesar del obstáculo.',
-      '¡Siente la liberación inmediata al quitarlo!'
+      'Paso 1: Lee el texto con un bolígrafo entre los dientes (Entrenamiento).',
+      'Paso 2: Quita el bolígrafo y siente la liberación.',
+      'Paso 3: ¡GRABA AHORA sin el bolígrafo para medir tu claridad!'
     ],
     benefit: 'Mejora radical e inmediata en la claridad.',
     tier: 'STARTER',
@@ -196,7 +240,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     benefit: 'Desconecta el miedo al ridículo y entrena la soberanía bajo fuego.',
     tier: 'ELITE',
     dimension: 'IMPROV',
-    isCore: false
+    isCore: false,
+    customRoute: '/practice/improvisation'
   },
   {
     id: 'improvisation-connect',

@@ -178,7 +178,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false })
 
             <div className="pt-2 flex gap-3">
               <Link 
-                href={`/practice?exercise=${exercise.id}`}
+                href={exercise.customRoute || `/practice?exercise=${exercise.id}`}
                  onClick={() => {
                   const { logEvent } = require('@/lib/events/logEvent');
                   logEvent("exercise_started", { 
