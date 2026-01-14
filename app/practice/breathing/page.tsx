@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AudioVisualizer from "@/components/AudioVisualizer";
 
 export default function BreathingExercisePage() {
@@ -12,6 +12,24 @@ export default function BreathingExercisePage() {
   const [phase, setPhase] = useState<"intro" | "countdown" | "recording" | "results">("intro");
   const [countdownVal, setCountdownVal] = useState(5);
   const [seconds, setSeconds] = useState(0);
+
+  // SOS LOGIC
+  const searchParams = useSearchParams();
+  const isSOS = searchParams.get('mode') === 'sos';
+  const [sosPhase, setSosPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
+  const [sosCount, setSosCount] = useState(4);
+
+  useEffect(() => {
+    if (!isSOS) return;
+    const interval = setInterval(() => {
+        setSosCount(prev => {
+            if (prev > 1) return prev - 1;
+            setSosPhase(p => p === 'inhale' ? 'hold' : p === 'hold' ? 'exhale' : 'inhale');
+            return 4; 
+        });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isSOS]);
   const [isActive, setIsActive] = useState(false);
   const [stabilityScore, setStabilityScore] = useState(100);
   const [volume, setVolume] = useState(0);
@@ -27,9 +45,12 @@ export default function BreathingExercisePage() {
   
   // Refs para Algoritmo
   const volumeHistoryRef = useRef<number[]>([]);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   // Constantes
-  const MIN_VOLUME_THRESHOLD = 5; // Bajar umbral para micrófonos sensibles, especialmente móbiles
+  const MIN_VOLUME_THRESHOLD = 2; // Bajar umbral para detectar exhalaciones suaves
   const GOAL_TIME = 20;     // Meta de segundos
   const GOAL_STABILITY = 80; // Meta de estabilidad
 
@@ -73,7 +94,27 @@ export default function BreathingExercisePage() {
               setSeconds(0);
               setStabilityScore(100);
               volumeHistoryRef.current = [];
+              audioChunksRef.current = [];
               startTimeRef.current = null;
+
+              // 🎙️ INICIAR GRABACIÓN REAL
+              if (mediaStreamRef.current) {
+                  try {
+                      const recorder = new MediaRecorder(mediaStreamRef.current);
+                      recorder.ondataavailable = (e) => {
+                          if (e.data.size > 0) audioChunksRef.current.push(e.data);
+                      };
+                      recorder.onstop = () => {
+                          const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                          setAudioBlob(blob);
+                      };
+                      recorder.start();
+                      mediaRecorderRef.current = recorder;
+                  } catch (e) {
+                      console.error("No se pudo iniciar grabadora:", e);
+                  }
+              }
+
               analyzeLoop();
           }
       }, 1000);
@@ -102,6 +143,9 @@ export default function BreathingExercisePage() {
   };
 
   const stopExercise = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+    }
     stopExerciseCleanup();
     setPhase("results");
   };
@@ -164,6 +208,42 @@ export default function BreathingExercisePage() {
       if (secs >= 15) return { name: "ACEPTABLE", color: "text-yellow-400", bg: "bg-yellow-500" };
       return { name: "INSUFICIENTE", color: "text-red-400", bg: "bg-red-500" };
   };
+
+  // 🚑 RENDER SOS MODE (BOX BREATHING)
+  if (isSOS) {
+     return (
+        <div className="min-h-[100dvh] bg-[#050505] text-white flex flex-col items-center justify-center relative overflow-hidden font-display">
+            <div className="absolute inset-0 pointer-events-none">
+                 <div className={`absolute inset-0 bg-blue-500/10 transition-transform duration-[4000ms] ease-linear ${sosPhase === 'inhale' ? 'scale-110' : 'scale-100'}`} />
+                 <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 rounded-full bg-blue-500/20 blur-[100px] transition-all duration-[4000ms] ${sosPhase === 'inhale' ? 'scale-150 opacity-100' : sosPhase === 'exhale' ? 'scale-50 opacity-50' : 'scale-100 opacity-80'}`} />
+            </div>
+
+            <div className="relative z-10 text-center space-y-12 animate-fade-in p-6">
+                <div className="space-y-4">
+                    <p className="text-sm text-blue-400 font-bold uppercase tracking-[0.3em] font-mono">Protocolo Anti-Pánico</p>
+                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter transition-all duration-500">
+                        {sosPhase === 'inhale' ? 'INHALE' : sosPhase === 'hold' ? 'HOLD' : 'EXHALE'}
+                    </h1>
+                </div>
+
+                <div className="text-[8rem] md:text-[12rem] font-black leading-none tabular-nums opacity-90 select-none text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-500 font-sans">
+                    {sosCount}
+                </div>
+
+                <p className="text-slate-400 max-w-xs mx-auto text-sm leading-relaxed">
+                    {sosPhase === 'inhale' ? 'Llena tus pulmones lentamente.' : sosPhase === 'hold' ? 'Mantén el aire y la calma.' : 'Suelta todo el estrés.'}
+                </p>
+
+                <button 
+                  onClick={() => router.push('/gym')}
+                  className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold transition-all text-slate-300 hover:text-white uppercase tracking-widest mt-8"
+                >
+                    Salir del Modo Pánico
+                </button>
+            </div>
+        </div>
+     );
+  }
 
   return (
     <div className="min-h-[100dvh] bg-[#050505] text-white font-display flex flex-col relative">
@@ -353,6 +433,17 @@ export default function BreathingExercisePage() {
                          <span className="block text-[9px] mt-1 opacity-50">Meta: {GOAL_STABILITY}%</span>
                      </div>
                  </div>
+
+                 {/* 🎧 REPRODUCCIÓN DE PRUEBA */}
+                 {audioBlob && (
+                     <div className="mb-6 bg-slate-900/50 p-4 rounded-2xl border border-white/5 animate-fade-in">
+                         <div className="flex items-center gap-2 mb-2">
+                             <span className="material-symbols-outlined text-blue-400 text-sm">headphones</span>
+                             <span className="text-xs text-slate-400 uppercase tracking-widest">Escucha tu Estabilidad</span>
+                         </div>
+                         <audio controls src={URL.createObjectURL(audioBlob)} className="w-full h-8 opacity-80 hover:opacity-100 transition-opacity" />
+                     </div>
+                 )}
 
                  <div className="space-y-4">
                     <button 

@@ -126,22 +126,23 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   },
   {
     id: 'anxiety-breathing',
-    title: 'Protocolo Anti-Pánico (SOS)',
-    description: 'Botón de emergencia. Usa el Biofeedback para estabilizar tu sistema nervioso.',
+    title: 'Protocolo Anti-Pánico',
+    description: 'Respiración Táctica (Box Breathing). Baja pulsaciones sin esfuerzo.',
     category: 'MINDSET',
     difficulty: 'BEGINNER',
     targetMetrics: ['rhythmConsistency', 'energyStability'],
     requiredMode: 'AUDIO',
     steps: [
-      'Sigue el círculo visualizador en pantalla.',
-      'Inhala profundo y suelta el aire con un "Sssss" constante.',
-      'Mantén la señal visual marcada como "ESTABLE".'
+      'Sigue la guía visual: Inhala en 4s.',
+      'Retén el aire 4s (Apnea).',
+      'Exhala suavemente en 4s.',
+      'Repite hasta calmarte.'
     ],
-    benefit: 'Elimina el temblor de voz y la taquicardia al instante.',
+    benefit: 'Hackea tu sistema nervioso parasimpático al instante.',
     tier: 'FREE',
     dimension: 'MINDSET',
     isCore: true,
-    customRoute: '/practice/breathing'
+    customRoute: '/practice/breathing?mode=sos'
   },
 
   // =================================================================
