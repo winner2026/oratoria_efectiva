@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import AudioVisualizer from "@/components/AudioVisualizer";
 
-export default function BreathingExercisePage() {
+function BreathingContent() {
   const router = useRouter();
   
   // Estados del ejercicio
@@ -472,4 +472,16 @@ function sensitivityFeedback(feedback: string) {
     if (feedback === 'quiet') return "Sopla un poco más fuerte";
     if (feedback === 'shaky') return "¡Controla el temblor!";
     return "Mantén esa presión";
+}
+
+export default function BreathingPage() {
+  return (
+    <Suspense fallback={
+        <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+    }>
+      <BreathingContent />
+    </Suspense>
+  );
 }
