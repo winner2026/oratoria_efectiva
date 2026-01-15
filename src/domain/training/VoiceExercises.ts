@@ -149,41 +149,23 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // 🔵 NIVEL STARTER (HABIT BUILDER)
   // =================================================================
   {
-    id: 'vocal-projection',
-    title: 'Proyección a la Pared',
-    description: 'Haz que tu voz viaje sin gritar. Ideal para ganar presencia en salas grandes.',
-    category: 'PROJECTION',
-    difficulty: 'INTERMEDIATE',
-    targetMetrics: ['volume', 'energyStability'],
-    requiredMode: 'AUDIO',
-    steps: [
-      'Siéntate contra una pared y mira un punto lejano.',
-      'Di "Hola" intentando tocar ese punto con tu voz.',
-      'Impulsa el aire desde el diafragma, no la garganta.'
-    ],
-    benefit: 'Tu voz llenará la sala sin esfuerzo físico.',
-    tier: 'STARTER',
-    dimension: 'RESONANCE',
-    isCore: false,
-    customRoute: '/practice/projection'
-  },
-  {
-    id: 'emotional-reading',
-    title: 'Lectura con Matices',
-    description: 'Combate la voz monótona (robot). Aprende a "pintar" con tu voz.',
+    id: 'sentence-finisher',
+    title: 'Afirmación de Poder', // NEW EXERCISE
+    description: 'Elimina el tono de pregunta al final de tus frases. Cierra con autoridad descendente.',
     category: 'INTONATION',
     difficulty: 'INTERMEDIATE',
-    targetMetrics: ['pitchRange', 'rhythmConsistency'],
+    targetMetrics: ['pitchRange', 'energyStability'],
     requiredMode: 'AUDIO',
     steps: [
-      'Lee un párrafo con entusiasmo exagerado.',
-      'Léelo ahora con seriedad absoluta.',
-      'Varía la velocidad para enfatizar palabras clave.'
+      'Lee la afirmación en pantalla.',
+      'Asegúrate de que tu tono BAJE al final de la frase (Inflección Descendente).',
+      'Si subes el tono, el sistema detectará inseguridad.'
     ],
-    benefit: 'Añade emoción y mantiene a la audiencia enganchada.',
+    benefit: 'Proyecta certeza absoluta y cierra negociaciones con firmeza.',
     tier: 'STARTER',
     dimension: 'AUTHORITY',
-    isCore: false
+    isCore: false,
+    customRoute: '/practice/inflection'
   },
   {
     id: 'pen-horizontal',
@@ -225,6 +207,43 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
   // 🟣 NIVEL ELITE (AUTHORITY LAB)
   // =================================================================
+  {
+    id: 'vocal-projection',
+    title: 'Proyección a la Pared',
+    description: 'Haz que tu voz viaje sin gritar. Ideal para ganar presencia en salas grandes.',
+    category: 'PROJECTION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['volume', 'energyStability'],
+    requiredMode: 'AUDIO',
+    steps: [
+      'Siéntate contra una pared y mira un punto lejano.',
+      'Di "Hola" intentando tocar ese punto con tu voz.',
+      'Impulsa el aire desde el diafragma, no la garganta.'
+    ],
+    benefit: 'Tu voz llenará la sala sin esfuerzo físico.',
+    tier: 'ELITE', // MOVED TO ELITE
+    dimension: 'RESONANCE',
+    isCore: false,
+    customRoute: '/practice/projection'
+  },
+  {
+    id: 'emotional-reading',
+    title: 'Lectura con Matices',
+    description: 'Combate la voz monótona (robot). Aprende a "pintar" con tu voz.',
+    category: 'INTONATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['pitchRange', 'rhythmConsistency'],
+    requiredMode: 'AUDIO',
+    steps: [
+      'Lee un párrafo con entusiasmo exagerado.',
+      'Léelo ahora con seriedad absoluta.',
+      'Varía la velocidad para enfatizar palabras clave.'
+    ],
+    benefit: 'Añade emoción y mantiene a la audiencia enganchada.',
+    tier: 'ELITE', // MOVED TO ELITE
+    dimension: 'AUTHORITY',
+    isCore: false
+  },
   {
     id: 'defend-the-indefensible',    // 🆕 NEW BLACK OPS EXERCISE
     title: 'Defensa de lo Indefendible',
