@@ -30,6 +30,8 @@ export default function InstantPlaybackPage() {
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
+  const MAX_DURATION = 10;
+
   const startRecording = async () => {
     try {
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -48,14 +50,23 @@ export default function InstantPlaybackPage() {
             const url = URL.createObjectURL(blob);
             setAudioUrl(url);
             setPhase("REVIEW");
+            if (timerRef.current) clearInterval(timerRef.current);
         };
 
         mediaRecorder.start();
         setPhase("RECORDING");
         setRecordingTime(0);
 
+        // Timer for UI and Auto-Stop
         timerRef.current = setInterval(() => {
-            setRecordingTime(prev => prev + 1);
+            setRecordingTime(prev => {
+                const nextTime = prev + 1;
+                if (nextTime >= MAX_DURATION) {
+                    stopRecording(); // Auto-stop limit exceeded
+                    return MAX_DURATION;
+                }
+                return nextTime;
+            });
         }, 1000);
 
     } catch (err) {
@@ -69,7 +80,7 @@ export default function InstantPlaybackPage() {
         mediaRecorderRef.current.stop();
     }
     if (timerRef.current) clearInterval(timerRef.current);
-    if (stream) { // Keep stream for re-recording?? Better to stop yellow dot.
+    if (stream) { 
         stream.getTracks().forEach(t => t.stop());
         setStream(null);
     }
