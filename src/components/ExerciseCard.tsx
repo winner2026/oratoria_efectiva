@@ -28,6 +28,15 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false })
     }
   };
 
+  const getDifficultyLabel = (difficulty: string) => {
+    switch (difficulty) {
+      case 'BEGINNER': return 'NIVEL 1';
+      case 'INTERMEDIATE': return 'NIVEL 2';
+      case 'ADVANCED': return 'NIVEL 3';
+      default: return difficulty;
+    }
+  };
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'BREATHING': return 'air';
@@ -119,7 +128,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false })
                      </span>
                 )}
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${getDifficultyColor(exercise.difficulty)}`}>
-                  {exercise.difficulty}
+                  {getDifficultyLabel(exercise.difficulty)}
                 </span>
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter flex items-center gap-1 ${exercise.requiredMode === 'VIDEO' ? 'text-purple-400 bg-purple-400/10' : 'text-cyan-400 bg-cyan-400/10'}`}>
                     <span className="material-symbols-outlined text-[10px]">{exercise.requiredMode === 'VIDEO' ? 'videocam' : 'mic'}</span>
