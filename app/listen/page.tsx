@@ -33,14 +33,32 @@ export default function ListenPage() {
     if (session?.user) {
       setUserName(session.user.name || session.user.email?.split('@')[0] || 'Operador');
       
-      // Obtener plan del usuario (esto debería venir de la sesión o API en el futuro)
-      const storedPlan = (localStorage.getItem("user_plan") || "FREE") as PlanType;
-      setPlanType(storedPlan);
-      
-      // Cargar Protocolo del Día con gating
-      const currentDay = new Date().getDate(); 
-      const access = getDailyProtocol(storedPlan, currentDay);
-      setProtocolAccess(access);
+      // 🔄 Obtener plan REAL desde la API y sincronizar
+      fetch('/api/users/me')
+        .then(res => res.json())
+        .then(data => {
+            if (data.plan) {
+               console.log("Plan sincronizado:", data.plan);
+               localStorage.setItem("user_plan", data.plan);
+               setPlanType(data.plan as PlanType);
+               
+               // Recargar protocolo con el nuevo plan
+               const currentDay = new Date().getDate(); 
+               const access = getDailyProtocol(data.plan as PlanType, currentDay);
+               setProtocolAccess(access);
+            }
+        })
+        .catch(err => {
+             console.error("Error al sincronizar plan:", err);
+             // Fallback a localStorage si falla la API
+             const storedPlan = (localStorage.getItem("user_plan") || "FREE") as PlanType;
+             setPlanType(storedPlan);
+             
+             const currentDay = new Date().getDate(); 
+             const access = getDailyProtocol(storedPlan, currentDay);
+             setProtocolAccess(access);
+        });
+
     }
   }, [session]);
 

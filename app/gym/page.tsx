@@ -17,9 +17,23 @@ export default function GymPage() {
   React.useEffect(() => {
     if (status === "loading") return;
     
+    // Initial load from storage
     if (typeof window !== 'undefined') {
       const storedPlan = localStorage.getItem('user_plan') || 'FREE';
       setPlanType(storedPlan);
+    }
+
+    // Sync with API if user is logged in
+    if (session?.user) {
+        fetch('/api/users/me')
+        .then(res => res.json())
+        .then(data => {
+            if (data.plan) {
+               localStorage.setItem("user_plan", data.plan);
+               setPlanType(data.plan);
+            }
+        })
+        .catch(err => console.error("Error syncing plan in Gym:", err));
     }
   }, [session, status]);
 
