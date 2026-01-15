@@ -114,9 +114,8 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false })
               
               <div className="flex items-center gap-2 mt-1">
                 {(exercise.targetMetrics?.includes('volume') || exercise.intensity === 'HIGH') && (
-                     <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-500 border border-red-500/30 flex items-center gap-1">
+                     <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-500 border border-red-500/30 flex items-center justify-center">
                         <span className="material-symbols-outlined text-[10px]">local_fire_department</span>
-                        INTENSO
                      </span>
                 )}
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${getDifficultyColor(exercise.difficulty)}`}>
