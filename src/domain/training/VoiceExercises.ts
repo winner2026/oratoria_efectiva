@@ -27,8 +27,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
   {
     id: 'stability-check',
-    title: 'Ajuste de Estabilidad (SSSS)',
-    description: 'El ejercicio clave. Sopla suave y mantén la línea recta. Si tiembla, repite.',
+    title: 'Respirar con la Panza',
+    description: 'Sopla suave y mantén la línea recta. Si tiembla, estás nervioso.',
     category: 'BREATHING',
     difficulty: 'BEGINNER',
     targetMetrics: ['energyStability'],
@@ -51,8 +51,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
   {
     id: 'instant-feedback',
-    title: 'Monitor de Retorno',
-    description: 'Di una frase y escúchate al instante. Sin juicios, solo realidad.',
+    title: 'Escúchate al Instante',
+    description: 'Di una frase y escúchate al momento. ¡Así es como suenas!',
     category: 'INTONATION',
     difficulty: 'BEGINNER',
     targetMetrics: ['pitchRange'],
@@ -74,8 +74,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
   {
     id: 'functional-volume',
-    title: 'Medidor de Volumen',
-    description: 'Ajusta tu proyección. Zona Verde = Autoridad. Rojo = Grito.',
+    title: 'Hablar Fuerte sin Gritar',
+    description: 'Mantén la barra en la ZONA VERDE. No dejes que se ponga roja.',
     category: 'PROJECTION',
     difficulty: 'INTERMEDIATE',
     targetMetrics: ['volume'],
@@ -97,8 +97,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
   {
     id: 'sentence-closure',
-    title: 'Cierre de Frase',
-    description: 'Elimina el tono de duda. Haz que tus frases "aterricen" con seguridad.',
+    title: 'Terminar Frases Seguro',
+    description: 'No preguntes al final. Termina tus frases bajando el tono.',
     category: 'INTONATION',
     difficulty: 'INTERMEDIATE',
     targetMetrics: ['pitchRange'],
@@ -120,8 +120,8 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
   {
     id: 'controlled-pause',
-    title: 'Pausa Controlada',
-    description: 'Domina el silencio. Habla, pausa (1s), y cierra.',
+    title: 'Hacer Pausas',
+    description: 'Habla, espera 1 segundo, y sigue. El silencio te da poder.',
     category: 'MINDSET',
     difficulty: 'ADVANCED',
     targetMetrics: ['rhythmConsistency'],
