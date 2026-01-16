@@ -37,7 +37,7 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
       'Inhala profundo por la nariz.',
       'Sopla una "S" suave y constante (SSSS...).',
       'Mantén la línea verde lo más recta posible.',
-      'Si, tiembla, estás nervioso. Repite hasta estabilizar.'
+      'Si tiembla, estás nervioso. Repite hasta estabilizar.'
     ],
     benefit: 'Reduce la ansiedad en segundos y te da control total.',
     tier: 'FREE',

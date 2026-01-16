@@ -504,19 +504,19 @@ function PracticeContent() {
           <span className="material-symbols-outlined text-3xl text-blue-400">biometrics</span>
         </div>
         
-        <h2 className="text-3xl font-black mb-2 uppercase tracking-tight">Reporte de Hardware</h2>
+        <h2 className="text-3xl font-black mb-2 uppercase tracking-tight">Resultados Rápidos</h2>
         <p className="text-slate-500 mb-8 max-w-xs mx-auto text-sm font-medium">
-          Pulsa "Deep Audit" para un análisis experto por IA.
+          Toca el botón blanco para ver todo.
         </p>
 
         {/* Local Metrics Grid */}
         <div className="grid grid-cols-2 gap-4 w-full max-w-xs mb-6">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Dominancia</span>
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Fuerza</span>
                 <div className="text-2xl font-black text-blue-400">%{localRms}</div>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Estabilidad</span>
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Calma</span>
                 <div className="text-2xl font-black text-emerald-400">%{localStab}</div>
             </div>
         </div>
@@ -544,8 +544,8 @@ function PracticeContent() {
             onClick={handleStartAnalysis}
             className="group w-full h-16 bg-white text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center gap-0 uppercase tracking-widest active:scale-95"
           >
-            <span className="text-[11px]">Deep Audit (Sincronizar IA)</span>
-            <span className="text-[8px] opacity-70">Consumirá 1 Crédito de Auditoría</span>
+            <span className="text-[11px]">Ver Resultados Completos</span>
+            <span className="text-[8px] opacity-70">Cuesta 1 Moneda</span>
           </button>
           
           <button 
@@ -553,7 +553,7 @@ function PracticeContent() {
             className="w-full h-14 bg-transparent hover:bg-white/5 text-slate-400 font-bold rounded-2xl transition-all border border-white/10 flex items-center justify-center gap-3 active:scale-95"
           >
             <span className="material-symbols-outlined text-lg">refresh</span>
-            Perfeccionar y Regrabar
+            Probar otra vez
           </button>
         </div>
 
@@ -587,11 +587,11 @@ function PracticeContent() {
           </div>
 
           <h2 className="text-3xl font-black mb-3 tracking-tighter uppercase italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-            AI Neural Processing
+            Analizando tu Voz...
           </h2>
           <div className="space-y-1 mb-8">
             <p className="text-blue-100/60 text-xs font-bold uppercase tracking-[0.3em] font-mono">
-              Analyzing vocal patterns
+              Escuchando grabación
             </p>
             <p className="text-white font-medium text-lg min-h-[1.5em] transition-all duration-300">
               {loadingMessage}
@@ -713,7 +713,7 @@ function PracticeContent() {
                 <div className="mb-8 flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur-md">
                   <div className={`size-1.5 rounded-full ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-blue-400 font-bold'}`}></div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100 italic">
-                    {isRecording ? "Neural Audio Analysis Live" : "Elite Voice Diagnostics"}
+                    {isRecording ? "Grabando..." : "Detector de Voz"}
                   </span>
                 </div>
 
@@ -746,12 +746,12 @@ function PracticeContent() {
                   <h2 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-white leading-none">
                     {isRecording ? (
                       <>Escuchando <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">tu voz</span></>
-                    ) : "Test de Autoridad"}
+                    ) : "Prueba de Voz"}
                   </h2>
                   <p className="text-slate-400 text-sm md:text-xl max-w-[320px] md:max-w-md mx-auto leading-relaxed font-medium">
                     {isRecording 
-                      ? "Habla con naturalidad. La IA está procesando tu tono, cadencia y micro-oscilaciones vocales." 
-                      : "Descubre el impacto real de tu comunicación en solo 15 segundos."}
+                      ? "Habla normal. La IA está escuchando cómo suenas." 
+                      : "Ve qué tan fuerte suenas en 15 segundos."}
                   </p>
                 </div>
 
@@ -761,7 +761,7 @@ function PracticeContent() {
                       <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-2">
                         <span className="material-symbols-outlined text-blue-400 text-xl">speed</span>
                       </div>
-                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Fluidez</span>
+                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Rapidez</span>
                     </div>
                     <div className="flex flex-col items-center">
                       <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-2">
@@ -773,7 +773,7 @@ function PracticeContent() {
                       <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-2">
                         <span className="material-symbols-outlined text-emerald-400 text-xl">verified</span>
                       </div>
-                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Impacto</span>
+                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Fuerza</span>
                     </div>
                   </div>
                 )}
