@@ -19,6 +19,7 @@ export type VoiceExercise = {
   isCore?: boolean; 
   customRoute?: string;
   intensity?: 'LOW' | 'MEDIUM' | 'HIGH';
+  aiEnhanced?: boolean;
 };
 
 export const VOICE_EXERCISES: VoiceExercise[] = [
@@ -109,10 +110,11 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
       'Si subes el tono (pregunta), inténtalo de nuevo.'
     ],
     benefit: 'Sensación de autoridad inmediata. Menos interrupciones.',
-    tier: 'STARTER',
+    tier: 'ELITE',
     dimension: 'AUTHORITY',
     isCore: false,
-    customRoute: '/practice/inflection'
+    customRoute: '/practice/inflection',
+    aiEnhanced: true
   },
 
   // =================================================================
@@ -135,6 +137,7 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     tier: 'ELITE',
     dimension: 'MINDSET',
     isCore: false,
-    customRoute: '/practice/breathing?mode=pauses' // Using breathing page as base for logic if needed, or update later
+    customRoute: '/practice/breathing?mode=pauses',
+    aiEnhanced: true
   }
 ];

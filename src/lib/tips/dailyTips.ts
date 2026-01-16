@@ -31,49 +31,49 @@ export const THIRTY_DAY_PROTOCOL: DailyProtocol[] = [
   {
     day: 1,
     phase: "HARDWARE",
-    title: "Reseteo Diafragmático",
+    title: "Respirar Bien",
     action: "Inhala 4s, sostén 4s, exhala 8s con siseo 'Ssss'. Repite 3 veces.",
     science: "Activa el nervio vago para reducir cortisol inmediato."
   },
   {
     day: 2,
     phase: "HARDWARE",
-    title: "Desbloqueo Mandibular",
+    title: "Soltar Mandíbula",
     action: "Masajea la articulación temporomandibular (TMJ) mientras dices 'Maaa'.",
     science: "La tensión en la TMJ oprime la laringe, agudizando la voz."
   },
   {
     day: 3,
     phase: "HARDWARE",
-    title: "Anclaje de Gravedad",
+    title: "Pies Firmes",
     action: "Habla parado, separando pies. Siente peso en talones.",
     science: "El cerebro asocia estabilidad física con seguridad psicológica."
   },
   {
     day: 4,
     phase: "HARDWARE",
-    title: "Resonancia de Pecho",
+    title: "Voz de Pecho",
     action: "Coloca mano en esternón. Di 'Mmmm' hasta sentir vibración allí.",
     science: "Baja el tono percibido sin forzar cuerdas vocales."
   },
   {
     day: 5,
     phase: "HARDWARE",
-    title: "Limpieza de Canal",
+    title: "Cuello Suelto",
     action: "Gira cuello lentamente diciendo 'Uuuu'. Detecta cortes de voz.",
     science: "Libera tensión cervical que estrangula el flujo de aire."
   },
   {
     day: 6,
     phase: "HARDWARE",
-    title: "Volumen Balístico",
+    title: "Lanzar Aire",
     action: "Lanza aire con '¡PA!' al diafragma. Cero garganta.",
     science: "Entrena la proyección sin daño tisular."
   },
   {
     day: 7,
     phase: "HARDWARE",
-    title: "Calibración de Silencio",
+    title: "Hacer Silencios",
     action: "Grábate. Haz pausa de 3s completos entre frases.",
     science: "El silencio demuestra estatus. La prisa demuestra sumisión."
   },
@@ -82,14 +82,14 @@ export const THIRTY_DAY_PROTOCOL: DailyProtocol[] = [
   {
     day: 8,
     phase: "SOFTWARE",
-    title: "Hiper-Articulación",
+    title: "Mover la Boca",
     action: "Lee un mail exagerando 200% el movimiento de labios.",
     science: "Despierta la memoria muscular facial dormida."
   },
   {
     day: 9,
     phase: "SOFTWARE",
-    title: "Control de Velocidad (Bpm)",
+    title: "Hablar Lento",
     action: "Habla caminando lento. Una palabra por paso.",
     science: "Sincroniza el ritmo motor con el ritmo verbal."
   },

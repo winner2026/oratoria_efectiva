@@ -91,7 +91,7 @@ export default function ListenPage() {
                   <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                </Link>
                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-blue-500/80">Estatus: {planType}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-blue-500/80">Nivel: {planType === 'FREE' ? '🥈 Monitor' : planType === 'STARTER' ? '🥉 CONTROL' : '🥇 PRECISION'}</span>
                   <h2 className="text-sm font-bold tracking-tight text-white">{userName || 'Operador'}</h2>
                </div>
             </div>
@@ -118,9 +118,9 @@ export default function ListenPage() {
             {/* 1. PROTOCOLO DEL DÍA (Misión Actual) */}
             <section className="space-y-4">
               <div className="flex items-center justify-between px-1">
-                 <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Misión Diaria</h3>
+                 <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Tu Reto de Hoy</h3>
                  {protocolAccess && !protocolAccess.isLocked && (
-                    <span className="text-[9px] font-bold text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-full">En Curso</span>
+                    <span className="text-[9px] font-bold text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-full">¡Dale!</span>
                  )}
               </div>
 
@@ -133,11 +133,11 @@ export default function ListenPage() {
                         </div>
                     )}
                     <div className="opacity-30 blur-[1px] mb-4">
-                        <h3 className="text-lg font-bold text-white leading-tight">Misión Bloqueada</h3>
-                        <p className="text-slate-500 text-xs mt-1">Requiere actualización de estatus.</p>
+                        <h3 className="text-lg font-bold text-white leading-tight">Juego Cerrado</h3>
+                        <p className="text-slate-500 text-xs mt-1">Necesitas subir de Nivel.</p>
                     </div>
                     <Link href="/upgrade" className="block w-full py-4 bg-amber-600 text-white text-center font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">
-                       Desbloquear Pase Elite
+                       Ver Nivel Pro
                     </Link>
                   </div>
                 ) : (
@@ -147,7 +147,11 @@ export default function ListenPage() {
                             <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Día {protocolAccess.protocol.day}/30</span>
                         </div>
                     )}
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">{protocolAccess.protocol.phase}</span>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">
+                      {protocolAccess.protocol.phase === 'HARDWARE' ? 'NIVEL 1: CUERPO' : 
+                       protocolAccess.protocol.phase === 'SOFTWARE' ? 'NIVEL 2: HABLA' : 
+                       protocolAccess.protocol.phase === 'SYSTEM' ? 'NIVEL 3: MENTE' : 'NIVEL 4: REALIDAD'}
+                    </span>
                     <h3 className="text-xl font-black text-white leading-tight mb-3">{protocolAccess.protocol.title}</h3>
                     <p className="text-slate-400 text-sm font-medium leading-relaxed italic border-l border-blue-500/50 pl-4 mb-5">
                         "{protocolAccess.protocol.action}"
