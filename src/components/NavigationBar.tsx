@@ -35,10 +35,11 @@ const NavigationBar = () => {
   }, []);
 
   const navItems = [
-    { label: 'Base', icon: 'dashboard_customize', href: '/listen' }, 
-    { label: 'Arsenal', icon: 'military_tech', href: '/gym' },
-    { label: 'Cursos', icon: 'school', href: '/courses' },
-    { label: 'Auditoría', icon: 'query_stats', href: '/my-sessions' },
+    { label: 'Inicio', icon: 'dashboard_customize', href: '/listen' }, 
+    { label: 'Entrenar', icon: 'fitness_center', href: '/gym' },
+    { label: 'Clases', icon: 'school', href: '/courses' },
+    { label: 'Historial', icon: 'query_stats', href: '/my-sessions' },
+    { label: '¡Ayuda!', icon: 'emergency', href: '/sos' },
   ];
 
   const handleLogout = () => {
