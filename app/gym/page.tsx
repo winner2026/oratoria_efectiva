@@ -83,9 +83,9 @@ export default function GymPage() {
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
           <div className="flex flex-col items-center">
-             <h1 className="font-bold text-sm uppercase tracking-widest text-white">Arsenal Pro</h1>
+             <h1 className="font-bold text-sm uppercase tracking-widest text-white">Zona de Entrenamiento</h1>
              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-                {planType === 'FREE' ? 'Nivel Acceso: Básico' : planType === 'STARTER' ? 'Nivel Acceso: Starter' : 'Nivel Acceso: Elite'}
+                {planType === 'FREE' ? 'Tu Nivel: 🥈 Monitor' : planType === 'STARTER' ? 'Tu Nivel: 🥉 CONTROL' : 'Tu Nivel: 🥇 PRECISION'}
              </span>
           </div>
           <div className="w-6"></div> 
@@ -120,7 +120,7 @@ export default function GymPage() {
                 <div className="flex items-center gap-2 mb-2">
                     <span className="flex size-2 bg-emerald-500 rounded-full animate-pulse"></span>
                     <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                        Protocolos Fundamentales
+                        Lo Básico
                     </h2>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
@@ -137,7 +137,7 @@ export default function GymPage() {
                 <div className="flex items-center gap-2 mb-2 pt-6 border-t border-slate-800/50">
                     <span className="material-symbols-outlined text-sm text-blue-500">grid_view</span>
                     <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                        Biblioteca Especializada
+                        Juegos Avanzados
                     </h2>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
@@ -151,7 +151,7 @@ export default function GymPage() {
         {organizedExercises.length === 0 && (
             <div className="text-center py-20 opacity-50">
                 <span className="material-symbols-outlined text-4xl mb-2">filter_list_off</span>
-                <p>No se encontraron ejercicios con este filtro.</p>
+                <p>No hay juegos de este tipo.</p>
             </div>
         )}
 
@@ -159,13 +159,13 @@ export default function GymPage() {
         {planType === 'FREE' && (
             <div className="mt-12 bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-3xl p-6 text-center space-y-4">
                 <p className="text-sm text-blue-200 font-medium">
-                    ¿Necesitas más potencia?
+                    ¿Quieres más juegos?
                 </p>
                 <h3 className="text-xl font-black text-white italic">
-                    Desbloquea el Arsenal Completo
+                    Desbloquear Todo
                 </h3>
                 <Link href="/upgrade" className="inline-block w-full py-4 bg-white text-blue-900 font-black rounded-xl uppercase tracking-widest shadow-xl">
-                    Ver Planes
+                    Ver Cómo
                 </Link>
             </div>
         )}

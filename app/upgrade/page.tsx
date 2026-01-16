@@ -72,7 +72,7 @@ export default function UpgradePage() {
            {/* PLAN STARTER (4 columnas) */}
            <div className="md:col-span-5 bg-[#0c1219] border border-blue-900/30 rounded-[32px] p-8 flex flex-col relative opacity-80 hover:opacity-100 transition-opacity">
                <div className="mb-6 border-b border-white/5 pb-6">
-                   <h3 className="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-2">Entrenamiento Base</h3>
+                   <h3 className="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-2">🥉 CONTROL</h3>
                    <div className="flex items-baseline gap-1">
                        <span className="text-4xl font-black text-white">$12</span>
                        <span className="text-[10px] text-slate-500 font-bold uppercase">/mes</span>
@@ -93,7 +93,7 @@ export default function UpgradePage() {
                   onClick={() => handlePlanSelect("STARTER")}
                   className="w-full py-4 rounded-xl bg-blue-900/10 hover:bg-blue-800/30 text-blue-400 border border-blue-500/20 font-black text-[10px] uppercase tracking-[0.2em] transition-all"
                >
-                  Seleccionar Starter
+                  Seleccionar 🥉 CONTROL
                </button>
            </div>
 
@@ -107,7 +107,7 @@ export default function UpgradePage() {
                    <div className="flex justify-between items-start mb-2">
                        <h3 className="text-sm font-black text-amber-500 uppercase tracking-[0.2em] flex items-center gap-2">
                            <span className="material-symbols-outlined text-base">verified_user</span>
-                           Dominio Estratégico
+                           🥇 PRECISION
                        </h3>
                        <span className="px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 rounded text-[9px] font-black text-amber-500 uppercase tracking-widest animate-pulse">
                            Recomendado
@@ -140,7 +140,7 @@ export default function UpgradePage() {
                   className="relative z-10 w-full py-5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 text-white font-black text-[12px] uppercase tracking-[0.25em] shadow-[0_10px_30px_rgba(245,158,11,0.2)] active:scale-95 transition-all flex items-center justify-center gap-2 group"
                >
                   <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">lock_open</span>
-                  Cambiar mi Voz
+                  Activar 🥇 PRECISION
                </button>
            </div>
         </div>
@@ -154,9 +154,9 @@ export default function UpgradePage() {
                          La diferencia entre <span className="text-slate-500">ser escuchado</span> y <span className="text-amber-500">Ser Seguido.</span>
                      </h2>
                      <p className="text-sm text-slate-400 leading-relaxed font-medium">
-                         El plan Starter te da las pesas; el plan Elite te da al <strong className="text-white">entrenador experto</strong>. 
+                         El plan 🥉 CONTROL te da las herramientas; el plan 🥇 PRECISION te da la <strong className="text-white">precisión quirúrgica</strong>. 
                          <br/><br/>
-                         Mientras el mundo entrena oratoria básica, tú haces corrección técnica. Con el Plan Elite, puedes subir la grabación de esa junta donde sentiste "ruido", y la IA te dirá exactamente dónde falló tu voz.
+                         Mientras el mundo entrena oratoria básica, tú haces corrección técnica. Con 🥇 PRECISION, puedes subir la grabación de esa junta donde sentiste "ruido", y la IA te dirá exactamente dónde falló tu voz.
                      </p>
                  </div>
                  {/* Testimonio Táctico */}
@@ -218,7 +218,7 @@ export default function UpgradePage() {
                   onClick={() => handlePlanSelect("PREMIUM")}
                   className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-slate-300 hover:text-white uppercase tracking-[0.2em] transition-all"
                 >
-                   Activar Protocolo Elite ($29)
+                   Activar Protocolo 🥇 PRECISION ($29)
                 </button>
             </div>
         </div>

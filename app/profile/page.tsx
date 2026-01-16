@@ -62,9 +62,9 @@ export default function ProfilePage() {
 
   // 🛡️ PLAN MAPPING
   const getPlanLabel = (plan: string) => {
-    if (plan === 'STARTER') return 'ACCESO BÁSICO';
-    if (plan === 'PREMIUM' || plan === 'ELITE') return 'RANGO PROFESIONAL';
-    return 'ACCESO GRATUITO';
+    if (plan === 'STARTER') return '🥉 CONTROL';
+    if (plan === 'PREMIUM' || plan === 'ELITE') return '🥇 PRECISION';
+    return '🥈 Monitor';
   };
 
   const getPlanColor = (plan: string) => {
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className="space-y-1">
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Identidad del Usuario</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">¿Quién eres?</p>
                     <h1 className="text-2xl font-black text-white">{user.name}</h1>
                     <p className="text-sm text-slate-400 font-mono">{user.email}</p>
                 </div>
@@ -134,7 +134,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                      <span className="text-3xl font-black text-white block">{user.totalUsage}</span>
-                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Prácticas (Total)</span>
+                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Veces que practicaste</span>
                 </div>
             </div>
             
@@ -144,7 +144,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                      <span className="text-3xl font-black text-white block">{user.credits}</span>
-                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Créditos</span>
+                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Monedas</span>
                 </div>
                 {user.plan === 'FREE' && (
                     <Link href="/upgrade" className="absolute top-4 right-4 text-emerald-500 animate-pulse">
@@ -157,7 +157,7 @@ export default function ProfilePage() {
 
         {/* SETTINGS LIST */}
         <section className="space-y-4">
-            <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] px-2">Configuración</h3>
+            <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] px-2">Tus Cosas</h3>
             
             <button 
                onClick={handleManageSubscription}
@@ -168,8 +168,8 @@ export default function ProfilePage() {
                         <span className="material-symbols-outlined">credit_card</span>
                     </div>
                     <div className="text-left">
-                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Suscripción</span>
-                        <span className="text-[10px] text-slate-500 font-medium">Gestionar plan y facturación</span>
+                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Tu Plan</span>
+                        <span className="text-[10px] text-slate-500 font-medium">Cambiar tipo de cuenta</span>
                     </div>
                 </div>
                 <span className="material-symbols-outlined text-slate-600">chevron_right</span>
@@ -197,10 +197,10 @@ export default function ProfilePage() {
                     </div>
                     <div className="text-left">
                         <span className={`text-sm font-bold block ${user.plan === 'FREE' ? 'text-slate-500' : 'text-slate-200 group-hover:text-white'}`}>
-                             {user.plan === 'FREE' ? 'Mis Sesiones (Bloqueado)' : 'Mis Sesiones'}
+                             {user.plan === 'FREE' ? 'Tu Historial (Bloqueado)' : 'Tu Historial'}
                         </span>
                         <span className="text-[10px] text-slate-500 font-medium">
-                            {user.plan === 'FREE' ? 'Requiere Plan Profesional' : 'Historial y métricas'}
+                            {user.plan === 'FREE' ? 'Necesitas Plan Pro' : 'Ver qué tal lo hiciste'}
                         </span>
                     </div>
                 </div>
@@ -216,8 +216,8 @@ export default function ProfilePage() {
                         <span className="material-symbols-outlined">fitness_center</span>
                     </div>
                     <div className="text-left">
-                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Gimnasio Vocal</span>
-                        <span className="text-[10px] text-slate-500 font-medium">Ejercicios de práctica</span>
+                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Entrenar Voz</span>
+                        <span className="text-[10px] text-slate-500 font-medium">Jugar y practicar</span>
                     </div>
                 </div>
                 <span className="material-symbols-outlined text-slate-600">chevron_right</span>
@@ -228,10 +228,10 @@ export default function ProfilePage() {
         <div className="pt-8 border-t border-white/5 flex justify-between items-center">
             <button onClick={handleLogout} className="text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">power_settings_new</span>
-                Cerrar Sesión
+                Salir
             </button>
             <a href="mailto:soporte@oratoriaefectiva.in" className="text-[10px] font-bold text-slate-600 hover:text-slate-400 uppercase tracking-widest transition-colors">
-                Soporte
+                Ayuda
             </a>
         </div>
 
