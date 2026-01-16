@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   title: "Oratoria Efectiva",
   description: "Mejora tu forma de hablar y comunica con autoridad",
   icons: {
-    icon: "/logo-app.png",
-    apple: "/logo-app.png",
+    icon: "/logo-new.png",
+    apple: "/logo-new.png",
   },
 };
 

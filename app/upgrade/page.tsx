@@ -55,7 +55,7 @@ export default function UpgradePage() {
           </h1>
           
           <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
-            <strong className="text-white">SOBERANA</strong> es el primer laboratorio de Bio-hacking Vocal que utiliza telemetría forense para reconstruir tu autoridad y romper tu techo de cristal.
+            <strong className="text-white">ORATORIA EFECTIVA</strong> es el primer laboratorio de entrenamiento vocal que utiliza telemetría para mejorar tu autoridad.
           </p>
           
           <div className="pt-4">
@@ -140,7 +140,7 @@ export default function UpgradePage() {
                   className="relative z-10 w-full py-5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 text-white font-black text-[12px] uppercase tracking-[0.25em] shadow-[0_10px_30px_rgba(245,158,11,0.2)] active:scale-95 transition-all flex items-center justify-center gap-2 group"
                >
                   <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">lock_open</span>
-                  Reclamar mi Soberanía
+                  Cambiar mi Voz
                </button>
            </div>
         </div>
@@ -154,16 +154,16 @@ export default function UpgradePage() {
                          La diferencia entre <span className="text-slate-500">ser escuchado</span> y <span className="text-amber-500">Ser Seguido.</span>
                      </h2>
                      <p className="text-sm text-slate-400 leading-relaxed font-medium">
-                         El plan Starter te da las pesas; el plan Elite te da al <strong className="text-white">entrenador forense</strong>. 
+                         El plan Starter te da las pesas; el plan Elite te da al <strong className="text-white">entrenador experto</strong>. 
                          <br/><br/>
-                         Mientras el mundo entrena oratoria básica, tú haces Reingeniería de Impacto. Con el Plan Elite, puedes subir la grabación de esa junta donde sentiste que perdiste el control, y la IA te dirá exactamente en qué milisegundo tu biometría delató tu ansiedad.
+                         Mientras el mundo entrena oratoria básica, tú haces corrección técnica. Con el Plan Elite, puedes subir la grabación de esa junta donde sentiste "ruido", y la IA te dirá exactamente dónde falló tu voz.
                      </p>
                  </div>
                  {/* Testimonio Táctico */}
                  <div className="flex-1 bg-slate-900/50 p-6 rounded-2xl border border-slate-800 italic relative">
                      <span className="absolute -top-3 -left-3 text-4xl text-slate-700 font-serif">"</span>
                      <p className="text-sm text-slate-300 mb-4 relative z-10">
-                         Pasé de ser el expert técnico al que nadie miraba, a liderar la mesa de decisiones. Mi Score de Soberanía subió de 45 a 92 en 3 semanas. <strong className="text-amber-500">Los datos no mienten.</strong>
+                         Pasé de ser el experto técnico al que nadie miraba, a liderar la mesa de decisiones. Mi Puntuación de Voz subió de 45 a 92 en 3 semanas. <strong className="text-amber-500">Los datos no mienten.</strong>
                      </p>
                      <div className="flex items-center gap-3 not-italic">
                          <div className="size-8 bg-slate-800 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-500">DO</div>
@@ -211,7 +211,7 @@ export default function UpgradePage() {
                 Mañana tienes otra reunión.
             </h3>
             <p className="text-sm text-slate-400 font-medium">
-                Puedes entrar con la misma voz que te ha mantenido estancado, o puedes entrar con una <strong className="text-white">Voz Soberana</strong>. La decisión es una métrica de tu ambición.
+                Puedes entrar con la misma voz de siempre, o puedes entrar con una <strong className="text-white">Voz Segura</strong>. Tú decides.
             </p>
             <div className="pt-4">
                 <button 

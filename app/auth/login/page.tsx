@@ -36,17 +36,21 @@ function LoginForm() {
         
         {/* LOGO & IDENTITY */}
         <div className="text-center mb-12 space-y-4">
-            <div className="flex justify-center mb-6">
-                <div className="size-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.3)]">
-                    <span className="material-symbols-outlined text-3xl text-white">graphic_eq</span>
+            {/* <div className="flex justify-center mb-6">
+                <div className="relative size-24 md:size-32">
+                    <img 
+                        src="/logo-new.png" 
+                        alt="Oratoria Efectiva" 
+                        className="object-contain w-full h-full drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                    />
                 </div>
-            </div>
+            </div> */}
             
             <h1 className="text-3xl font-black text-white tracking-widest uppercase mb-1">
-                SOBERANA
+                ORATORIA EFECTIVA
             </h1>
             <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] bg-blue-900/10 inline-block px-3 py-1 rounded-full border border-blue-500/20">
-                Reserva Federal de Autoridad
+                Sistema de Control Vocal
             </p>
         </div>
 
@@ -63,8 +67,8 @@ function LoginForm() {
                 <div>
                      <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-2">Identificación Requerida</h2>
                      <p className="text-xs text-slate-500 leading-relaxed">
-                         Acceso restringido a operadores de Nivel 1.
-                         <br/>Por favor, verifique su credencial biométrica.
+                         Acceso a estudiantes y profesionales.
+                         <br/>Por favor, inicia sesión para continuar.
                      </p>
                 </div>
 
@@ -84,7 +88,7 @@ function LoginForm() {
 
         {/* FOOTER */}
         <p className="mt-8 text-center text-[10px] text-slate-600 uppercase tracking-widest font-medium">
-             Proto-Arquitectura por Soberana Labs &copy; 2026
+             &copy; 2026 Oratoria Efectiva Labs
         </p>
 
       </div>

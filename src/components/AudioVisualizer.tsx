@@ -19,6 +19,11 @@ export default function AudioVisualizer({ stream, isActive }: AudioVisualizerPro
     const source = audioContext.createMediaStreamSource(stream);
     const analyzer = audioContext.createAnalyser();
     
+    // Ensure properly resumed
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    
     analyzer.fftSize = 256;
     source.connect(analyzer);
     analyzerRef.current = analyzer;
@@ -26,6 +31,12 @@ export default function AudioVisualizer({ stream, isActive }: AudioVisualizerPro
     const bufferLength = analyzer.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     const canvas = canvasRef.current;
+    
+    // Safety check for canvas context
+    if (!canvas) { 
+        audioContext.close();
+        return; 
+    }
     const ctx = canvas.getContext("2d");
 
     const draw = () => {
@@ -68,7 +79,10 @@ export default function AudioVisualizer({ stream, isActive }: AudioVisualizerPro
 
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      audioContext.close();
+      // Important to catch errors during cleanup
+      if (audioContext.state !== 'closed') {
+          audioContext.close().catch(e => console.error("Error closing AudioContext", e));
+      }
     };
   }, [stream, isActive]);
 

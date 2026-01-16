@@ -1,3 +1,4 @@
+﻿
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -14,16 +15,16 @@ export default function Home() {
       {/* GLOBAL FLOATING HEADER */}
       <header className="absolute top-0 left-0 w-full p-6 z-50 flex items-center justify-between">
           <div className="flex items-center gap-3">
-             <div className="relative size-10 md:size-12 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 p-2 shadow-2xl">
+             {/* <div className="relative size-10 md:size-12 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 p-2 shadow-2xl">
                 <Image 
-                   src="/logo-app.png" 
-                   alt="Oratoria Pro Logo" 
+                   src="/logo-new.png" 
+                   alt="Oratoria Efectiva Logo" 
                    fill 
                    className="object-contain p-1"
                 />
-             </div>
+             </div> */}
              <span className="font-black tracking-tighter text-sm md:text-base uppercase hidden md:block">
-                Oratoria <span className="text-blue-500">Pro</span>
+                Oratoria <span className="text-blue-500">Efectiva</span>
              </span>
           </div>
           
@@ -41,22 +42,22 @@ export default function Home() {
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10 space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 mb-4 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium uppercase tracking-[0.3em] text-blue-400 mb-4 animate-fade-in">
              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
              </span>
-             INTELIGENCIA DE COMANDO v3.0
+             ENTRENADOR VOCAL v3.0
           </div>
 
-          <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[1.1] md:leading-[0.9] text-white uppercase italic">
-            Tu voz te está costando <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-red-500 via-orange-500 to-amber-500">Más de lo que crees.</span>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] text-white uppercase">
+            Habla claro. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-indigo-400 to-slate-400">Habla con seguridad.</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto font-medium leading-relaxed">
-            La inseguridad vocal es el "impuesto invisible" que pagas en cada negociación. <br />
-            <span className="text-white font-bold">Deja de pedir permiso. Empieza a dar órdenes biológicas.</span>
+          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
+            Mejora tu voz en segundos. <br />
+            <span className="text-slate-200">Sin teoría aburrida. Solo práctica.</span>
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
@@ -67,7 +68,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <span className="relative z-10 flex items-center gap-3">
                 <span className="material-symbols-outlined text-3xl">mic</span>
-                Analizar mi Autoridad (Gratis)
+                Analizar Señal (Gratis)
               </span>
             </button>
             <div className="flex flex-col gap-1">
@@ -98,54 +99,48 @@ export default function Home() {
 
       {/* SECCIÓN 2: LA VERDAD INCÓMODA (DOLORES PROFUNDOS) */}
       <section className="py-20 md:py-32 px-6 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
-        {/* Adorno de fondo */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-900/5 rounded-full blur-[120px] pointer-events-none" />
-
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center relative z-10">
           <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[1.2] md:leading-[1.1]">
-              ¿Por qué sientes que <br/> tienes un <span className="text-blue-500">techo invisible</span>?
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tighter uppercase leading-tight">
+              Cómo funciona <br/> <span className="text-blue-500">tu voz</span>.
             </h2>
-            <div className="h-1 w-24 bg-gradient-to-r from-blue-600 to-transparent" />
-            <p className="text-lg text-slate-300 leading-relaxed font-medium">
-              Tienes la experiencia. Tienes la estrategia. Eres, objetivamente, el más capaz de la sala.
+            <div className="h-0.5 w-16 bg-blue-600/50" />
+            <p className="text-base text-slate-400 leading-relaxed">
+              Si tu voz tiembla o se escucha bajo, nadie te prestará atención.
               <br/><br/>
-              Sin embargo, ves cómo otros con la mitad de tu talento se llevan el crédito, el ascenso o el cliente. 
+              No es culpa de tus ideas. Es "ruido" en tu sonido.
               <br/><br/>
-              No es injusticia. Es <strong className="text-white">Física Acústica</strong>. El mundo no escucha tu "currículum", escucha tu frecuencia.
+              No necesitas talento. Necesitas <strong className="text-slate-200">controlar tu aire</strong>.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6">
-             {/* DOLOR 1: IRRELEVANCIA / SER IGNORADO */}
              <div className="p-8 bg-[#0F1419] border border-white/5 rounded-3xl space-y-3 group hover:border-blue-500/30 transition-colors shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                    <span className="material-symbols-outlined text-6xl text-slate-500">visibility_off</span>
                 </div>
-                <h4 className="font-bold text-xl text-white uppercase">La "Desconexión" Sutil</h4>
-                <p className="text-sm text-slate-400 font-medium leading-relaxed">
-                   Ese momento en la reunión donde notas que miran el celular o te interrumpen "sin querer". No es mala educación; es que tu voz no reclamó biológicamente el espacio auditivo. Te volviste ruido de fondo.
+                <h4 className="font-bold text-lg text-slate-200 uppercase">Voz Insegura</h4>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                   Cuando hablas monótono o dudas, la gente deja de escuchar. Te conviertes en ruido de fondo.
                 </p>
              </div>
              
-             {/* DOLOR 2: LA DISONANCIA (IMPOSTOR) */}
              <div className="p-8 bg-[#0F1419] border border-white/5 rounded-3xl space-y-3 group hover:border-blue-500/30 transition-colors shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                    <span className="material-symbols-outlined text-6xl text-slate-500">theater_comedy</span>
                 </div>
-                <h4 className="font-bold text-xl text-white uppercase">La Traición del Hardware</h4>
-                <p className="text-sm text-slate-400 font-medium leading-relaxed">
-                   Por dentro estás 100% seguro de tu idea. Pero tu laringe se tensa y emite un micro-temblor que grita "duda". Tu cuerpo está contradiciendo a tu intelecto, y la audiencia siempre le cree al cuerpo.
+                <h4 className="font-bold text-lg text-slate-200 uppercase">Tensión Física</h4>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                   Si te pones tenso, tu garganta se cierra. Tu voz sale fina y débil, aunque tú te sientas seguro.
                 </p>
              </div>
              
-             {/* DOLOR 3: EL COSTO DE OPORTUNIDAD */}
              <div className="p-8 bg-[#0F1419] border border-white/5 rounded-3xl space-y-3 group hover:border-blue-500/30 transition-colors shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                    <span className="material-symbols-outlined text-6xl text-slate-500">trending_flat</span>
                 </div>
-                <h4 className="font-bold text-xl text-white uppercase">El Estancamiento Silencioso</h4>
-                <p className="text-sm text-slate-400 font-medium leading-relaxed">
-                   Ser el "experto técnico" confiable, pero nunca el "líder" inspirador. Quedar atrapado en la ejecución porque nadie visualiza tu voz dirigiendo la estrategia.
+                <h4 className="font-bold text-lg text-slate-200 uppercase">Poco Volumen</h4>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                   Si no usas bien tu aire, tu voz no viaja. Nadie te escucha si hay ruido en la sala.
                 </p>
              </div>
           </div>
@@ -155,201 +150,197 @@ export default function Home() {
       {/* SECCIÓN 3: LA SOLUCIÓN (INGENIERÍA VOCAL) */}
       <section className="py-20 md:py-40 px-6 relative overflow-hidden bg-[#05070A]">
         <div className="max-w-6xl mx-auto text-center mb-16 md:mb-24 space-y-6">
-           <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[1.1] md:leading-tight">Deja de Adivinar. <br /><span className="text-blue-500">Empieza a Medir.</span></h2>
-           <p className="text-slate-400 uppercase tracking-widest font-black text-xs max-w-xl mx-auto leading-loose">
-             La oratoria tradicional te da "consejos". Nosotros te damos <span className="text-white border-b border-blue-500">datos forenses</span> de tu performance.
+           <h2 className="text-4xl md:text-5xl font-bold tracking-tight uppercase leading-tight">Resultados reales. <br /><span className="text-blue-500">Sin mentiras.</span></h2>
+           <p className="text-slate-400 uppercase tracking-widest font-medium text-xs max-w-xl mx-auto leading-loose">
+             Dejamos las opiniones. Usamos <span className="text-slate-200 border-b border-blue-500/50">datos simples</span>.
            </p>
         </div>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-           {/* Benefit 1 */}
-           <div className="group p-10 rounded-[40px] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 opacity-5 font-black text-9xl text-slate-700 select-none group-hover:opacity-10 transition-opacity">1</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+           <div className="p-10 bg-[#0F1419] border border-white/5 rounded-[40px] hover:bg-[#13181E] transition-all group hover:-translate-y-2 relative">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
                <div className="size-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-4xl">monitor_heart</span>
                </div>
-               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Telemetría Emocional</h3>
+               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Detector de Errores</h3>
                <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                 Nuestro motor IA rastrea 24 puntos de datos por segundo. Detectamos la ansiedad antes de que tu audiencia la note.
+                 Analizamos tu voz al instante. Te decimos si tiemblas o si hablas muy bajo.
                </p>
            </div>
 
-           {/* Benefit 2 */}
-           <div className="group p-10 rounded-[40px] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 hover:border-amber-500/30 transition-all duration-500 relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 opacity-5 font-black text-9xl text-slate-700 select-none group-hover:opacity-10 transition-opacity">2</div>
+           <div className="p-10 bg-[#0F1419] border border-amber-500/10 rounded-[40px] hover:bg-[#13181E] transition-all group hover:-translate-y-2 relative shadow-[0_0_50px_rgba(245,158,11,0.05)]">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors"></div>
                <div className="size-16 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 mb-8 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-4xl">psychology_alt</span>
                </div>
-               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Subtexto Psicológico</h3>
+               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Escucha tu Tono</h3>
                <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                 No solo analizamos CÓMO suenas, sino QUÉ proyectas. ¿Suenas autoritario o arrogante? ¿Seguro o defensivo?
+                 ¿Suenas seguro o con dudas? Te mostramos cómo te escuchan los demás realmente.
                </p>
            </div>
 
-           {/* Benefit 3 */}
-           <div className="group p-10 rounded-[40px] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 hover:border-purple-500/30 transition-all duration-500 relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 opacity-5 font-black text-9xl text-slate-700 select-none group-hover:opacity-10 transition-opacity">3</div>
+           <div className="p-10 bg-[#0F1419] border border-white/5 rounded-[40px] hover:bg-[#13181E] transition-all group hover:-translate-y-2 relative">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-colors"></div>
                <div className="size-16 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-8 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-4xl">prescriptions</span>
                </div>
-               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Corrección Quirúrgica</h3>
+               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Ejercicios Rápidos</h3>
                <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                 Diagnóstico sin cura es inútil. Recibe "recetas" de ejercicios de 2 minutos diseñados para eliminar tus fallos específicos.
+                 Nada de charlas largas. Solo ejercicios de 2 minutos para arreglar lo que falla.
                </p>
            </div>
         </div>
       </section>
 
-      {/* SECCIÓN 4: EL PROTOCOLO (LOGÍSTICA) */}
-      <section className="py-32 px-6">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-blue-900/40 to-black p-[1px] rounded-[48px] overflow-hidden">
-           <div className="bg-[#05070A] p-8 md:p-20 rounded-[47px] space-y-12">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                 <div className="space-y-4">
-                    <span className="text-4xl font-black text-blue-500">01</span>
-                    <h5 className="font-black uppercase tracking-widest text-xs">Bio-Calibras</h5>
-                    <p className="text-[11px] text-slate-500 font-medium">Ajustas tu hardware vocal con el piano inteligente antes de cada acción.</p>
-                 </div>
-                 <div className="space-y-4">
-                    <span className="text-4xl font-black text-amber-500">02</span>
-                    <h5 className="font-black uppercase tracking-widest text-xs">Auditas</h5>
-                    <p className="text-[11px] text-slate-500 font-medium">Grabas tu intención. El motor IA descompone 24 métricas en microsegundos.</p>
-                 </div>
-                 <div className="space-y-4">
-                    <span className="text-4xl font-black text-purple-500">03</span>
-                    <h5 className="font-black uppercase tracking-widest text-xs">Dominas</h5>
-                    <p className="text-[11px] text-slate-500 font-medium">Recibes el feedback estratégico y tu plan de entrenamiento personalizado.</p>
-                 </div>
-              </div>
-           </div>
-        </div>
+      {/* SECCIÓN 4: CÓMO FUNCIONA (PASOS) */}
+      <section className="py-20 md:py-32 px-6 border-t border-white/5">
+         <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div className="flex-1 space-y-12">
+                  <div className="space-y-4">
+                     <span className="text-4xl font-black text-blue-500">01</span>
+                     <h5 className="font-bold uppercase tracking-widest text-xs text-slate-300">Ajustar</h5>
+                     <p className="text-[11px] text-slate-500 font-medium">Prepara tu garganta con un sonido guía.</p>
+                  </div>
+                  <div className="space-y-4">
+                     <span className="text-4xl font-light text-slate-600">02</span>
+                     <h5 className="font-bold uppercase tracking-widest text-xs text-slate-300">Medir</h5>
+                     <p className="text-[11px] text-slate-500 font-medium">Mira en la pantalla cómo suena tu voz.</p>
+                  </div>
+                  <div className="space-y-4">
+                     <span className="text-4xl font-light text-slate-600">03</span>
+                     <h5 className="font-bold uppercase tracking-widest text-xs text-slate-300">Corregir</h5>
+                     <p className="text-[11px] text-slate-500 font-medium">Haz pequeños cambios para sonar firme.</p>
+                  </div>
+            </div>
+            <div className="flex-1 relative">
+                <div className="aspect-[3/4] rounded-3xl bg-[#111] border border-white/10 relative overflow-hidden shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                    <img 
+                      src="/calibration_preview_1768166750000.png" 
+                      alt="Calibración en tiempo real"
+                      className="object-cover w-full h-full opacity-80"
+                    />
+                    
+                    {/* Floating Badge */}
+                    <div className="absolute top-6 right-6 bg-green-500 text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                       En Vivo
+                    </div>
+                </div>
+            </div>
+         </div>
       </section>
 
-      {/* SECCIÓN 5: PRICING (PLANES DE MANDO) */}
-      <section className="py-24 px-6 bg-[#07090C] border-t border-white/5">
-        <div className="max-w-6xl mx-auto flex flex-col items-center">
-          <header className="text-center mb-16 space-y-6">
-            <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tight">Elige tu <span className="text-blue-500">Nivel de Dominio</span></h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
-               La mayoría invierte en trajes caros. Los líderes invierten en la única herramienta que usan el 100% del tiempo: <strong className="text-white">Su Voz.</strong>
-            </p>
-          </header>
+      {/* SECCIÓN 5: PRICING (SISTEMA DE ACCESO) */}
+      <section className="py-20 md:py-32 px-6 relative bg-gradient-to-b from-[#05070A] to-[#0B0F15]">
+           <header className="text-center mb-16 space-y-6">
+             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight">Elige tu <span className="text-blue-500">Plan</span></h2>
+             <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                Empieza con lo básico o ve por todo. Tú decides.
+             </p>
+           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-             {/* 1. PLAN STARTER */}
-             <div className="bg-[#0D131A] border-2 border-blue-600 rounded-[32px] p-8 md:p-10 flex flex-col h-full relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
-                <div className="absolute top-6 right-8 bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
-                   RECOMENDADO PARA INICIAR
-                </div>
-                
-                <div className="space-y-2 mb-8 mt-4">
-                   <h3 className="text-xl font-black text-white flex items-center gap-2 uppercase tracking-[0.2em]">
-                     <span className="material-symbols-outlined text-blue-500 text-3xl">bolt</span>
-                     STARTER
-                   </h3>
-                   <div className="pt-2 flex items-baseline gap-2">
-                      <span className="text-5xl font-black text-white">$12</span>
-                      <span className="text-slate-500 text-xs uppercase font-bold">/ Mes</span>
-                   </div>
-                </div>
-                <p className="text-base text-slate-300 mb-10 font-medium italic leading-relaxed">
-                  "Para quien ya no quiere pasar desapercibido y necesita construir una base sólida de seguridad."
-                </p>
-                <ul className="space-y-5 mb-12 flex-1 text-sm font-bold text-white">
+           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+              
+              {/* PLAN STARTER - TACTICAL ENTRY */}
+              <div className="p-8 md:p-12 rounded-[40px] border border-white/5 bg-[#0F1419] flex flex-col relative group hover:border-blue-500/20 transition-all">
+                 <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-4">
+                        <span className="material-symbols-outlined text-blue-500">bolt</span>
+                        <span className="text-xs font-black text-blue-500 uppercase tracking-[0.2em]">Starter</span>
+                    </div>
+                    <div className="flex items-baseline gap-2 text-white">
+                        <span className="text-5xl font-black tracking-tighter">$12</span>
+                        <span className="text-slate-500 font-medium">/ mes</span>
+                    </div>
+                 </div>
+                 
+                 <p className="text-base text-slate-300 mb-10 font-medium italic leading-relaxed">
+                   "Perfecto para empezar a mejorar tu voz hoy mismo."
+                 </p>
+
+                 <ul className="space-y-5 mb-12 flex-1 text-sm font-bold text-slate-400">
                     <li className="flex items-center gap-4">
                        <span className="material-symbols-outlined text-blue-500">verified</span>
-                       100 Auditorías IA / mes
+                       100 Pruebas al mes
                     </li>
-                   <li className="flex items-center gap-4">
-                      <span className="material-symbols-outlined text-blue-500">fitness_center</span>
-                      Protocolo Completo (Fases 1-3)
-                   </li>
-                   <li className="flex items-center gap-4">
-                      <span className="material-symbols-outlined text-blue-500">library_books</span>
-                      Arsenal de Tácticas Total
-                   </li>
-                </ul>
-                <button 
-                   onClick={() => router.push("/auth/login?callbackUrl=/upgrade")}
-                   className="w-full py-6 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black transition-all text-xs uppercase tracking-[0.25em] shadow-[0_10px_20px_rgba(37,99,235,0.3)] active:scale-95"
-                >
-                   ACTIVAR LICENCIA STARTER
-                </button>
-             </div>
+                    <li className="flex items-center gap-4">
+                       <span className="material-symbols-outlined text-blue-500">library_books</span>
+                       Todos los ejercicios
+                    </li>
+                    <li className="flex items-center gap-4">
+                       <span className="material-symbols-outlined text-slate-600">lock</span>
+                       <span className="text-slate-600 line-through decoration-slate-600/50">Medición Ilimitada</span>
+                    </li>
+                 </ul>
+                 <button 
+                  onClick={() => router.push("/upgrade")}
+                  className="w-full py-4 rounded-xl border border-white/10 hover:bg-white hover:text-black transition-all font-black uppercase tracking-widest text-xs"
+                 >
+                    Empezar
+                 </button>
+              </div>
 
-             {/* 2. PLAN PREMIUM */}
-             <div className="bg-gradient-to-b from-[#111] to-black border border-amber-500/30 rounded-[32px] p-8 md:p-10 flex flex-col h-full relative overflow-hidden group hover:border-amber-500/60 transition-all duration-500 shadow-2xl ring-1 ring-white/5">
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-amber-500 to-orange-600"></div>
-                
-                <div className="space-y-2 mb-8 mt-4">
-                   <h3 className="text-xl font-black text-white flex items-center gap-2 uppercase tracking-[0.2em]">
-                     <span className="material-symbols-outlined text-amber-500 text-3xl">military_tech</span>
-                     PREMIUM
-                   </h3>
-                   <div className="pt-2 flex items-baseline gap-2">
-                      <span className="text-5xl font-black text-white">$29</span>
-                      <span className="text-slate-500 text-xs uppercase font-bold">/ Mes</span>
-                   </div>
-                </div>
-                <p className="text-base text-slate-400 mb-10 font-medium leading-relaxed">
-                  "Para el ejecutivo que negocia contratos de alto valor. Tu voz será tu ventaja injusta."
-                </p>
-                <ul className="space-y-5 mb-12 flex-1 text-sm font-bold text-slate-200">
-                    <li className="flex items-start gap-4">
+              {/* PLAN ELITE - FULL CONTROL */}
+              <div className="p-8 md:p-12 rounded-[40px] border border-amber-500/30 bg-[#0F1419] flex flex-col relative shadow-[0_0_50px_rgba(245,158,11,0.05)] transform md:scale-105 z-10">
+                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] py-2 px-6 rounded-full shadow-lg text-white">
+                    Recomendado para Iniciar
+                 </div>
+
+                 <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-4">
+                        <span className="material-symbols-outlined text-amber-500">military_tech</span>
+                        <span className="text-xs font-black text-amber-500 uppercase tracking-[0.2em]">Elite</span>
+                    </div>
+                    <div className="flex items-baseline gap-2 text-white">
+                        <span className="text-5xl font-black tracking-tighter">$24</span>
+                        <span className="text-slate-500 font-medium">/ mes</span>
+                    </div>
+                 </div>
+                 
+                 <p className="text-base text-slate-400 mb-10 font-medium leading-relaxed">
+                   "Herramientas completas para cuando hablar es lo más importante."
+                 </p>
+
+                 <ul className="space-y-5 mb-12 flex-1 text-sm font-bold text-white">
+                    <li className="flex items-center gap-4">
                        <div className="mt-0.5 text-amber-500">
                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18,6c-3.31,0-6,2.69-6,6s2.69,6,6,6s6-2.69,6-6S21.31,6,18,6z M18,16c-2.21,0-4-1.79-4-4s1.79-4,4-4s4,1.79,4,4S20.21,16,18,16z M6,12c0-3.31,2.69-6,6-6v2c-2.21,0-4,1.79-4,4s1.79-4,4,4v2C8.69,18,6,15.31,6,12z"/></svg>
                        </div>
-                       <span>Auditorías IA Ilimitadas</span>
+                       <span>Pruebas Ilimitadas</span>
                     </li>
                    <li className="flex items-start gap-4">
                       <span className="material-symbols-outlined text-amber-500">psychology</span>
-                      <span>Análisis de Persuasión</span>
+                      <span>Detector de Confianza</span>
                    </li>
                    <li className="flex items-start gap-4">
                       <span className="material-symbols-outlined text-amber-500">medical_services</span>
-                      <span>Prescripción (Recetas) de Ejercicios</span>
+                      <span>Guías de Ajuste Rápido</span>
                    </li>
-                </ul>
-                <button 
-                   onClick={() => router.push("/auth/login?callbackUrl=/upgrade")}
-                   className="w-full py-6 rounded-2xl bg-gradient-to-r from-amber-700 to-orange-800 hover:from-amber-600 hover:to-orange-700 text-white font-black transition-all text-xs uppercase tracking-[0.25em] shadow-[0_10px_20px_rgba(217,119,6,0.2)] active:scale-95 border border-white/5"
-                >
-                   OBTENER PASE ELITE
-                </button>
-             </div>
-          </div>
-          
-          {/* FREE TRIAL DOWNSELL */}
-          <div className="mt-16 text-center">
-              <Link href="/listen" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 text-slate-300 hover:text-white transition-all text-xs font-bold uppercase tracking-widest group">
-                  <span className="material-symbols-outlined text-xl text-emerald-500">biotech</span>
-                  <span>No estoy listo • Iniciar Diagnóstico Gratuito</span>
-                  <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </Link>
-          </div>
-        </div>
+                 </ul>
+                 <button 
+                  onClick={() => router.push("/upgrade")}
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition-all font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-600/20"
+                 >
+                    Obtener Acceso Total
+                 </button>
+              </div>
+
+           </div>
       </section>
 
-      {/* FOOTER FINAL CTA */}
-      <section className="py-40 px-6 text-center">
-         <div className="max-w-4xl mx-auto space-y-12">
-            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter italic">
-               No nazcas líder. <br /> <span className="text-blue-500">Constrúyelo.</span>
-            </h2>
-            <p className="text-slate-500 font-mono text-sm max-w-xl mx-auto uppercase">
-               Mañana vas a hablar. <br /> Asegúrate de que el mundo quiera escuchar.
-            </p>
-            <button 
-               onClick={() => router.push("/auth/login?callbackUrl=/listen")}
-               className="px-12 py-8 bg-white text-black rounded-[32px] font-black text-xl uppercase tracking-widest hover:bg-slate-200 transition-all hover:scale-105 active:scale-95 shadow-2xl"
-            >
-               REGÍSTRATE GRATIS
-            </button>
-            <p className="text-[10px] text-slate-700 font-bold uppercase tracking-[0.3em] pt-12">
-               Oratoria Efectiva Pro • 2026 • © Todos los derechos reservados
-            </p>
-         </div>
+      {/* FOOTER: CTA FINAL */}
+      <section className="py-24 px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-tight mb-8">
+             Controla tu voz. <br /> <span className="text-blue-500">Cuando quieras.</span>
+          </h2>
+          <p className="text-slate-500 font-mono text-sm max-w-xl mx-auto uppercase mb-12">
+             Prueba, mide y mejora antes de hablar.
+          </p>
+          <button 
+            onClick={() => router.push("/listen")}
+            className="px-12 py-5 bg-white text-black rounded-full font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors"
+          >
+            Empezar Gratis
+          </button>
       </section>
 
     </main>

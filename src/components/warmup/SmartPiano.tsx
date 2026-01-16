@@ -1,3 +1,4 @@
+﻿
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -51,7 +52,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
     const [safeRange, setSafeRange] = useState<[number, number] | null>(null); // [minIndex, maxIndex]
     
     const [activeNote, setActiveNote] = useState<string | null>(null);
-    const [suggestion, setSuggestion] = useState("Toca una nota y haz 'Mmm'...");
+    const [suggestion, setSuggestion] = useState("Activa una frecuencia y haz 'Mmm'...");
     
     const [isModelLoaded, setIsModelLoaded] = useState(false);
     const pitchEstimatorRef = useRef<any>(null);
@@ -76,10 +77,10 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
     const pitchBufferRef = useRef<number[]>([]);
 
     const SUGGESTIONS = [
-        "Haz un 'Lip Trill' (Brrr) con la nota.",
+        "Haz un 'Lip Trill' (Brrr) con la frecuencia.",
         "Usa una 'M' resonante: Mmmmmm...",
         "Di 'NG' como en 'Sing' manteniendo el tono.",
-        "Sube 3 notas y baja: Do-Re-Mi-Re-Do.",
+        "Sube 3 frecuencias y baja: Do-Re-Mi-Re-Do.",
         "Haz 'Uuu' suavemente como un búho.",
         "Di 'Ga-Ga-Ga' para relajar la mandíbula."
     ];
@@ -200,7 +201,11 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                      
                      // Declarative UI handles highlighting now based on 'detectedNoteIndex'
                      
-                     // We removed scrollIntoView here to allow manual movement while pitch is indicated
+                     // Auto-scroll to detected note (Restored per user request "arreglar calibración")
+                     const keyElement = keyRefs.current[closestIndex];
+                     if (keyElement) {
+                        keyElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                     }
                  }
             } else {
                 setInstantPitch(0);
@@ -330,11 +335,11 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                 <div className="bg-[#283039] p-3 sm:p-4 flex justify-between items-center border-b border-slate-700 landscape:py-2">
                     <div className="flex items-center gap-3">
                         <div className="size-8 sm:size-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 landscape:hidden">
-                             <span className="material-symbols-outlined text-sm sm:text-base">piano</span>
+                             <span className="material-symbols-outlined text-sm sm:text-base">graphic_eq</span>
                         </div>
                         <div>
-                             <h2 className="text-white font-bold text-sm sm:text-lg leading-tight">Bio-Calibración de Resonadores</h2>
-                             <p className="text-slate-400 text-[10px] sm:text-xs">Motor de Frecuencias • Escáner de Armónicos</p>
+                             <h2 className="text-white font-bold text-sm sm:text-lg leading-tight">Afinador de Voz</h2>
+                             <p className="text-slate-400 text-[10px] sm:text-xs">Encuentra tu tono ideal.</p>
                         </div>
                     </div>
                     {!isStandalone && onClose && (
@@ -353,9 +358,9 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                             <div className="bg-blue-900/10 border border-blue-500/20 rounded-2xl p-4 sm:p-5 text-center flex-1 flex flex-col justify-center landscape:flex-row landscape:items-center landscape:gap-4 landscape:p-2 landscape:text-left">
                                 <span className="material-symbols-outlined text-4xl sm:text-5xl text-blue-400 mb-2 sm:mb-4 mx-auto landscape:mx-0 landscape:mb-0">neurology</span>
                                 <div className="landscape:flex-1">
-                                    <h3 className="text-white font-bold mb-0 text-sm sm:text-xl landscape:text-xs">Frecuencia Fundamental</h3>
+                                    <h3 className="text-white font-bold mb-0 text-sm sm:text-xl landscape:text-xs">Tu Tono Base</h3>
                                     <p className="text-slate-400 text-[10px] sm:text-sm mb-2 sm:mb-6 leading-relaxed landscape:hidden">
-                                        Detectando base de autoridad.
+                                        Escuchando...
                                     </p>
                                 </div>
                                 
@@ -388,7 +393,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                 <div className="bg-green-900/20 border border-green-500/30 rounded-2xl p-4 sm:p-5 text-center animate-fade-in relative overflow-hidden landscape:p-2 landscape:flex landscape:items-center landscape:gap-3">
                                     <span className="material-symbols-outlined text-2xl sm:text-4xl text-green-400 mb-1 sm:mb-2 landscape:mb-0">verified_user</span>
                                     <div className="landscape:text-left">
-                                        <h3 className="text-white font-bold text-xs sm:text-sm mb-0">Hardware Estable</h3>
+                                        <h3 className="text-white font-bold text-xs sm:text-sm mb-0">Voz Estable</h3>
                                         <p className="text-green-200 text-[10px] sm:text-xs font-mono">
                                             Base: <span className="font-bold text-white tracking-widest">{NOTES[detectedNoteIndex!].note}</span>
                                         </p>

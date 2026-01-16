@@ -25,6 +25,12 @@ export default function AudioLevelMeter({ stream, isActive }: AudioLevelMeterPro
 
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Auto-resume logic
+      if (audioContext.state === 'suspended') {
+          audioContext.resume();
+      }
+
       const source = audioContext.createMediaStreamSource(stream);
       const analyzer = audioContext.createAnalyser();
       
@@ -35,6 +41,10 @@ export default function AudioLevelMeter({ stream, isActive }: AudioLevelMeterPro
 
       const dataArray = new Uint8Array(analyzer.frequencyBinCount);
       const canvas = canvasRef.current;
+      if (!canvas) {
+          audioContext.close();
+          return;
+      }
       const ctx = canvas.getContext("2d");
 
       // Dimensiones
@@ -122,7 +132,9 @@ export default function AudioLevelMeter({ stream, isActive }: AudioLevelMeterPro
 
       return () => {
         if (animationRef.current) cancelAnimationFrame(animationRef.current);
-        audioContext.close();
+        if (audioContext.state !== 'closed') {
+             audioContext.close().catch(e => console.error("Error closing AudioContext", e));
+        }
       };
     } catch (e) {
       console.error("Error initializing level meter:", e);

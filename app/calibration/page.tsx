@@ -1,4 +1,4 @@
-
+﻿
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
@@ -140,8 +140,8 @@ function CalibrationContent() {
   // No camera here. We infer needs from baseline audio.
   
   const [hackMessage, setHackMessage] = useState({
-      title: "Hemos detectado tensión en tu resonancia.",
-      instruction: "Baja los hombros, separa los dientes traseros y habla desde el pecho."
+      title: "Volumen muy bajo.",
+      instruction: "Usa más aire. Habla con ganas."
   });
 
   useEffect(() => {
@@ -149,13 +149,13 @@ function CalibrationContent() {
         // Dynamic Inference Logic
         if (metricsBaseline.rms < 10) { // Umbral arbitrario de volumen bajo
             setHackMessage({
-                title: "Tu proyección es baja.",
-                instruction: "Imagina que tu voz es una flecha que debe tocar la pared opuesta. ¡Lanza el aire!"
+                title: "Volumen muy bajo.",
+                instruction: "Usa más aire. Habla con ganas."
             });
         } else if (metricsBaseline.stability < 40) {
             setHackMessage({
-                title: "Tu voz tiembla ligeramente.",
-                instruction: "Aprieta el abdomen (core) como si fueras a recibir un golpe. Eso estabilizará tu aire."
+                title: "Voz temblorosa.",
+                instruction: "Mantén el aire constante. No dudes."
             });
         }
         // Default: Resilience/Tension hack (already set)
@@ -176,13 +176,13 @@ function CalibrationContent() {
     return (
       <main className="min-h-screen bg-[#0A0F14] font-display flex flex-col items-center justify-center p-6 text-white text-center">
          <div className="max-w-md w-full">
-            <h2 className="text-3xl font-black mb-2 text-red-500 uppercase tracking-tight">Escáner Base</h2>
-            <p className="text-gray-400 mb-8 text-sm font-medium">Detectando tu nivel de autoridad inicial. Tienes 15 segundos.</p>
+            <h2 className="text-3xl font-black mb-2 text-blue-500 uppercase tracking-tight">Prueba de Voz</h2>
+            <p className="text-gray-400 mb-8 text-sm font-medium">Escuchando tu voz. Tienes 15 segundos.</p>
             
             <div className="flex flex-col items-center gap-6">
                 {!isRecording ? (
                     <button onClick={startRecording} className="size-40 rounded-full bg-red-600/10 border-2 border-red-600/50 hover:bg-red-600 hover:border-red-500 transition-all flex items-center justify-center group active:scale-95 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
-                        <span className="material-symbols-outlined text-5xl text-red-500 group-hover:text-white transition-colors">mic</span>
+                        <span className="material-symbols-outlined text-5xl text-blue-500 group-hover:text-white transition-colors">mic</span>
                     </button>
                 ) : (
                     <div className="flex flex-col items-center gap-4">
@@ -213,24 +213,24 @@ function CalibrationContent() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 rounded-full blur-[80px] animate-pulse"></div>
             
             <div className="relative z-10 animate-fade-in-up">
-               <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">
-                  Reporte de Hardware
+               <span className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">
+                  Resultados
                </span>
                <h2 className="text-5xl md:text-7xl font-black mb-2 text-white tracking-tighter">
                   {authorityScore}%
                </h2>
-               <p className="text-xl font-black text-gray-400 mb-8 uppercase tracking-[0.2em]">Índice de Dominancia</p>
+               <p className="text-xl font-black text-gray-400 mb-8 uppercase tracking-[0.2em]">Control</p>
                
                <div className="bg-[#111] border border-red-900/30 p-8 rounded-2xl mb-8 shadow-2xl">
                   <div className="flex items-center gap-3 mb-4 justify-center">
                       <span className="material-symbols-outlined text-yellow-400">bolt</span>
-                      <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em]">Ajuste de Alto Rendimiento</span>
+                      <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em]">Corrección Rápida</span>
                   </div>
                   <p className="text-2xl text-white font-bold mb-2">
                      "{hackMessage.instruction}"
                   </p>
                   <p className="text-gray-500 text-sm">
-                     Detectamos {hackMessage.title.toLowerCase()}
+                     Diagnóstico: {hackMessage.title}
                   </p>
                </div>
                
@@ -239,7 +239,7 @@ function CalibrationContent() {
                    className="w-full py-5 bg-white text-black font-black text-xs rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-[0.2em]"
                   >
                     <span className="material-symbols-outlined">biometrics</span>
-                    Sincronizar Ajuste IA
+                    Mejorar Ahora
                 </button>
             </div>
          </div>
@@ -252,9 +252,9 @@ function CalibrationContent() {
      return (
       <main className="min-h-screen bg-[#0A0F14] font-display flex flex-col items-center justify-center p-6 text-white text-center">
          <div className="max-w-md w-full">
-            <h2 className="text-2xl font-black mb-2 text-blue-400 uppercase tracking-tight">Fase 2: Optimización Activa</h2>
+            <h2 className="text-2xl font-black mb-2 text-blue-400 uppercase tracking-tight">Paso 2: Haz el Cambio</h2>
             <p className="text-gray-300 mb-8">
-               Aplica el <strong className="text-white font-black">ajuste biométrico</strong> para elevar tu impacto.
+               Realiza la <strong className="text-white font-black">instrucción</strong> para sonar mejor.
             </p>
             
             <div className="flex flex-col items-center gap-6">
@@ -285,14 +285,14 @@ function CalibrationContent() {
       <main className="min-h-screen bg-[#0A0F14] font-display flex flex-col items-center justify-center p-6 text-white">
          <div className="max-w-4xl w-full">
             <h2 className="text-3xl md:text-5xl font-black mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 uppercase tracking-tighter">
-               Calibración de Resultados
+               Tu Nueva Voz
             </h2>
-            <p className="text-gray-400 text-center mb-10 text-lg font-medium">Impacto medido tras ajuste de hardware vocal.</p>
+            <p className="text-gray-400 text-center mb-10 text-lg font-medium">Mira la diferencia.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                {/* BEFORE CARD */}
                <div className="bg-[#111] border border-gray-800 p-8 rounded-3xl opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 block">Hardware Base</span>
+                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 block">Tu Voz Antes</span>
                   <div className="h-24 flex items-center justify-center bg-gray-900 rounded-xl mb-6">
                      {audioBlobBaseline && (
                        <audio controls src={URL.createObjectURL(audioBlobBaseline)} className="w-full px-4 opacity-50" />
@@ -301,7 +301,7 @@ function CalibrationContent() {
                   </div>
                   <div className="space-y-4">
                      <div className="flex justify-between text-xs font-black uppercase tracking-widest">
-                        <span className="text-gray-500">Dominancia</span>
+                        <span className="text-gray-500">Firmeza Inicial</span>
                         <span className="font-mono text-gray-400">{metricsBaseline?.rms.toFixed(1) || "45.0"}</span>
                      </div>
                      <div className="w-full bg-gray-800 h-1.5 rounded-full">
@@ -313,9 +313,9 @@ function CalibrationContent() {
                {/* AFTER CARD */}
                <div className="bg-gradient-to-b from-blue-900/20 to-purple-900/20 border border-blue-500/50 p-8 rounded-3xl relative shadow-[0_0_50px_rgba(59,130,246,0.15)] transform md:scale-105">
                   <div className="absolute -top-3 -right-3 bg-gradient-to-r from-blue-500 to-indigo-400 text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg transform rotate-3">
-                     Optimizado
+                     ¡Mejor!
                   </div>
-                  <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-4 block">Hardware Calibrado</span>
+                  <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-4 block">Voz Firme</span>
                   <div className="h-24 flex items-center justify-center bg-blue-900/20 rounded-xl mb-6 border border-blue-500/10">
                      {audioBlobCalibration && (
                        <audio controls src={URL.createObjectURL(audioBlobCalibration)} className="w-full px-4" />
@@ -324,7 +324,7 @@ function CalibrationContent() {
                   <div className="space-y-6">
                       <div>
                           <div className="flex justify-between items-end mb-2">
-                             <span className="text-gray-200 font-black text-[10px] uppercase tracking-widest">Proyección de Poder</span>
+                             <span className="text-gray-200 font-black text-[10px] uppercase tracking-widest">Volumen</span>
                              <span className="text-blue-400 font-black text-xl">+{projGain}%</span>
                           </div>
                           <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -334,7 +334,7 @@ function CalibrationContent() {
                       
                       <div>
                           <div className="flex justify-between items-end mb-2">
-                             <span className="text-gray-200 font-black text-[10px] uppercase tracking-widest">Estabilidad de Mando</span>
+                             <span className="text-gray-200 font-black text-[10px] uppercase tracking-widest">Firmeza</span>
                              <span className="text-indigo-400 font-black text-xl">+{stabGain}%</span>
                           </div>
                           <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
