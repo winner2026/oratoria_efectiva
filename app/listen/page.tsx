@@ -172,8 +172,8 @@ export default function ListenPage() {
                       <span className="material-symbols-outlined text-4xl">mic</span>
                    </div>
                    <div className="space-y-1">
-                      <h2 className="text-2xl font-black uppercase tracking-tighter">Escanear Autoridad</h2>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">IA Performance Radar</p>
+                      <h2 className="text-2xl font-black uppercase tracking-tighter">Mi Voz Ahora</h2>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">Pulsa para ver</p>
                    </div>
                 </div>
               </button>
@@ -192,9 +192,9 @@ export default function ListenPage() {
                      )}
                   </div>
                   <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
-                     Auditoría
+                     Historial
                   </h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Historial de sesiones.</p>
+                  <p className="text-[10px] text-slate-500 font-medium">Mira qué tal lo hiciste.</p>
                </Link>
 
                {/* Arsenal Pro */}
@@ -202,8 +202,8 @@ export default function ListenPage() {
                   <div className="size-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4 group-hover:scale-110 transition-transform">
                      <span className="material-symbols-outlined text-2xl">fitness_center</span>
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-1">Arsenal</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Ejercicios tácticos.</p>
+                  <h4 className="text-sm font-bold text-white mb-1">Entrenar</h4>
+                  <p className="text-[10px] text-slate-500 font-medium">Juegos divertidos.</p>
                </Link>
 
                {/* Ruta de Maestría */}
@@ -211,8 +211,8 @@ export default function ListenPage() {
                   <div className="size-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
                      <span className="material-symbols-outlined text-2xl">school</span>
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-1">Cursos</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Protocolos Maestros.</p>
+                  <h4 className="text-sm font-bold text-white mb-1">Clases</h4>
+                  <p className="text-[10px] text-slate-500 font-medium">Aprender trucos nuevos.</p>
                </Link>
 
                {/* SOS Feedback (Nuevo Slot) */}
@@ -220,8 +220,8 @@ export default function ListenPage() {
                   <div className="size-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
                      <span className="material-symbols-outlined text-2xl">emergency</span>
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-1">SOS</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Ayuda inmediata.</p>
+                  <h4 className="text-sm font-bold text-white mb-1">¡Ayuda!</h4>
+                  <p className="text-[10px] text-slate-500 font-medium">Por si te pones nervioso.</p>
                </Link>
             </section>
 

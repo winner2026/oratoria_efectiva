@@ -55,7 +55,7 @@ export default function Home() {
             <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-indigo-400 to-slate-400">Habla con seguridad.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed text-center">
             Mejora tu voz en segundos. <br />
             <span className="text-slate-200">Sin teoría aburrida. Solo práctica.</span>
           </p>
@@ -105,7 +105,7 @@ export default function Home() {
               Cómo funciona <br/> <span className="text-blue-500">tu voz</span>.
             </h2>
             <div className="h-0.5 w-16 bg-blue-600/50" />
-            <p className="text-base text-slate-400 leading-relaxed">
+            <p className="text-base text-slate-400 leading-relaxed text-justify hyphens-auto">
               Si tu voz tiembla o se escucha bajo, nadie te prestará atención.
               <br/><br/>
               No es culpa de tus ideas. Es "ruido" en tu sonido.
@@ -119,7 +119,7 @@ export default function Home() {
                    <span className="material-symbols-outlined text-6xl text-slate-500">visibility_off</span>
                 </div>
                 <h4 className="font-bold text-lg text-slate-200 uppercase">Voz Insegura</h4>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed text-justify">
                    Cuando hablas monótono o dudas, la gente deja de escuchar. Te conviertes en ruido de fondo.
                 </p>
              </div>
@@ -129,7 +129,7 @@ export default function Home() {
                    <span className="material-symbols-outlined text-6xl text-slate-500">theater_comedy</span>
                 </div>
                 <h4 className="font-bold text-lg text-slate-200 uppercase">Tensión Física</h4>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed text-justify">
                    Si te pones tenso, tu garganta se cierra. Tu voz sale fina y débil, aunque tú te sientas seguro.
                 </p>
              </div>
@@ -139,7 +139,7 @@ export default function Home() {
                    <span className="material-symbols-outlined text-6xl text-slate-500">trending_flat</span>
                 </div>
                 <h4 className="font-bold text-lg text-slate-200 uppercase">Poco Volumen</h4>
-                <p className="text-sm text-slate-500 leading-relaxed">
+                <p className="text-sm text-slate-500 leading-relaxed text-justify">
                    Si no usas bien tu aire, tu voz no viaja. Nadie te escucha si hay ruido en la sala.
                 </p>
              </div>
@@ -212,20 +212,7 @@ export default function Home() {
                      <p className="text-[11px] text-slate-500 font-medium">Haz pequeños cambios para sonar firme.</p>
                   </div>
             </div>
-            <div className="flex-1 relative">
-                <div className="aspect-[3/4] rounded-3xl bg-[#111] border border-white/10 relative overflow-hidden shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                    <img 
-                      src="/calibration_preview_1768166750000.png" 
-                      alt="Calibración en tiempo real"
-                      className="object-cover w-full h-full opacity-80"
-                    />
-                    
-                    {/* Floating Badge */}
-                    <div className="absolute top-6 right-6 bg-green-500 text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
-                       En Vivo
-                    </div>
-                </div>
-            </div>
+            {/* Image removed as per user request to remove real-time calibration preview */}
          </div>
       </section>
 
