@@ -176,7 +176,7 @@ export default function ListenPage() {
                       <span className="material-symbols-outlined text-4xl">mic</span>
                    </div>
                    <div className="space-y-1">
-                      <h2 className="text-2xl font-black uppercase tracking-tighter">Mi Voz Ahora</h2>
+                      <h2 className="text-2xl font-black uppercase tracking-tighter text-black">Mi Voz Ahora</h2>
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">Pulsa para ver</p>
                    </div>
                 </div>
