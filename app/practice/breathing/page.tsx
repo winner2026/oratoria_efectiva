@@ -412,6 +412,23 @@ function BreathingContent() {
                              : "Te falta aire. Necesitas practicar respiración diafragmática."
                           }
                       </p>
+                      
+                       {/* [CORE Scan] Ingest */}
+                       {(() => {
+                           // Ensure we only log once per result view if possible, but for MVP render-time is acceptable 
+                           // provided we don't care about dupes (CoreDiagnosticService handles loose history)
+                           import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+                                CoreDiagnosticService.getInstance().ingest({
+                                    sourceExerciseId: 'stability-check',
+                                    layer: 'EJECUCION',
+                                    metricType: 'STABILITY',
+                                    value: stabilityScore,
+                                    rawUnit: 'score'
+                                });
+                           });
+                           return null;
+                       })()}
+
                   </div>
 
                  <div className="grid grid-cols-2 gap-4 mb-8">

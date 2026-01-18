@@ -172,6 +172,21 @@ export default function ReadingExercisePage() {
                      <div className="text-center animate-fade-in-up mt-8">
                         <h3 className="text-2xl font-black text-green-400 mb-2">¡Sincronización Completa!</h3>
                         <p className="text-slate-400 mb-6">Has mantenido un ritmo de {wpm} palabras por minuto.</p>
+                        
+                        {/* [CORE Scan] Ingest on Render/Mount of result implies it happened. Better to do in effect or here once. */}
+                        {(() => {
+                           import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+                              CoreDiagnosticService.getInstance().ingest({
+                                  sourceExerciseId: 'sincronizacion-mental',
+                                  layer: 'RITMO',
+                                  metricType: 'WPM',
+                                  value: wpm,
+                                  rawUnit: 'wpm' // User followed this target
+                              });
+                           });
+                           return null;
+                        })()}
+
                         <button 
                            onClick={reset}
                            className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-colors"

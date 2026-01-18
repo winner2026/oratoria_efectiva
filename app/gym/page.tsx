@@ -49,6 +49,11 @@ export default function GymPage() {
         let isLocked = true;
         let isVisible = true;
 
+        // 🔓 DESHABILITAR NIVELES: Acceso total para todos
+        isLocked = false;
+        isVisible = true;
+
+        /* LOGICA ORIGINAL DESHABILITADA
         if (planType === 'FREE') {
             // Usuario FREE: Solo ve ejercicios FREE. Ve STARTER bloqueados. ELITE ocultos.
             if (ex.tier === 'FREE') isLocked = false;
@@ -64,6 +69,7 @@ export default function GymPage() {
             // Dios: Ve todo abierto.
             isLocked = false;
         }
+        */
 
         return { ...ex, isLocked, isVisible };
     }).filter(ex => ex.isVisible); // Eliminar los ocultos del array final

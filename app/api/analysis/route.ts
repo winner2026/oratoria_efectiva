@@ -77,7 +77,8 @@ export async function POST(req: NextRequest) {
        // 💰 FREE TIER DEVICE LIMIT CHECK
        // Fetch real plan first
        const userRecord = userId ? await prisma.user.findUnique({ where: { email: userId }}) : null;
-       const isPaid = userRecord?.plan === 'STARTER' || userRecord?.plan === 'PREMIUM';
+       const isPaid = true; // 🔓 DESHABILITAR NIVELES: Siempre pagado
+       // const isPaid = userRecord?.plan === 'STARTER' || userRecord?.plan === 'PREMIUM';
 
        if (!isPaid) {
           if (device.freeAnalysesUsed >= 3) {
@@ -141,8 +142,15 @@ export async function POST(req: NextRequest) {
     let dbError = false;
 
     try {
+      plan = "PREMIUM"; // 🔓 DESHABILITAR NIVELES: Forzar Premium
+      // plan = await getUserPlan(fingerprint); 
+      
+      // Bypass real check logic if needed, but PREMIUM usually has high limits.
+      // let usageCheck = { allowed: true }; 
+      
+      // If we want to keep tracking but allow access:
       const usageCheck = await checkUsage(fingerprint);
-      plan = await getUserPlan(fingerprint); // Seguimos necesitando el plan para el incremento
+      if (plan === "PREMIUM") usageCheck.allowed = true; // Force allow
       
       if (!usageCheck.allowed) {
         console.log(`[ANALYSIS] 🚫 LIMIT REACHED (${usageCheck.reason}):`, fingerprint);

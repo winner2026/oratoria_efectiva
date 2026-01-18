@@ -75,14 +75,19 @@ function LoginForm() {
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
                 <button
-                    onClick={handleGoogleLogin}
-                    className="w-full relative group/btn overflow-hidden rounded-xl bg-white text-black font-black py-4 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    disabled
+                    className="w-full relative group/btn overflow-hidden rounded-xl bg-slate-800 text-slate-500 font-bold py-4 cursor-not-allowed opacity-70"
                 >
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="G" />
-                        <span className="uppercase tracking-widest text-xs">Acceder con Google</span>
+                        <span className="material-symbols-outlined text-sm">block</span>
+                        <span className="uppercase tracking-widest text-xs">Login Google Deshabilitado</span>
                     </div>
                 </button>
+                <div className="text-center mt-2">
+                    <Link href="/listen" className="text-[10px] text-blue-400 uppercase tracking-widest hover:text-blue-300 font-bold">
+                        Ingresar sin cuenta &rarr;
+                    </Link>
+                </div>
             </div>
         </div>
 

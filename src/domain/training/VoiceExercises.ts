@@ -7,7 +7,7 @@ export type VoiceExercise = {
   id: string;
   title: string;
   description: string;
-  category: 'BREATHING' | 'PROJECTION' | 'INTONATION' | 'MINDSET'; // Simplified categories
+  category: 'BREATHING' | 'PROJECTION' | 'INTONATION' | 'MINDSET' | 'ARTICULATION' | 'IMPROVISATION'; // Simplified categories
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   targetMetrics: string[]; 
   requiredMode: ExerciseMode;
@@ -138,6 +138,78 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     dimension: 'MINDSET',
     isCore: false,
     customRoute: '/practice/breathing?mode=pauses',
+    aiEnhanced: true
+  },
+
+  // =================================================================
+  // 6️⃣ MINUTO DE ORO (Improvisación)
+  // =================================================================
+  {
+    id: 'improvisation-challenge',
+    title: 'Minuto de Oro',
+    description: 'Habla 60s sin parar sobre un tema aleatorio. Prohibido callarse.',
+    category: 'IMPROVISATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['flow', 'silence'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Recibe un tema sorpresa.',
+        'Habla sin parar durante 60 segundos.',
+        'Si te callas más de 3s, pierdes.'
+    ],
+    benefit: 'Elimina el miedo al vacío y mejora tu agilidad mental.',
+    tier: 'FREE', // Visible para todos
+    dimension: 'IMPROV',
+    isCore: false,
+    customRoute: '/practice/improvisation',
+    aiEnhanced: true
+  },
+
+  // =================================================================
+  // 7️⃣ SINCRONIZACIÓN MENTAL (Lectura)
+  // =================================================================
+  {
+    id: 'mental-sync',
+    title: 'Sincronización Mental',
+    description: 'Lee al ritmo exacto del marcador. Ni antes, ni después.',
+    category: 'MINDSET',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['wpm', 'rhythm'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Sigue la palabra iluminada.',
+        'Respeta la velocidad impuesta.',
+        'Mantén el flujo constante.'
+    ],
+    benefit: 'Calibra tu velocidad interna y reduce la prisa.',
+    tier: 'FREE',
+    dimension: 'AGILITY',
+    isCore: false,
+    customRoute: '/practice/reading',
+    aiEnhanced: true
+  },
+
+  // =================================================================
+  // 8️⃣ TRABALENGUAS (Articulación)
+  // =================================================================
+  {
+    id: 'articulation-drill',
+    title: 'Trabalenguas Pro',
+    description: 'Repite frases complejas con dicción perfecta. La IA te evaluará.',
+    category: 'ARTICULATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['clarity', 'accuracy'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Escucha/Lee la frase compleja.',
+        'Repítela con máxima claridad.',
+        'Supera el 85% de precisión para avanzar.'
+    ],
+    benefit: 'Limpia tu dicción y agiliza tu lengua.',
+    tier: 'FREE',
+    dimension: 'AGILITY',
+    isCore: false,
+    customRoute: '/practice/articulation',
     aiEnhanced: true
   }
 ];

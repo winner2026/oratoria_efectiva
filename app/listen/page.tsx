@@ -22,7 +22,7 @@ export default function ListenPage() {
   // Nuevo Estado: Protocolo Diario con Gating
   const [protocolAccess, setProtocolAccess] = useState<ProtocolAccess | null>(null);
 
-  const [planType, setPlanType] = useState<PlanType>("FREE");
+  const [planType, setPlanType] = useState<PlanType>("PREMIUM"); // 🔓 DEFAULT ELITE (Code: PREMIUM)
 
   useEffect(() => {
     // Cargar datos del streak desde localStorage
@@ -51,7 +51,7 @@ export default function ListenPage() {
         .catch(err => {
              console.error("Error al sincronizar plan:", err);
              // Fallback a localStorage si falla la API
-             const storedPlan = (localStorage.getItem("user_plan") || "FREE") as PlanType;
+             const storedPlan = (localStorage.getItem("user_plan") || "PREMIUM") as PlanType;
              setPlanType(storedPlan);
              
              const currentDay = new Date().getDate(); 
@@ -119,13 +119,13 @@ export default function ListenPage() {
             <section className="space-y-4">
               <div className="flex items-center justify-between px-1">
                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Tu Reto de Hoy</h3>
-                 {protocolAccess && !protocolAccess.isLocked && (
+                 {protocolAccess && true && (
                     <span className="text-[9px] font-bold text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-full">¡Dale!</span>
                  )}
               </div>
 
               {protocolAccess && (
-                protocolAccess.isLocked ? (
+                false ? (
                   <div className="bg-gradient-to-br from-amber-900/10 to-black/40 border border-amber-500/20 rounded-[28px] p-6 relative overflow-hidden backdrop-blur-md">
                     {planType !== 'FREE' && (
                         <div className="absolute top-0 right-0 bg-amber-600/20 px-3 py-1 rounded-bl-2xl border-l border-b border-amber-500/10">

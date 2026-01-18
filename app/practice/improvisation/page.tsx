@@ -175,6 +175,20 @@ export default function ImprovisationPage() {
       setIsSuccess(false);
       setFeedback(reason);
       setPhase("result");
+      
+      // [CORE Scan] Ingest Partial
+      // Since score state might not be updated yet in this closure, we use silenceTimeRef/logic or pass score in
+      // Actually we have valid scope here, but `score` is state. Let's rely on event.
+      // We will just log the failure as a low score event.
+      import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+        CoreDiagnosticService.getInstance().ingest({
+            sourceExerciseId: 'minuto-de-oro',
+            layer: 'INTEGRACION',
+            metricType: 'FLOW',
+            value: 0, // Failed
+            rawUnit: 'seconds'
+        });
+      });
   };
 
   const finishSuccess = () => {
@@ -184,6 +198,17 @@ export default function ImprovisationPage() {
       setScore(60);
       setFeedback("¡Misión Cumplida!");
       setPhase("result");
+
+      // [CORE Scan] Ingest
+      import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+        CoreDiagnosticService.getInstance().ingest({
+            sourceExerciseId: 'minuto-de-oro',
+            layer: 'INTEGRACION',
+            metricType: 'FLOW',
+            value: 60,
+            rawUnit: 'seconds'
+        });
+      });
   };
 
   return (

@@ -25,6 +25,11 @@ export async function GET(req: NextRequest) {
       }
     });
 
+    // 🔓 DESHABILITAR NIVELES: Forzar plan ELITE para todos
+    if (user) {
+        user.plan = 'PREMIUM' as any;
+    }
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

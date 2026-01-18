@@ -11,6 +11,9 @@ interface ExerciseCardProps {
 }
 
 const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false }) => {
+  // 🔓 DESHABILITAR NIVELES: Forzar desbloqueo visual siempre
+  locked = false;
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 

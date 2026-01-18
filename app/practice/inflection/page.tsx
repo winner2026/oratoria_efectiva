@@ -107,13 +107,23 @@ export default function InflectionPage() {
                 msg: "Inseguridad detectada. Subiste el tono (¿Pregunta?).", 
                 dropHz: Math.round(drop) 
             });
-        } else {
-             setFeedback({ 
+            setFeedback({ 
                 status: "fail", 
                 msg: "Tono plano. Te faltó contundencia al cerrar.", 
                 dropHz: Math.round(drop) 
             });
         }
+
+        // [CORE Scan] Ingest
+        import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+             CoreDiagnosticService.getInstance().ingest({
+                 sourceExerciseId: 'sentence-closure',
+                 layer: 'EJECUCION',
+                 metricType: 'STABILITY', // Tonal Control
+                 value: Math.max(0, Math.min(100, 50 + drop)), // Normalize roughly: 0 drop = 50, >50 drop = 100
+                 rawUnit: 'hz_diff'
+             });
+        });
     };
 
     const nextPhrase = () => {

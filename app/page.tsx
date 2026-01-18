@@ -28,8 +28,8 @@ export default function Home() {
              </span>
           </div>
           
-          <Link href="/auth/login" className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest">
-             Iniciar Sesión
+          <Link href="/listen" className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest">
+             Acceso Libre
           </Link>
       </header>
       

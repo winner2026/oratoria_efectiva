@@ -287,6 +287,25 @@ export default function ArticulationPage() {
       // If auto-stopped (success=true from accuracy check), verify speed
       const finalSuccess = passedAccuracy && passedSpeed;
 
+      // [CORE Scan] Ingest
+      import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+          CoreDiagnosticService.getInstance().ingest({
+              sourceExerciseId: 'trabalenguas',
+              layer: 'EJECUCION',
+              metricType: 'ACCURACY',
+              value: finalAcc,
+              rawUnit: 'percent'
+          });
+
+          CoreDiagnosticService.getInstance().ingest({
+              sourceExerciseId: 'trabalenguas',
+              layer: 'RITMO',
+              metricType: 'WPM',
+              value: finalWpm,
+              rawUnit: 'wpm'
+          });
+      });
+
       setPhase("result");
   };
 
