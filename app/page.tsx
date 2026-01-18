@@ -28,7 +28,7 @@ export default function Home() {
              </span>
           </div>
           
-          <Link href="/listen" className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-widest">
+          <Link href="/listen" className="text-sm md:text-lg font-black text-green-500 hover:text-green-400 transition-colors uppercase tracking-widest animate-pulse">
              Acceso Libre
           </Link>
       </header>
