@@ -1,5 +1,5 @@
 
-import { CoreLayer, CoreMetric, CoreProfile } from './CoreSystem';
+import { CoreLayer, CoreMetric, CoreProfile } from '@/domain/core/CoreSystem';
 
 const METRIC_STORAGE_KEY = 'core_metrics_log';
 
