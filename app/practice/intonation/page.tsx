@@ -527,16 +527,31 @@ export default function IntonationPage() {
         
         <div className="mobile-container pt-8 flex flex-col items-center">
             
+
             <div className="text-center space-y-4 mb-8">
                  <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500">
                     Afinador de Voz
                  </h1>
-                 <p className="text-slate-400 text-xs md:text-sm max-w-md mx-auto">
-                    {phase === 'idle' 
-                        ? "Visualiza la entonación natural de tu voz mientras hablas con normalidad."
-                        : "Habla como si contaras algo interesante a un amigo. Sé natural."}
-                 </p>
+                 <div className="text-slate-400 text-xs md:text-sm max-w-md mx-auto space-y-2">
+                    {phase === 'idle' ? (
+                        <>
+                            <p>Este ejercicio analiza tu <strong>melodía al hablar</strong> (entonación).</p>
+                            <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5 text-left text-[11px] md:text-xs space-y-2">
+                                <p className="font-bold text-amber-400 uppercase tracking-wider mb-1">Cómo usarlo:</p>
+                                <ul className="list-disc pl-4 space-y-1 text-slate-300">
+                                    <li>Pulsa iniciar y habla durante 30s (cuenta una historia o lee algo).</li>
+                                    <li><strong>Evita monólogos planos</strong> (línea recta).</li>
+                                    <li>Busca picos (énfasis) y valles (bajar la voz).</li>
+                                    <li>Intenta no sonar robótico. Sé expresivo.</li>
+                                </ul>
+                            </div>
+                        </>
+                    ) : (
+                        <p className="animate-pulse text-amber-400 font-bold">¡Habla con emoción! Sube y baja el tono para enfatizar.</p>
+                    )}
+                 </div>
             </div>
+
 
         {/* Visualizer Container */}
         <div className="relative w-full h-[250px] md:h-[400px] bg-slate-900 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
