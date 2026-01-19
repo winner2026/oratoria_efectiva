@@ -18,7 +18,7 @@ export default function AuthoritativePausePage() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const silenceStartRef = useRef<number | null>(null);
   const hasSpokenRef = useRef(false);
