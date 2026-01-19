@@ -144,7 +144,9 @@ export default function ListenPage() {
                   <div className="bg-white/[0.03] border border-white/10 rounded-[28px] p-6 relative overflow-hidden backdrop-blur-sm group hover:bg-white/[0.05] transition-all">
                     {planType !== 'FREE' && (
                         <div className="absolute top-0 right-0 bg-blue-600/10 px-3 py-1 rounded-bl-2xl border-l border-b border-blue-500/10">
-                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Día {protocolAccess.protocol.day}/30</span>
+                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">
+                                {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).toUpperCase()}
+                            </span>
                         </div>
                     )}
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">
