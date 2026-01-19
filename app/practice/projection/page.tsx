@@ -378,11 +378,20 @@ export default function ProjectionPage() {
             {/* Main Bar */}
             <div className={`w-20 md:w-24 h-[300px] md:h-96 bg-slate-900 rounded-full p-2 border border-white/10 relative overflow-hidden shadow-2xl ${phase !== 'active' ? 'grayscale opacity-50' : ''}`}>
                 {/* Zone Markers */}
+                {/* Zone Markers with Labels */}
                 <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none z-20">
-                    <div className="w-full h-[1px] bg-red-500/50" /> {/* 90% */}
-                    <div className="w-full h-[1px] bg-amber-500/50" /> {/* 70% */}
-                    <div className="w-full h-[1px] bg-green-500/50" /> {/* 40% */}
-                    <div className="w-full h-[1px] bg-blue-500/50" /> {/* 10% */}
+                    <div className="w-full h-[1px] bg-red-500/50 relative group">
+                        <span className="absolute right-0 -top-3 text-[9px] text-red-400 font-mono font-bold bg-slate-900/80 px-1 rounded">97%</span>
+                    </div>
+                    <div className="w-full h-[1px] bg-amber-500/50 relative group">
+                        <span className="absolute right-0 -top-3 text-[9px] text-amber-400 font-mono font-bold bg-slate-900/80 px-1 rounded">80%</span>
+                    </div>
+                    <div className="w-full h-[1px] bg-green-500/50 relative group">
+                        <span className="absolute right-0 -top-3 text-[9px] text-green-400 font-mono font-bold bg-slate-900/80 px-1 rounded">40%</span>
+                    </div>
+                    <div className="w-full h-[1px] bg-blue-500/50 relative group">
+                        <span className="absolute right-0 -top-3 text-[9px] text-blue-400 font-mono font-bold bg-slate-900/80 px-1 rounded">10%</span>
+                    </div>
                 </div>
                 
                 {/* Fill */}
