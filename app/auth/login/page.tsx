@@ -11,10 +11,19 @@ function LoginForm() {
   const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") || "/listen";
 
-  React.useEffect(() => {
-    // 🔓 GUEST BYPASS: Siempre redirigir al dashboard
-    router.replace(callbackUrl);
-  }, [router, callbackUrl]);
+  const handleGuestLogin = async () => {
+    try {
+      await signIn("credentials", {
+         redirect: false,
+         callbackUrl: callbackUrl,
+         name: "Invitado",
+         email: "invitado@oratoria.com"
+      });
+      router.push(callbackUrl);
+    } catch (error) {
+       console.error("Login failed", error);
+    }
+  };
 
   return (
     <main className="min-h-[100dvh] bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden font-display selection:bg-blue-500/30">
