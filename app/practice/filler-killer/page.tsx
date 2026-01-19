@@ -10,16 +10,18 @@ const MAX_FILLERS = 3; // Game Over limit
 
 // Lista Negra de Muletillas Comunes (Normalizadas)
 const FILLER_WORDS = [
-    "eh", "ehh", "ehhh",
-    "este", "estee",
-    "o sea", "osea",
-    "tipo", 
-    "digamos", 
-    "básicamente",
-    "literal",
-    "bueno", "bueno pues",
-    "mmm", "umm",
-    "sabes", "¿sabes?"
+    // Básicas y Sonoras
+    "eh", "ehh", "ehhh", "em", "emm", "emmm", "hm", "hmm", "mmm", "umm", "uh", "uhh",
+    
+    // Conectores Viciados
+    "este", "estee", "o sea", "osea", "oseaa", "es decir", "digamos", 
+    "tipo", "tipo asi", "tipo que", "onda", "básicamente", "literal", "literalmente",
+    "en plan", "ni idea", "pues", "bueno", "bueno pues", 
+    
+    // Muletillas de confirmación/duda
+    "sabes", "¿sabes?", "viste", "¿viste?", "¿me explico?", "¿entiendes?", "¿vale?", 
+    "verdad", "¿verdad?", "cierto", "¿no?", "aja", "ajá", "ya", "y tal",
+    "fijate", "mira", "oye", "entonces"
 ];
 
 export default function FillerKillerPage() {
@@ -72,13 +74,18 @@ export default function FillerKillerPage() {
     }
   };
 
+  // Ref para controlar el debounce por tiempo de la misma palabra
+  const lastPenaltyTime = useRef<number>(0);
+
   const analyzeSpeech = (text: string) => {
-      // Logic: 
-      // We look for filler words in the NEW text.
-      // Since 'interim' upgrades to 'final', detecting duplicates is tricky.
-      // Strategy: Just check the LAST few words for immediate feedback.
-      // Actually, let's use a simpler "sliding window" or "ends with" check for real-time trigger
+      const now = Date.now();
       
+      // COOLDOWN GLOBAL DE "INVENCIBILIDAD"
+      // Si te castigamos hace menos de 1.5 segundos, eres inmune.
+      // Esto evita que "eh" -> "eh..." -> "ehh" cuenten como 3,
+      // y que "bueno" -> "bueno pues" cuente doble.
+      if (now - lastPenaltyTime.current < 1500) return;
+
       const normalized = text.toLowerCase();
       const words = normalized.split(/\s+/);
       const lastWord = words[words.length - 1]?.replace(/[.,?!]/g, "");
@@ -87,28 +94,9 @@ export default function FillerKillerPage() {
 
       // Check current word against blacklist
       if (FILLER_WORDS.includes(lastWord)) {
-          // Debounce: Don't trigger if we just triggered for this same instance
-          // We can't easily distinguish "eh... eh" from "eh" with just string matching on last word
-          // without more complex index tracking.
-          // For MVP: If 'lastDetected' is this word, ignore until word changes? 
-          // Better: Require a clear buffer. 
-          
-          /*
-            Enhanced Logic:
-            We need a robust way to count. 
-            Ideally, we process 'final' results for counting, and 'interim' for warning.
-            But 'final' is slow.
-            Let's rely on a primitive "Lock" mechanism.
-          */
-          
-          const now = Date.now();
-          if (lastDetected !== lastWord) {
              triggerFiller(lastWord);
-          }
-      } else {
-          // If word changed to something valid, clear lastDetected so we can detect again
-          setLastDetected(null);
-      }
+             lastPenaltyTime.current = now;
+      } 
   };
 
   const triggerFiller = (word: string) => {
