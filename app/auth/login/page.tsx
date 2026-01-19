@@ -2,17 +2,19 @@
 
 import React, { Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 function LoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") || "/listen";
 
-  const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl });
-  };
+  React.useEffect(() => {
+    // 🔓 GUEST BYPASS: Siempre redirigir al dashboard
+    router.replace(callbackUrl);
+  }, [router, callbackUrl]);
 
   return (
     <main className="min-h-[100dvh] bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden font-display selection:bg-blue-500/30">

@@ -9,8 +9,16 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
+    // 🔓 GUEST ACCESS: Si no hay sesión, devolvemos un usuario invitado mock
     if (!session || !session.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({
+        id: 'guest',
+        email: 'invitado@oratoriaefectiva.in',
+        name: 'Invitado',
+        plan: 'PREMIUM',
+        role: 'student',
+        credits: 999
+      });
     }
 
     const user = await prisma.user.findUnique({

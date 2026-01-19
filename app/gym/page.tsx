@@ -89,9 +89,9 @@ export default function GymPage() {
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
           <div className="flex flex-col items-center">
-             <h1 className="font-bold text-sm uppercase tracking-widest text-white">Zona de Entrenamiento</h1>
-             <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-                {planType === 'FREE' ? 'Tu Nivel: 🥈 Monitor' : planType === 'STARTER' ? 'Tu Nivel: 🥉 CONTROL' : 'Tu Nivel: 🥇 PRECISION'}
+              <h1 className="font-bold text-sm uppercase tracking-widest text-white">Zona de Entrenamiento</h1>
+             <span className="text-[9px] font-bold text-blue-500 uppercase tracking-wider">
+                Tu Nivel: 🥇 PRECISION
              </span>
           </div>
           <div className="w-6"></div> 
@@ -131,7 +131,7 @@ export default function GymPage() {
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                     {coreExercises.map(ex => (
-                        <ExerciseCard key={ex.id} exercise={ex} locked={ex.isLocked} />
+                        <ExerciseCard key={ex.id} exercise={ex} locked={false} />
                     ))}
                 </div>
             </div>
@@ -148,7 +148,7 @@ export default function GymPage() {
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                     {libraryExercises.map(ex => (
-                        <ExerciseCard key={ex.id} exercise={ex} locked={ex.isLocked} />
+                        <ExerciseCard key={ex.id} exercise={ex} locked={false} />
                     ))}
                 </div>
             </div>
@@ -161,20 +161,7 @@ export default function GymPage() {
             </div>
         )}
 
-        {/* UPSELL BANNER (Si es FREE) */}
-        {planType === 'FREE' && (
-            <div className="mt-12 bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-3xl p-6 text-center space-y-4">
-                <p className="text-sm text-blue-200 font-medium">
-                    ¿Quieres más juegos?
-                </p>
-                <h3 className="text-xl font-black text-white italic">
-                    Desbloquear Todo
-                </h3>
-                <Link href="/upgrade" className="inline-block w-full py-4 bg-white text-blue-900 font-black rounded-xl uppercase tracking-widest shadow-xl">
-                    Ver Cómo
-                </Link>
-            </div>
-        )}
+        {/* UPSELL BANNER ELIMINADO PORQUE TODO ES GRATIS */}
 
       </main>
 

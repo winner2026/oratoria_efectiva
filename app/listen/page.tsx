@@ -90,10 +90,10 @@ export default function ListenPage() {
                   <span className="material-symbols-outlined text-slate-400 group-hover:text-white transition-colors">person</span>
                   <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                </Link>
-               <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-blue-500/80">Nivel: {planType === 'FREE' ? '🥈 Monitor' : planType === 'STARTER' ? '🥉 CONTROL' : '🥇 PRECISION'}</span>
-                  <h2 className="text-sm font-bold tracking-tight text-white">{userName || 'Operador'}</h2>
-               </div>
+                <div className="flex flex-col">
+                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-500/80">Nivel: 🥇 PRECISION</span>
+                   <h2 className="text-sm font-bold tracking-tight text-white">{userName || 'Invitado'}</h2>
+                </div>
             </div>
 
             <div className="flex items-center gap-2">
