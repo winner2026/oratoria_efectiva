@@ -131,13 +131,13 @@ export default function ScriptPage() {
                      
                      <div className="bg-black/50 p-6 rounded-2xl border border-red-800 max-w-sm">
                          <p className="text-sm text-slate-300 leading-relaxed mb-4">
-                             Has sobrevivido usando un protocolo estándar. Tu biometría indica que tu <strong className="text-white">Escudo de Soberanía</strong> se debilitó bajo el ataque.
+                             Protocolo ejecutado con éxito. Has recuperado el control del marco comunicativo.
                          </p>
                          <p className="text-sm text-white font-bold mb-6">
-                             Para que la próxima vez sea "dominancia natural", activa el entrenamiento Black Ops.
+                             Refuerza tu biometría de mando en el Arsenal de entrenamiento.
                          </p>
-                         <Link href="/upgrade" className="block w-full py-3 bg-gradient-to-r from-amber-600 to-red-700 text-white font-black text-xs uppercase tracking-widest rounded-lg hover:scale-105 transition-transform">
-                             Activar Plan Elite
+                         <Link href="/gym" className="block w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black text-xs uppercase tracking-widest rounded-lg hover:scale-105 transition-transform">
+                             Ir al Arsenal Pro
                          </Link>
                      </div>
 

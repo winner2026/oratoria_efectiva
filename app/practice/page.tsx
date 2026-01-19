@@ -52,28 +52,6 @@ function PracticeContent() {
     }
   }, [exerciseId]);
 
-  // 🛡️ SECURITY GATING: PREVENT UNAUTHORIZED ACCESS
-  useEffect(() => {
-    if (!currentExercise) return; // Generic scanner has its own backend limit check
-
-    const checkPlanAccess = () => {
-        const userPlan = localStorage.getItem('user_plan') || 'FREE';
-        
-        // Define hierarchy
-        const tiers = { 'FREE': 0, 'STARTER': 1, 'ELITE': 2, 'PREMIUM': 2 };
-        const userLevel = tiers[userPlan as keyof typeof tiers] || 0;
-        
-        const exerciseTier = currentExercise.tier;
-        const reqLevel = tiers[exerciseTier as keyof typeof tiers] || 0;
-
-        if (userLevel < reqLevel) {
-            // Access Denied
-            router.replace('/upgrade'); 
-        }
-    };
-    
-    checkPlanAccess();
-  }, [currentExercise, router]);
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -461,34 +439,6 @@ function PracticeContent() {
     );
   }
 
-  // --- LIMIT MODAL ---
-  if (showLimitModal) {
-    return (
-      <main className="min-h-[100dvh] bg-[#101922] flex items-center justify-center p-4 text-white font-display">
-        <div className="bg-[#1a242d] border border-[#3b4754] rounded-2xl p-6 max-w-sm text-center space-y-5">
-          <div className="size-16 rounded-full bg-yellow-500/10 flex items-center justify-center mx-auto">
-            <span className="material-symbols-outlined text-3xl text-yellow-500">lock</span>
-          </div>
-          <h2 className="text-xl font-bold">Límite gratuito alcanzado</h2>
-          <p className="text-[#9dabb9] text-sm">
-            Has usado tus análisis gratuitos. Únete a la lista de espera para acceso ilimitado.
-          </p>
-          <div className="flex flex-col gap-3">
-            <Link href="/waitlist">
-              <button className="w-full h-12 bg-primary hover:bg-blue-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-primary/20">
-                Unirse a waitlist
-              </button>
-            </Link>
-            <Link href="/">
-              <button className="w-full h-11 bg-[#283039] hover:bg-[#3b4754] text-white font-medium rounded-xl transition-colors border border-[#3b4754]">
-                Volver al inicio
-              </button>
-            </Link>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   // --- RECORDING VIEW (with video) ---
 
@@ -521,21 +471,21 @@ function PracticeContent() {
             </div>
         </div>
 
-        {/* 🔒 DEEP AUDIT PREVIEW (FOMO) */}
+        {/* Escaneando capas de señal */}
         <div className="w-full max-w-xs mb-10 space-y-2">
-            <div className="flex items-center justify-between px-4 py-3 bg-black/40 border border-white/5 rounded-xl opacity-60">
+            <div className="flex items-center justify-between px-4 py-3 bg-blue-500/5 border border-blue-500/10 rounded-xl">
                 <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm text-slate-500 italic">lock</span>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Detección de Muletillas</span>
+                    <span className="material-symbols-outlined text-sm text-blue-400">analytics</span>
+                    <span className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Dinámica de Entonación</span>
                 </div>
-                <span className="text-[8px] font-black text-slate-600">REQ. IA</span>
+                <span className="text-[8px] font-black text-blue-500">ACTIVO</span>
             </div>
-            <div className="flex items-center justify-between px-4 py-3 bg-black/40 border border-white/5 rounded-xl opacity-60">
+            <div className="flex items-center justify-between px-4 py-3 bg-blue-500/5 border border-blue-500/10 rounded-xl">
                 <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm text-slate-500 italic">lock</span>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Versión Nivel CEO</span>
+                    <span className="material-symbols-outlined text-sm text-blue-400">waves</span>
+                    <span className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Estabilidad Espectral</span>
                 </div>
-                <span className="text-[8px] font-black text-slate-600">REQ. IA</span>
+                <span className="text-[8px] font-black text-blue-500">ACTIVO</span>
             </div>
         </div>
 
@@ -544,8 +494,7 @@ function PracticeContent() {
             onClick={handleStartAnalysis}
             className="group w-full h-16 bg-white text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center gap-0 uppercase tracking-widest active:scale-95"
           >
-            <span className="text-[11px]">Ver Resultados Completos</span>
-            <span className="text-[8px] opacity-70">Cuesta 1 Moneda</span>
+            <span className="text-[11px]">Generar Auditoría de Autoridad</span>
           </button>
           
           <button 
@@ -621,7 +570,7 @@ function PracticeContent() {
           
           {/* Progress hint */}
           <p className="mt-12 text-[10px] text-slate-600 font-bold uppercase tracking-widest animate-pulse">
-            System Online • Neural Link Active
+            System Online • Signal Analysis Active
           </p>
         </div>
       </main>
@@ -633,7 +582,7 @@ function PracticeContent() {
       {/* COUNTDOWN OVERLAY */}
       {isCountingDown && (
           <div className="absolute inset-0 bg-black/90 backdrop-blur-xl z-[1000] flex items-center justify-center animate-bounce-in pointer-events-none">
-              <div className="text-[15rem] md:text-[25rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-orange-600 drop-shadow-[0_0_80px_rgba(245,158,11,0.5)]">
+              <div className="text-[40vw] md:text-[25rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-orange-600 drop-shadow-[0_0_80px_rgba(245,158,11,0.5)]">
                   {countdownVal}
               </div>
           </div>

@@ -15,7 +15,7 @@ export default function CoursesPage() {
     }
   }, []);
 
-  const hasCourseAccess = planType === 'PREMIUM' || planType === 'STARTER';
+  const hasCourseAccess = true;
   return (
     <div className="min-h-[100dvh] bg-slate-950 text-white pb-24 font-display">
       
@@ -25,7 +25,7 @@ export default function CoursesPage() {
           <Link href="/listen" className="text-slate-400 hover:text-white">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <h1 className="font-black text-lg uppercase tracking-[0.2em] text-amber-500">MANDO</h1>
+          <h1 className="font-black text-lg uppercase tracking-[0.2em] text-blue-500">MANDO</h1>
           <div className="w-6"></div>
         </div>
       </header>
@@ -73,19 +73,10 @@ export default function CoursesPage() {
                       {course.durationDays} Días
                     </div>
                     
-                    {!hasCourseAccess && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                         <div className="bg-amber-600 size-12 rounded-full flex items-center justify-center shadow-lg">
-                            <span className="material-symbols-outlined text-white">lock</span>
-                         </div>
-                      </div>
-                    )}
 
-                    {course.externalLink && hasCourseAccess && (
                       <div className="absolute top-3 left-4 bg-blue-600/80 backdrop-blur px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white border border-blue-400/50">
-                        Externo (Hotmart)
+                        Acceso de Video
                       </div>
-                    )}
                   </div>
 
                   <div className="p-6 space-y-3">
@@ -123,13 +114,6 @@ export default function CoursesPage() {
                 </div>
               </Link>
               
-              {!hasCourseAccess && (
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4/5">
-                   <Link href="/upgrade" className="block w-full text-center bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] py-3 rounded-full shadow-xl border border-white/10 active:scale-95 transition-all">
-                      Desbloquear Acceso Elite
-                   </Link>
-                </div>
-              )}
             </div>
           ))}
         </div>

@@ -38,7 +38,7 @@ export default function GymPage() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-28 mobile-container space-y-10 animate-fade-in">
+      <main className="pt-24 mobile-container space-y-8 animate-fade-in pb-20">
         
           <div className="space-y-4 px-1">
               <div className="flex items-center gap-2 mb-2">

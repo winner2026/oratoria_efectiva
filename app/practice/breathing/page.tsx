@@ -35,6 +35,8 @@ function BreathingContent() {
   const [volume, setVolume] = useState(0);
   const [feedback, setFeedback] = useState<"stable" | "shaky" | "quiet">("quiet");
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [lives, setLives] = useState(3);
+  const [lastFailType, setLastFailType] = useState<string | null>(null);
   
   // Refs para Audio
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -50,9 +52,10 @@ function BreathingContent() {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   // Constantes
-  const MIN_VOLUME_THRESHOLD = 2; // Bajar umbral para detectar exhalaciones suaves
+  const MIN_VOLUME_THRESHOLD = 1.5; // Más tolerancia (era 2)
   const GOAL_TIME = 20;     // Meta de segundos
   const GOAL_STABILITY = 80; // Meta de estabilidad
+  const SILENCE_GRACE_PERIOD = 2000; // 2 segundos de tolerancia (era 1s)
 
   useEffect(() => {
     // Cleanup al desmontar
@@ -92,6 +95,8 @@ function BreathingContent() {
               setPhase("recording");
               setIsActive(false);
               setSeconds(0);
+              setLives(3);
+              setLastFailType(null);
               setStabilityScore(100);
               volumeHistoryRef.current = [];
               audioChunksRef.current = [];
@@ -181,35 +186,58 @@ function BreathingContent() {
             let newScore = stabilityScore;
             if (stdDev < 3) {
                  setFeedback("stable");
-                 newScore = Math.min(100, stabilityScore + 0.05);
+                 newScore = Math.min(100, stabilityScore + 0.05 * stabilityMultiplier);
             } else if (stdDev < 8) {
                  setFeedback("shaky");
-                 newScore = Math.max(0, stabilityScore - 0.2);
+                 newScore = Math.max(0, stabilityScore - 0.2 * stabilityMultiplier);
             } else {
                  setFeedback("shaky");
-                 newScore = Math.max(0, stabilityScore - 0.5);
+                 newScore = Math.max(0, stabilityScore - 0.5 * stabilityMultiplier);
             }
             setStabilityScore(newScore);
+            setLastFailType(null);
 
-            // STRICT FAIL CONDITION
-            if (newScore < 40) {
-                 stopExercise();
-                 localStorage.setItem('last_breathing_fail', 'unstable');
-                 return;
+            // FAIL CONDITION (ONE LIFE LOST)
+            if (newScore < 30) {
+                 if (lives > 1) {
+                     setLives(prev => prev - 1);
+                     setStabilityScore(100);
+                     setLastFailType("unstable-warning");
+                 } else {
+                     stopExercise();
+                     localStorage.setItem('last_breathing_fail', 'unstable');
+                     return;
+                 }
             }
         }
         
     } else {
         // If silence detected after start (User stopped blowing)
-        if (startTimeRef.current && (Date.now() - startTimeRef.current) > 1000) {
-             stopExercise();
-             localStorage.setItem('last_breathing_fail', 'stopped');
-             return; 
+        // Use a 2s grace period
+        if (startTimeRef.current && (Date.now() - (lastVolumeTimeRef.current || startTimeRef.current)) > SILENCE_GRACE_PERIOD) {
+             if (lives > 1) {
+                 setLives(prev => prev - 1);
+                 setLastFailType("silence-warning");
+                 // Reset attempt timer for this life
+                 startTimeRef.current = null; 
+                 setIsActive(false);
+             } else {
+                 stopExercise();
+                 localStorage.setItem('last_breathing_fail', 'stopped');
+                 return; 
+             }
         }
+    }
+
+    if (avgVolume > MIN_VOLUME_THRESHOLD) {
+        lastVolumeTimeRef.current = Date.now();
     }
     
     animationFrameRef.current = requestAnimationFrame(analyzeLoop);
   };
+
+const lastVolumeTimeRef = useRef<number | null>(null);
+const stabilityMultiplier = 1.0; // For easy tuning
 
   const isSuccess = seconds >= GOAL_TIME && stabilityScore >= GOAL_STABILITY;
 
@@ -371,12 +399,27 @@ function BreathingContent() {
                              }`}>
                                  {feedback === "stable" ? "ESTABLE ✨" : "INESTABLE ⚠️"}
                              </div>
-                             <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-widest">
-                                 {sensitivityFeedback(feedback)}
-                             </p>
-                         </div>
-                     )}
-                 </div>
+                              <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-widest">
+                                  {sensitivityFeedback(feedback)}
+                              </p>
+                          </div>
+                      )}
+
+                      {/* LIVES UI */}
+                      <div className="flex justify-center gap-2 mt-4">
+                          {[...Array(3)].map((_, i) => (
+                              <span key={i} className={`material-symbols-outlined transition-all ${i < lives ? "text-red-500 fill-current" : "text-slate-700"}`}>
+                                  favorite
+                              </span>
+                          ))}
+                      </div>
+
+                      {lastFailType && (
+                          <div className="mt-2 text-red-500 text-xs font-bold animate-pulse uppercase tracking-tighter">
+                              {lastFailType === "unstable-warning" ? "¡Demasiado Temblor! Vida -1" : "¡Se cortó el aire! Vida -1"}
+                          </div>
+                      )}
+                  </div>
 
                  <div className="w-full max-w-[200px] sm:max-w-xs h-12 sm:h-20 flex items-center justify-center shrink-0">
                     {stream && <AudioVisualizer stream={stream} isActive={true} />}

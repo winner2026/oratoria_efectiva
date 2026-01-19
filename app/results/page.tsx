@@ -46,6 +46,9 @@ type AnalysisResult = {
   weaknesses: string[];
   decision: string;
   payoff: string;
+  score_transcripcion?: number;
+  score_audio?: number;
+  score_general?: number;
 };
 
 export default function ResultsPage() {
@@ -87,18 +90,18 @@ export default function ResultsPage() {
 
   if (!result) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-gray-500 font-mono text-xs animate-pulse">ESTABLECIENDO ENLACE TÁCTICO...</div>;
 
-  // 🧬 PERFIL SANTIAGO
-  const claridad = result.score_claridad || 85; 
-  const autoridad = result.authorityScore.score || 35; 
-  const estructura = result.score_estructura || 60;
+  // 🧬 MAPEAR MÉTRICAS REALES DE LA SEÑAL
+  const claridad = result.score_claridad || result.score_transcripcion || 85; 
+  const autoridad = result.authorityScore?.score || result.score_general || 50; 
+  const estructura = result.score_estructura || 70;
   
   const metrics = {
       articulation: claridad, 
       authority: autoridad,   
-      improv: 40,             
-      stability: 25,          
-      projection: 45,         
-      support: 30             
+      improv: result.metrics?.pitchVariation ? Math.min(100, result.metrics.pitchVariation * 2) : 50,             
+      stability: result.metrics?.energyStability || 60,          
+      projection: result.score_audio || 50,         
+      support: 40             
   };
 
   const potentialScore = 98; 
@@ -118,7 +121,7 @@ export default function ResultsPage() {
         {/* Header */}
         <div className="flex items-center p-4 justify-between sticky top-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
           <button onClick={() => router.push("/practice")} className="flex size-10 items-center justify-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-white active:scale-95">
-            <span className="material-symbols-outlined">arrow_back</span>
+            <span className="material-symbols-outlined">refresh</span>
           </button>
           <div className="flex flex-col items-center">
             <h2 className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500">Expediente #{(Math.random()*10000).toFixed(0)}</h2>
@@ -141,80 +144,70 @@ export default function ResultsPage() {
                 resistance={90} 
              />
 
-             {/* 🎯 VEREDICTO CLÍNICO (Nuevo Copy) */}
-             <div className="mt-8 p-6 bg-slate-900/50 border-l-2 border-amber-500 rounded-r-2xl backdrop-blur-sm shadow-xl">
-                 <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-4">Veredicto Forense</h3>
+             {/* 🎯 VEREDICTO CLÍNICO */}
+             <div className="mt-8 p-6 bg-slate-900/50 border-l-2 border-blue-500 rounded-r-2xl backdrop-blur-sm shadow-xl">
+                 <h3 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-4">Veredicto Forense</h3>
                  
                  <p className="text-sm leading-relaxed text-slate-300 font-medium mb-4">
-                     Tu precisión léxica es de élite, pero tu biometría revela una <strong className="text-white">"Voz de Supervivencia"</strong>.
+                     {autoridad > 75 
+                        ? "Tu señal vocal proyecta una dominancia natural. Mantienes un flujo de energía constante sin picos de cortisol detectables."
+                        : "Tu biometría revela una señal inestable. La falta de soporte diafragmático está diluyendo tu impacto percibido."}
                  </p>
                  
                  <p className="text-sm leading-relaxed text-slate-400 mb-6">
-                     Cuando la presión aumenta, tus cuerdas vocales se tensan y pierdes la resonancia de pecho. El resultado: <span className="text-amber-200 italic">tu equipo escucha tus datos, pero no siente tu autoridad.</span> Estás proyectando competencia técnica, pero no dominancia estratégica.
+                     {autoridad > 75
+                        ? "Estás en el percentil superior de mando. Optimiza tus pausas para generar mayor tensión estratégica."
+                        : "Cuando la presión aumenta, tus cuerdas vocales tienden a la tensión. El resultado: tu audiencia escucha tus datos, pero no siente tu autoridad."}
                  </p>
 
-                 <div className="bg-amber-900/20 border border-amber-500/20 p-3 rounded-lg flex items-center justify-between">
-                     <span className="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Brecha Detectada</span>
-                     <span className="text-xs font-black text-white">65 Puntos de Diferencia</span>
+                 <div className="bg-blue-900/20 border border-blue-500/20 p-3 rounded-lg flex items-center justify-between">
+                     <span className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Brecha de Mejora</span>
+                     <span className="text-xs font-black text-white">{gap} Puntos</span>
                  </div>
              </div>
 
           </div>
 
-          {/* 2. SOLUCIÓN: PROTOCOLOS DE REINGENIERÍA (ELITE) */}
+          {/* 2. SOLUCIÓN: PROTOCOLOS DISPONIBLES */}
           <div className="space-y-4 mb-12">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] px-2 text-center">Protocolos de Reingeniería Requeridos</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] px-2 text-center">Protocolos de Entrenamiento Sugeridos</h3>
               
-              {/* Card 1: Autoridad */}
-              <div className="bg-[#0A0F14] border border-white/5 rounded-2xl p-4 flex items-center gap-4 opacity-70 group hover:opacity-100 transition-opacity">
-                 <div className="size-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 group-hover:text-amber-500 transition-colors">
-                    <span className="material-symbols-outlined">church</span>
+              <Link href="/gym" className="block bg-[#0A0F14] border border-white/5 rounded-2xl p-4 flex items-center gap-4 group hover:border-blue-500/30 transition-all">
+                 <div className="size-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400">
+                    <span className="material-symbols-outlined">campaign</span>
                  </div>
                  <div className="flex-1">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase group-hover:text-white">Corrección Tonal</h4>
-                    <p className="text-[10px] text-slate-500">Resonancia Tóraco-Abdominal</p>
+                    <h4 className="text-xs font-bold text-slate-300 uppercase group-hover:text-white">Dinamómetro Vocal</h4>
+                    <p className="text-[10px] text-slate-500">Nivelar Presión Acústica</p>
                  </div>
-                 <span className="material-symbols-outlined text-amber-500 text-sm animate-pulse">lock</span>
-              </div>
+                 <span className="material-symbols-outlined text-slate-600 text-sm">chevron_right</span>
+              </Link>
 
-              {/* Card 2: Neural Link */}
-              <div className="bg-[#0A0F14] border border-white/5 rounded-2xl p-4 flex items-center gap-4 opacity-70 group hover:opacity-100 transition-opacity">
-                 <div className="size-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 group-hover:text-amber-500 transition-colors">
-                    <span className="material-symbols-outlined">psychology</span>
+              <Link href="/gym" className="block bg-[#0A0F14] border border-white/5 rounded-2xl p-4 flex items-center gap-4 group hover:border-blue-500/30 transition-all">
+                 <div className="size-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400">
+                    <span className="material-symbols-outlined">air</span>
                  </div>
                  <div className="flex-1">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase group-hover:text-white">Conexión Neural</h4>
-                    <p className="text-[10px] text-slate-500">Improvisación Black Ops</p>
+                    <h4 className="text-xs font-bold text-slate-300 uppercase group-hover:text-white">Respiración SSSS</h4>
+                    <p className="text-[10px] text-slate-500">Control de Flujo Laminar</p>
                  </div>
-                 <span className="material-symbols-outlined text-amber-500 text-sm animate-pulse">lock</span>
-              </div>
-
-              {/* Card 3: Soporte */}
-              <div className="bg-[#0A0F14] border border-white/5 rounded-2xl p-4 flex items-center gap-4 opacity-70 group hover:opacity-100 transition-opacity">
-                 <div className="size-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 group-hover:text-amber-500 transition-colors">
-                    <span className="material-symbols-outlined">medical_services</span>
-                 </div>
-                 <div className="flex-1">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase group-hover:text-white">Bio-Hacking</h4>
-                    <p className="text-[10px] text-slate-500">Respiración de Combate (Core Lock)</p>
-                 </div>
-                 <span className="material-symbols-outlined text-amber-500 text-sm animate-pulse">lock</span>
-              </div>
+                 <span className="material-symbols-outlined text-slate-600 text-sm">chevron_right</span>
+              </Link>
           </div>
 
 
           {/* 3. CTA FINAL */}
-          <div className="bg-gradient-to-b from-amber-500/10 to-transparent border border-amber-500/20 rounded-[32px] p-8 text-center space-y-6 mb-12">
+          <div className="bg-gradient-to-b from-blue-500/10 to-transparent border border-blue-500/20 rounded-[32px] p-8 text-center space-y-6 mb-12">
               <h3 className="text-2xl font-black text-white uppercase italic leading-none">
-                  No viniste a aprender.<br/>Viniste a dominar.
+                  El hardware vocal<br/>se entrena.
               </h3>
               <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-4">
-                  El hardware vocal no se arregla leyendo libros. Se arregla entrenando bajo presión.
+                  Has completado la auditoría inicial. Ahora usa el Arsenal Pro para corregir las brechas detectadas.
               </p>
-              <Link href="/upgrade" className="mt-8 group relative inline-flex w-full items-center justify-center py-4 bg-gradient-to-r from-amber-600 to-orange-700 text-white font-black rounded-xl uppercase tracking-widest shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:scale-[1.02] transition-transform overflow-hidden">
-                  <span className="relative z-10 flex items-center gap-2">
-                     <span className="material-symbols-outlined">lock_open</span>
-                     Equilibrar mi Perfil Soberano
+              <Link href="/gym" className="mt-8 group relative inline-flex w-full items-center justify-center py-4 bg-white text-black font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] transition-transform overflow-hidden">
+                  <span className="relative z-10 flex items-center gap-2 text-[11px]">
+                     <span className="material-symbols-outlined">fitness_center</span>
+                     Ir al Arsenal de Entrenamiento
                   </span>
               </Link>
           </div>

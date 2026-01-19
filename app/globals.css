@@ -77,7 +77,9 @@
   }
 
   .mobile-container {
-    @apply w-full max-w-md mx-auto px-6 relative;
+    @apply w-full max-w-md mx-auto px-5 relative;
+    /* Evitar overflow horizontal por padding */
+    box-sizing: border-box;
   }
 
   /* Custom animations for premium interactions */

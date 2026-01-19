@@ -91,7 +91,6 @@ export default function ListenPage() {
                   <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                </Link>
                 <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-500/80">Nivel: 🥇 PRECISION</span>
                    <h2 className="text-sm font-bold tracking-tight text-white">{userName || 'Invitado'}</h2>
                 </div>
             </div>
@@ -119,36 +118,18 @@ export default function ListenPage() {
             <section className="space-y-4">
               <div className="flex items-center justify-between px-1">
                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Tu Reto de Hoy</h3>
-                 {protocolAccess && true && (
+                 {protocolAccess && (
                     <span className="text-[9px] font-bold text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-full">¡Dale!</span>
                  )}
               </div>
 
-              {protocolAccess && (
-                false ? (
-                  <div className="bg-gradient-to-br from-amber-900/10 to-black/40 border border-amber-500/20 rounded-[28px] p-6 relative overflow-hidden backdrop-blur-md">
-                    {planType !== 'FREE' && (
-                        <div className="absolute top-0 right-0 bg-amber-600/20 px-3 py-1 rounded-bl-2xl border-l border-b border-amber-500/10">
-                            <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Día {new Date().getDate()}/30</span>
-                        </div>
-                    )}
-                    <div className="opacity-30 blur-[1px] mb-4">
-                        <h3 className="text-lg font-bold text-white leading-tight">Juego Cerrado</h3>
-                        <p className="text-slate-500 text-xs mt-1">Necesitas subir de Nivel.</p>
-                    </div>
-                    <Link href="/upgrade" className="block w-full py-4 bg-amber-600 text-white text-center font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">
-                       Ver Nivel Pro
-                    </Link>
-                  </div>
-                ) : (
+              {protocolAccess ? (
                   <div className="bg-white/[0.03] border border-white/10 rounded-[28px] p-6 relative overflow-hidden backdrop-blur-sm group hover:bg-white/[0.05] transition-all">
-                    {planType !== 'FREE' && (
-                        <div className="absolute top-0 right-0 bg-blue-600/10 px-3 py-1 rounded-bl-2xl border-l border-b border-blue-500/10">
-                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">
-                                {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).toUpperCase()}
-                            </span>
-                        </div>
-                    )}
+                    <div className="absolute top-0 right-0 bg-blue-600/10 px-3 py-1 rounded-bl-2xl border-l border-b border-blue-500/10">
+                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">
+                            {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).toUpperCase()}
+                        </span>
+                    </div>
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block">
                       {protocolAccess.protocol.phase === 'HARDWARE' ? 'NIVEL 1: CUERPO' : 
                        protocolAccess.protocol.phase === 'SOFTWARE' ? 'NIVEL 2: HABLA' : 
@@ -162,8 +143,16 @@ export default function ListenPage() {
                        <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${protocolAccess.completionPercentage}%` }}></div>
                     </div>
                   </div>
-                )
-              )}
+                ) : (
+                  <div className="bg-white/[0.03] border border-white/10 rounded-[28px] p-8 relative overflow-hidden backdrop-blur-sm text-center">
+                    <span className="material-symbols-outlined text-4xl text-blue-500/30 mb-4 font-light">fitness_center</span>
+                    <h3 className="text-lg font-bold text-white mb-2">Inicia tu Legado</h3>
+                    <p className="text-slate-500 text-xs mb-6">Elige tu primer protocolo en el Arsenal Pro.</p>
+                    <Link href="/gym" className="inline-block px-10 py-3 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                        Ir al Arsenal Pro
+                    </Link>
+                  </div>
+                )}
             </section>
 
             {/* 2. TRIGGER PRINCIPAL (Escanear Autoridad) */}
@@ -187,21 +176,16 @@ export default function ListenPage() {
 
             {/* 3. NAVEGACIÓN SECUNDARIA (GRID) */}
             <section className="grid grid-cols-2 gap-4">
-               {/* Centro de Auditoría */}
-               <Link href={planType === 'FREE' ? "/upgrade" : "/my-sessions"} className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
-                  <div className={`size-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative ${planType === 'FREE' ? 'bg-slate-800/50 text-slate-600' : 'bg-blue-500/10 text-blue-400'}`}>
-                     <span className="material-symbols-outlined text-2xl">query_stats</span>
-                     {planType === 'FREE' && (
-                        <div className="absolute -top-2 -right-2 bg-slate-900 rounded-full p-1 border border-slate-700 shadow-sm flex items-center justify-center">
-                            <span className="material-symbols-outlined text-[10px] text-slate-400">lock</span>
-                        </div>
-                     )}
-                  </div>
-                  <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
-                     Historial
-                  </h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Mira qué tal lo hiciste.</p>
-               </Link>
+                {/* Centro de Auditoría */}
+                <Link href="/my-sessions" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
+                   <div className="size-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative bg-blue-500/10 text-blue-400">
+                      <span className="material-symbols-outlined text-2xl">query_stats</span>
+                   </div>
+                   <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
+                      Historial
+                   </h4>
+                   <p className="text-[10px] text-slate-500 font-medium">Mira qué tal lo hiciste.</p>
+                </Link>
 
                {/* Arsenal Pro */}
                <Link href="/gym" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
@@ -233,9 +217,9 @@ export default function ListenPage() {
 
             {/* 4. FOOTER / REFERRAL */}
             <div className="pt-6 text-center">
-               <Link href="/referrals" className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 hover:text-blue-400 transition-colors">
-                  Invitar Colegas • Ganar Créditos
-               </Link>
+               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                  Oratoria de Alto Impacto
+               </span>
             </div>
 
           </main>

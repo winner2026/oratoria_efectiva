@@ -7,10 +7,7 @@ import Link from 'next/link';
 interface UserProfile {
   name: string;
   email: string;
-  credits: number;
-  plan: string;
   totalUsage: number;
-  subscriptionStatus?: string;
 }
 
 export default function ProfilePage() {
@@ -26,7 +23,6 @@ export default function ProfilePage() {
       return;
     }
 
-    // Fetch real-time data from DB to verify usage
     fetch(`/api/users/${userId}`)
       .then(res => res.json())
       .then(data => {
@@ -35,14 +31,11 @@ export default function ProfilePage() {
       })
       .catch(err => {
          console.error("Error loading profile:", err);
-         // Fallback basic info
          const name = localStorage.getItem("user_name") || "Agente Anónimo";
          const email = localStorage.getItem("user_email") || "ID Desconocido";
          setUser({ 
              name, 
              email, 
-             credits: parseInt(localStorage.getItem("user_credits") || "0"), 
-             plan: "FREE", 
              totalUsage: 0 
          });
       })
@@ -56,22 +49,8 @@ export default function ProfilePage() {
     }
   };
 
-  const handleManageSubscription = () => {
-      router.push("/upgrade");
-  };
-
-  // 🛡️ PLAN MAPPING
-  const getPlanLabel = (plan: string) => {
-    if (plan === 'STARTER') return '🥉 CONTROL';
-    if (plan === 'PREMIUM' || plan === 'ELITE') return '🥇 PRECISION';
-    return '🥈 Monitor';
-  };
-
-  const getPlanColor = (plan: string) => {
-    if (plan === 'STARTER') return 'text-blue-400 border-blue-500/50 bg-blue-500/10';
-    if (plan === 'PREMIUM' || plan === 'ELITE') return 'text-amber-500 border-amber-500/50 bg-amber-500/10';
-    return 'text-slate-500 border-slate-700 bg-slate-800/50';
-  };
+  const getPlanLabel = () => 'COMANDANTE';
+  const getPlanColor = () => 'text-blue-400 border-blue-500/50 bg-blue-500/10';
 
   if (loading) return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-slate-500 text-xs font-mono uppercase animate-pulse">Cargando perfil...</div>;
   if (!user) return null;
@@ -100,14 +79,14 @@ export default function ProfilePage() {
         
         {/* ID CARD */}
         <div className="relative group">
-            <div className={`absolute inset-0 bg-gradient-to-r ${user.plan === 'ELITE' || user.plan === 'PREMIUM' ? 'from-amber-500/20 to-orange-500/20' : 'from-blue-500/20 to-purple-500/20'} blur-xl rounded-3xl opacity-50`}></div>
+            <div className={`absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-xl rounded-3xl opacity-50`}></div>
             <div className="relative bg-[#0A0F14] border border-white/10 rounded-[24px] p-6 overflow-hidden">
                 <div className="flex items-start justify-between mb-8">
                     <div className="size-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
                         <span className="text-2xl font-black text-slate-400">{user.name.charAt(0).toUpperCase()}</span>
                     </div>
-                    <div className={`px-3 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest ${getPlanColor(user.plan)}`}>
-                        {getPlanLabel(user.plan)}
+                    <div className={`px-3 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest ${getPlanColor()}`}>
+                        {getPlanLabel()}
                     </div>
                 </div>
                 
@@ -127,7 +106,7 @@ export default function ProfilePage() {
         </div>
 
         {/* METRICS GRID */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
             <div className="bg-[#0F1318] border border-white/5 p-5 rounded-[20px] flex flex-col justify-between h-32 hover:border-blue-500/30 transition-colors group">
                 <div className="p-2 bg-blue-500/10 w-fit rounded-lg text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
                     <span className="material-symbols-outlined text-lg">mic</span>
@@ -137,21 +116,6 @@ export default function ProfilePage() {
                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Veces que practicaste</span>
                 </div>
             </div>
-            
-            <div className="bg-[#0F1318] border border-white/5 p-5 rounded-[20px] flex flex-col justify-between h-32 hover:border-emerald-500/30 transition-colors group">
-                <div className="p-2 bg-emerald-500/10 w-fit rounded-lg text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-lg">bolt</span>
-                </div>
-                <div>
-                     <span className="text-3xl font-black text-white block">{user.credits}</span>
-                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Monedas</span>
-                </div>
-                {user.plan === 'FREE' && (
-                    <Link href="/upgrade" className="absolute top-4 right-4 text-emerald-500 animate-pulse">
-                        <span className="material-symbols-outlined text-sm">add_circle</span>
-                    </Link>
-                )}
-            </div>
         </div>
 
 
@@ -160,48 +124,16 @@ export default function ProfilePage() {
             <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] px-2">Tus Cosas</h3>
             
             <button 
-               onClick={handleManageSubscription}
+               onClick={() => router.push('/my-sessions')}
                className="w-full flex items-center justify-between p-5 bg-[#0F1318] border border-white/5 rounded-[20px] hover:bg-white/5 transition-all group active:scale-[0.98]"
             >
                 <div className="flex items-center gap-4">
                     <div className="size-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
-                        <span className="material-symbols-outlined">credit_card</span>
-                    </div>
-                    <div className="text-left">
-                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Tu Plan</span>
-                        <span className="text-[10px] text-slate-500 font-medium">Cambiar tipo de cuenta</span>
-                    </div>
-                </div>
-                <span className="material-symbols-outlined text-slate-600">chevron_right</span>
-            </button>
-
-            {/* AUDITORÍA (Locked for FREE) */}
-            <button 
-               onClick={() => router.push(user.plan === 'FREE' ? '/upgrade' : '/my-sessions')}
-               className={`w-full flex items-center justify-between p-5 border rounded-[20px] transition-all group active:scale-[0.98] ${
-                   user.plan === 'FREE' 
-                   ? 'bg-[#0F1318]/50 border-slate-800' 
-                   : 'bg-[#0F1318] border-white/5 hover:bg-white/5'
-               }`}
-            >
-                <div className="flex items-center gap-4">
-                    <div className={`size-10 rounded-xl flex items-center justify-center transition-colors relative ${
-                        user.plan === 'FREE' ? 'bg-slate-900 text-slate-600' : 'bg-slate-800 text-slate-400 group-hover:text-white'
-                    }`}>
                         <span className="material-symbols-outlined">query_stats</span>
-                        {user.plan === 'FREE' && (
-                            <div className="absolute -top-1 -right-1 bg-slate-900 rounded-full p-0.5 border border-slate-700 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-[10px] text-slate-500">lock</span>
-                            </div>
-                        )}
                     </div>
                     <div className="text-left">
-                        <span className={`text-sm font-bold block ${user.plan === 'FREE' ? 'text-slate-500' : 'text-slate-200 group-hover:text-white'}`}>
-                             {user.plan === 'FREE' ? 'Tu Historial (Bloqueado)' : 'Tu Historial'}
-                        </span>
-                        <span className="text-[10px] text-slate-500 font-medium">
-                            {user.plan === 'FREE' ? 'Necesitas Plan Pro' : 'Ver qué tal lo hiciste'}
-                        </span>
+                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Tu Historial</span>
+                        <span className="text-[10px] text-slate-500 font-medium">Ver qué tal lo hiciste</span>
                     </div>
                 </div>
                 <span className="material-symbols-outlined text-slate-600">chevron_right</span>

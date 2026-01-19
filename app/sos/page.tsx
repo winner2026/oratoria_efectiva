@@ -31,8 +31,8 @@ export default function SOSPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#050505] text-white font-display overflow-hidden flex flex-col">
-      <main className="flex-1 flex flex-col justify-center p-6 animate-fade-in-up">
+    <div className="min-h-[100dvh] bg-[#050505] text-white font-display flex flex-col overflow-y-auto">
+      <main className="flex-1 flex flex-col justify-center p-6 animate-fade-in-up pb-20">
          {/* Banner de Gratuidad */}
          <div className="w-full max-w-md mx-auto mb-8 bg-green-900/20 border border-green-500/30 rounded-lg p-3 flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-green-500 text-sm">lock_open</span>
@@ -66,7 +66,7 @@ export default function SOSPage() {
                <button
                  key={key}
                  onClick={() => handleSelect(key)}
-                 className={`group relative w-full h-28 bg-[#111] border border-white/10 rounded-xl flex items-center px-6 overflow-hidden transition-all hover:border-${situation.color.split('-')[1]}-500/50 hover:bg-[#161616] active:scale-[0.99]`}
+                 className={`group relative w-full min-h-[100px] py-4 bg-[#111] border border-white/10 rounded-xl flex items-center px-6 overflow-hidden transition-all hover:border-${situation.color.split('-')[1]}-500/50 hover:bg-[#161616] active:scale-[0.99]`}
                >
                  {/* Decorative BG Number */}
                  <span className="absolute right-2 bottom-[-10px] text-7xl font-black text-white/[0.03] group-hover:text-white/[0.05] transition-colors leading-none pointer-events-none">
