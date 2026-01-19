@@ -12,12 +12,13 @@ import { usePitchDetector } from "@/hooks/usePitchDetector";
 const EXERCISE_DURATION = 30; // seconds
 
 // Volume zones (0-100 scale after our *400 multiplier)
+// Volume zones (0-100 scale after our *300 multiplier adjustment)
 const ZONES = {
     SILENCE: { min: 0, max: 10 },
-    WHISPER: { min: 10, max: 35 },        // Reduced range slightly
-    CONVERSATION: { min: 35, max: 75 },   // Widened Optimal Zone (was 40-70)
-    PROJECTION: { min: 75, max: 95 },     // Widened Projection Zone (was 70-90)
-    SATURATION: { min: 95, max: 100 },    // Higher threshold for saturation (was 90)
+    WHISPER: { min: 10, max: 40 },        // Widened
+    CONVERSATION: { min: 40, max: 80 },   // Much wider Safe Zone
+    PROJECTION: { min: 80, max: 97 },     // Harder to reach
+    SATURATION: { min: 97, max: 100 },    // Very hard to clip now
 };
 
 interface VolumeStats {
@@ -116,8 +117,8 @@ export default function ProjectionPage() {
   const sampleIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const volumeRef = useRef(0); // Track current volume for sampling
   
-  // Volume is roughly 0.0 to 1.0 RMS from Analyser
-  const currentLevel = Math.min(100, volume * 400);
+  // Volume is roughly 0.0 to 1.0 RMS from Analyser. Reduced sensitivity (*300 instead of *400).
+  const currentLevel = Math.min(100, volume * 300);
   
   // Keep volumeRef in sync with current volume
   useEffect(() => {
