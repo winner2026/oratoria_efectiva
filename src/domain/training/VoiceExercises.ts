@@ -217,6 +217,27 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     aiEnhanced: true
   },
 
+  {
+    id: 'filler-killer',
+    title: 'Misión: Limpieza',
+    description: 'Sobrevive 60s sin decir "eh", "este", "o sea". Cada muletilla te resta vida.',
+    category: 'ARTICULATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['clarity', 'filler_words'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Habla improvisando.',
+        'Evita las palabras prohibidas.',
+        'Si acumulas 3 muletillas, pierdes.'
+    ],
+    benefit: 'Oratoria limpia y profesional.',
+    tier: 'FREE',
+    dimension: 'AUTHORITY',
+    isCore: false,
+    customRoute: '/practice/filler-killer',
+    aiEnhanced: true
+  },
+
   // =================================================================
   // ⚔️ NIVEL 5: AGILIDAD MENTAL (La Arena)
   // =================================================================
