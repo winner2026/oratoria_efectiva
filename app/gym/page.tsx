@@ -30,7 +30,7 @@ export default function GymPage() {
           <div className="flex flex-col items-center">
               <h1 className="font-bold text-sm uppercase tracking-widest text-white">Zona de Entrenamiento</h1>
              <span className="text-[9px] font-bold text-blue-500 uppercase tracking-wider">
-                Tu Nivel: 🥇 PRECISION
+                Gimnasio
              </span>
           </div>
           <div className="w-6"></div> 
@@ -40,44 +40,19 @@ export default function GymPage() {
       {/* Main Content */}
       <main className="pt-28 mobile-container space-y-10 animate-fade-in">
         
-        {/* SECTION 1: CORE 12 (FUNDAMENTALS) - Solo si no hay filtro activo o coincide */}
-        {coreExercises.length > 0 && (
-            <div className="space-y-4 px-1">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="flex size-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                        Lo Básico
-                    </h2>
-                </div>
-                <div className="grid grid-cols-1 gap-4">
-                    {coreExercises.map(ex => (
-                        <ExerciseCard key={ex.id} exercise={ex} locked={false} />
-                    ))}
-                </div>
-            </div>
-        )}
-
-             ) : (
-                <div className="text-center py-20 opacity-50">
-                    <span className="material-symbols-outlined text-4xl mb-2">filter_list_off</span>
-                    <p>No hay juegos en esta categoría.</p>
-                </div>
-                <div className="grid grid-cols-1 gap-4">
-                    {libraryExercises.map(ex => (
-                        <ExerciseCard key={ex.id} exercise={ex} locked={false} />
-                    ))}
-                </div>
-            </div>
-        )}
-
-        {organizedExercises.length === 0 && (
-            <div className="text-center py-20 opacity-50">
-                <span className="material-symbols-outlined text-4xl mb-2">filter_list_off</span>
-                <p>No hay juegos de este tipo.</p>
-            </div>
-        )}
-
-        {/* UPSELL BANNER ELIMINADO PORQUE TODO ES GRATIS */}
+          <div className="space-y-4 px-1">
+              <div className="flex items-center gap-2 mb-2">
+                  <span className="flex size-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                      Misiones Disponibles
+                  </h2>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                  {exercises.map(ex => (
+                      <ExerciseCard key={ex.id} exercise={ex} locked={false} />
+                  ))}
+              </div>
+          </div>
 
       </main>
 
