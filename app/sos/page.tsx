@@ -15,19 +15,19 @@ export default function SOSPage() {
     router.push(`/sos/${id}/anchor`);
   };
 
-  // Mapeo situacional Nivel Black Ops
+  // Mapeo situacional Simplificado (Nivel Niños de 10 Años)
   const situationalTitles: Record<string, string> = {
-    EXPOSE: "Algoritmo de Impacto",
-    RESPOND: "Puente Neural",
-    DEFEND: "Escudo de Neutralización",
-    SUMMARIZE: "Anclaje de Código"
+    EXPOSE: "Vender una Idea",
+    RESPOND: "Hablar sin Guion",
+    DEFEND: "Defenderse",
+    SUMMARIZE: "Cerrar el Tema"
   };
 
   const situationalSubtitles: Record<string, string> = {
-    EXPOSE: "Estructura de Pitch Invasivo",
-    RESPOND: "Improvisación Bajo Fuego",
-    DEFEND: "Defensa ante Ataques Hostiles",
-    SUMMARIZE: "Cierre de Memoria Ejecutiva"
+    EXPOSE: "Convence a todos rápido.",
+    RESPOND: "Sal del apuro improvisando.",
+    DEFEND: "Responde sin enojarte.",
+    SUMMARIZE: "Termina como un experto."
   };
 
   return (
