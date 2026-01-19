@@ -260,7 +260,14 @@ export default function ArticulationPage() {
       }
 
       timerRef.current = setInterval(() => {
-          setElapsedTime(prev => prev + 0.1);
+          setElapsedTime(prev => {
+              // TIME ATTACK: 12 seconds
+              if (prev >= 12) {
+                  finishLevel(false, 0); // Fail due to timeout
+                  return 12;
+              }
+              return prev + 0.1;
+          });
       }, 100);
   };
 
@@ -439,10 +446,17 @@ export default function ArticulationPage() {
                             {renderTextWithHighlights()}
                         </div>
 
+                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-4 max-w-xs mx-auto">
+                            <div 
+                                className="h-full bg-amber-500 transition-all duration-100 ease-linear"
+                                style={{ width: `${(1 - (elapsedTime / 12)) * 100}%` }}
+                            />
+                        </div>
+
                         <div className="flex justify-center gap-8 text-sm font-mono text-slate-400">
                             <div>
-                                <span className="block text-2xl font-bold text-white">{elapsedTime.toFixed(1)}s</span>
-                                <span>TIEMPO</span>
+                                <span className="block text-2xl font-bold text-white">{(12 - elapsedTime).toFixed(1)}s</span>
+                                <span>TIEMPO RESTANTE</span>
                             </div>
                             <div>
                                 <span className={`block text-2xl font-bold ${accuracy > 80 ? 'text-green-400' : 'text-slate-200'}`}>

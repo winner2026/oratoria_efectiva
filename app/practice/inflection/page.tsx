@@ -71,18 +71,21 @@ export default function InflectionPage() {
         analyzeResult();
     };
 
+    const [streak, setStreak] = useState(0);
+    const [missionComplete, setMissionComplete] = useState(false);
+
+    // ... existing refs
+
     const analyzeResult = () => {
         stopListening();
         setPhase("result");
 
         const data = historyRef.current;
         if (data.length < 10) {
-            setFeedback({ status: "fail", msg: "Audio muy corto o no detectado.", dropHz: 0 });
+            setFeedback({ status: "fail", msg: "Audio muy corto. Habla más fuerte.", dropHz: 0 });
             return;
         }
 
-        // Logic: Compare Average of the first 70% vs Average of the last 20%
-        // (Assuming the last part is the "drop")
         const splitIndex = Math.floor(data.length * 0.7);
         const bodyPart = data.slice(0, splitIndex);
         const tailPart = data.slice(splitIndex);
@@ -90,26 +93,33 @@ export default function InflectionPage() {
         const avgBody = bodyPart.reduce((a,b) => a+b, 0) / bodyPart.length;
         const avgTail = tailPart.reduce((a,b) => a+b, 0) / tailPart.length;
 
-        const drop = avgBody - avgTail; // Positive means it dropped (Body > Tail)
+        const drop = avgBody - avgTail; 
         
-        // Threshold: Needs to drop at least 15z to be clear authority
-        // If drop is negative, it went UP (Question tone)
-        
-        if (drop > 15) {
-            setFeedback({ 
-                status: "success", 
-                msg: "¡Excelente! Caída de autoridad confirmada.", 
-                dropHz: Math.round(drop) 
-            });
-        } else if (drop < -5) {
+        // Strict threshold: > 10Hz drop to count as "Authority"
+        if (drop > 10) {
+            const newStreak = streak + 1;
+            setStreak(newStreak);
+            
+            if (newStreak >= 3) {
+                 setMissionComplete(true);
+                 setFeedback({ 
+                    status: "success", 
+                    msg: "¡MISIÓN CUMPLIDA! 3 DE 3.", 
+                    dropHz: Math.round(drop) 
+                });
+            } else {
+                setFeedback({ 
+                    status: "success", 
+                    msg: `¡Bien! Llevas ${newStreak} de 3 seguidas.`, 
+                    dropHz: Math.round(drop) 
+                });
+            }
+
+        } else {
+            setStreak(0); // RESET STREAK ON FAILURE
             setFeedback({ 
                 status: "fail", 
-                msg: "Inseguridad detectada. Subiste el tono (¿Pregunta?).", 
-                dropHz: Math.round(drop) 
-            });
-            setFeedback({ 
-                status: "fail", 
-                msg: "Tono plano. Te faltó contundencia al cerrar.", 
+                msg: "Fallo. Has perdido la racha. Cierra con más peso.", 
                 dropHz: Math.round(drop) 
             });
         }
@@ -120,15 +130,23 @@ export default function InflectionPage() {
                  sourceExerciseId: 'sentence-closure',
                  layer: 'EJECUCION',
                  metricType: 'STABILITY', // Tonal Control
-                 value: Math.max(0, Math.min(100, 50 + drop)), // Normalize roughly: 0 drop = 50, >50 drop = 100
+                 value: Math.max(0, Math.min(100, 50 + drop)), 
                  rawUnit: 'hz_diff'
              });
         });
     };
 
     const nextPhrase = () => {
-        setPhase("idle");
-        setCurrentPhraseIndex(prev => (prev + 1) % PHRASES.length);
+        if (missionComplete) {
+            // Reset everything for replay
+            setStreak(0);
+            setMissionComplete(false);
+            setCurrentPhraseIndex(0);
+            setPhase("idle");
+        } else {
+            setPhase("idle");
+            setCurrentPhraseIndex(prev => (prev + 1) % PHRASES.length);
+        }
         setFeedback(null);
     };
 
@@ -151,7 +169,9 @@ export default function InflectionPage() {
                     <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Gimnasio</span>
                 </Link>
                 <div className="flex items-center gap-2">
-                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Módulo: Inflexión</span>
+                     <div className={`px-3 py-1 rounded-full text-xs font-bold border ${streak > 0 ? 'bg-amber-500/20 border-amber-500 text-amber-500' : 'bg-slate-800 border-white/5 text-slate-500'}`}>
+                        RACHA: {streak}/3
+                     </div>
                 </div>
              </div>
 

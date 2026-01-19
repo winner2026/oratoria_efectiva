@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import AudioLevelMeter from "@/components/AudioLevelMeter";
+import { usePitchDetector } from "@/hooks/usePitchDetector";
 
 const SPEECH_TEXT = `La oratoria no es solo hablar. Es el arte de influir. Cuando abres la boca, estás compitiendo por el recurso más valioso del mundo: la atención de los demás.
 La mayoría de la gente habla para llenar el silencio. Los líderes hablan para crear un cambio.
@@ -13,50 +14,76 @@ Si logras que tu mensaje resuene, no solo serás escuchado. Serás recordado.`;
 const WORDS = SPEECH_TEXT.replace(/\n/g, " ").split(" ").filter(w => w.length > 0);
 
 export default function ReadingExercisePage() {
+  const { isListening, startListening, stopListening, volume } = usePitchDetector(); // Use consistent hook
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(140);
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
   const [isFinished, setIsFinished] = useState(false);
-
-  // Audio for visual feedback (optional)
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [failReason, setFailReason] = useState<string | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const silenceCounterRef = useRef(0);
+  const volumeRef = useRef(0);
 
+  // Auto-stop on component unmount
   useEffect(() => {
-    // Request mic access for visualizer (Zero Cost)
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(s => setStream(s))
-      .catch(err => console.error("Mic error", err));
-
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (stream) stream.getTracks().forEach(t => t.stop());
+        stopReading();
     };
   }, []);
+  
+  // Volume ref sync
+  useEffect(() => { volumeRef.current = volume; }, [volume]);
+
+  // Main Logic Loop
+  useEffect(() => {
+      if (isPlaying) {
+          const intervalMs = (60 / wpm) * 1000;
+          timerRef.current = setInterval(() => {
+              
+              setCurrentWordIndex(prev => {
+                  if (prev >= WORDS.length - 1) {
+                      stopReading(true);
+                      return prev;
+                  }
+                  return prev + 1;
+              });
+
+              if (currentWordIndex > 3) {
+                  // Volume Threshold: 5 (processed 0-100 scale from hook)
+                  if (volumeRef.current < 5) {
+                       silenceCounterRef.current += 1;
+                  } else {
+                       silenceCounterRef.current = 0; 
+                  }
+
+                  // 6 ticks * (60/140)s = 6 * 0.42s = 2.5s of silence roughly
+                  if (silenceCounterRef.current > 6) {
+                      setFailReason("lost_flow");
+                      stopReading(false); 
+                  }
+              }
+
+          }, intervalMs);
+
+          return () => clearInterval(timerRef.current!);
+      }
+  }, [isPlaying, wpm, currentWordIndex]); 
 
   const startReading = () => {
     setIsPlaying(true);
     setIsFinished(false);
+    setFailReason(null);
     setCurrentWordIndex(0);
-
-    const intervalMs = (60 / wpm) * 1000;
-
-    timerRef.current = setInterval(() => {
-      setCurrentWordIndex(prev => {
-        if (prev >= WORDS.length - 1) {
-            stopReading(true);
-            return prev;
-        }
-        return prev + 1;
-      });
-    }, intervalMs);
+    silenceCounterRef.current = 0;
+    startListening();
   };
 
   const stopReading = (finished = false) => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = null;
     setIsPlaying(false);
+    stopListening();
     if (finished) setIsFinished(true);
   };
 
@@ -64,6 +91,7 @@ export default function ReadingExercisePage() {
     stopReading();
     setCurrentWordIndex(-1);
     setIsFinished(false);
+    setFailReason(null);
   };
 
   const getWpmLabel = (val: number) => {
@@ -95,7 +123,7 @@ export default function ReadingExercisePage() {
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10 max-w-3xl mx-auto w-full">
         
-        {!isPlaying && !isFinished && (
+        {!isPlaying && !isFinished && !failReason && (
             <div className="w-full mb-8 animate-fade-in">
                  <div className="bg-slate-900/50 border border-white/10 p-6 rounded-2xl mb-8 text-center">
                     <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
@@ -121,8 +149,8 @@ export default function ReadingExercisePage() {
                  <div className="text-center space-y-2 mb-8">
                      <h1 className="text-3xl font-black text-white">Sincronización Mental</h1>
                      <p className="text-slate-400 text-sm">
-                         Lee en voz alta siguiendo la palabra iluminada. <br/>
-                         No te adelantes ni te atrases.
+                         Lee en voz alta sin detenerte. <br/>
+                         Si haces silencio por más de 1.5s, perderás.
                      </p>
                  </div>
 
@@ -131,58 +159,76 @@ export default function ReadingExercisePage() {
                    className="w-full py-4 bg-white text-black font-black text-lg rounded-2xl hover:scale-[1.02] transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2"
                  >
                      <span className="material-symbols-outlined">play_arrow</span>
-                     COMENZAR LECTURA
+                     COMENZAR DESAFÍO
                  </button>
             </div>
         )}
 
         {/* READING AREA */}
-        {(isPlaying || isFinished) && (
+        {(isPlaying || isFinished || failReason) && (
             <div className="space-y-8 w-full">
                 
-                {/* Visualizer (Top) */}
-                <div className="h-16 flex items-center justify-center opacity-50">
-                    {stream && <AudioLevelMeter stream={stream} isActive={true} />}
+                {/* Volume Bar (Visualizer Replacement) */}
+                <div className="h-2 w-48 mx-auto bg-slate-800 rounded-full overflow-hidden">
+                    <div 
+                        className={`h-full transition-all duration-75 ${volume > 5 ? 'bg-green-500' : 'bg-red-500'}`} 
+                        style={{ width: `${Math.min(100, volume * 3)}%` }} // Visual scaling
+                    />
                 </div>
 
-                <div 
-                    className="text-2xl md:text-4xl font-serif leading-relaxed text-center px-4"
-                    style={{ lineHeight: '1.6' }}
-                >
-                    {WORDS.map((word, idx) => {
-                        const isCurrent = idx === currentWordIndex;
-                        const isPast = idx < currentWordIndex;
-                        
-                        return (
-                            <span 
-                                key={idx} 
-                                className={`inline-block mr-2 transition-colors duration-200 ${
-                                    isCurrent ? 'text-white scale-110 font-bold drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] transform' : 
-                                    isPast ? 'text-slate-600' : 
-                                    'text-slate-500 blur-[0.5px]'
-                                }`}
-                            >
-                                {word}
-                            </span>
-                        );
-                    })}
-                </div>
+                {!failReason && (
+                    <div 
+                        className="text-2xl md:text-4xl font-serif leading-relaxed text-center px-4"
+                        style={{ lineHeight: '1.6' }}
+                    >
+                        {WORDS.map((word, idx) => {
+                            const isCurrent = idx === currentWordIndex;
+                            const isPast = idx < currentWordIndex;
+                            
+                            return (
+                                <span 
+                                    key={idx} 
+                                    className={`inline-block mr-2 transition-colors duration-200 ${
+                                        isCurrent ? 'text-white scale-110 font-bold drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] transform' : 
+                                        isPast ? 'text-slate-600' : 
+                                        'text-slate-500 blur-[0.5px]'
+                                    }`}
+                                >
+                                    {word}
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
+
+                {failReason && (
+                    <div className="text-center animate-bounce-in">
+                        <div className="text-6xl mb-4">🔇</div>
+                        <h2 className="text-3xl font-black text-red-500 mb-2">¡FLUJO PERDIDO!</h2>
+                        <p className="text-slate-400 mb-6">Te quedaste en silencio. Debes mantener el ritmo.</p>
+                        <button 
+                           onClick={reset}
+                           className="px-8 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-bold rounded-xl transition-colors border border-red-500/30"
+                        >
+                            Reintentar
+                        </button>
+                    </div>
+                )}
 
                 {isFinished && (
                      <div className="text-center animate-fade-in-up mt-8">
                         <h3 className="text-2xl font-black text-green-400 mb-2">¡Sincronización Completa!</h3>
-                        <p className="text-slate-400 mb-6">Has mantenido un ritmo de {wpm} palabras por minuto.</p>
+                        <p className="text-slate-400 mb-6">Has mantenido el flujo a {wpm} palabras por minuto.</p>
                         
-                        {/* [CORE Scan] Ingest on Render/Mount of result implies it happened. Better to do in effect or here once. */}
                         {(() => {
                            import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
-                              CoreDiagnosticService.getInstance().ingest({
-                                  sourceExerciseId: 'sincronizacion-mental',
-                                  layer: 'RITMO',
-                                  metricType: 'WPM',
-                                  value: wpm,
-                                  rawUnit: 'wpm' // User followed this target
-                              });
+                               CoreDiagnosticService.getInstance().ingest({
+                                   sourceExerciseId: 'sincronizacion-mental',
+                                   layer: 'RITMO',
+                                   metricType: 'WPM',
+                                   value: wpm,
+                                   rawUnit: 'wpm'
+                               });
                            });
                            return null;
                         })()}

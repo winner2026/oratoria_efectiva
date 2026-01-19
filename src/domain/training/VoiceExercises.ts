@@ -1,5 +1,5 @@
 
-export type ExerciseMode = 'AUDIO' | 'VIDEO';
+export type ExerciseMode = 'AUDIO' | 'VIDEO' | 'TEXT';
 export type UserLevel = 'FREE' | 'STARTER' | 'ELITE';
 export type BiometricDimension = 'SUPPORT' | 'RESONANCE' | 'AGILITY' | 'AUTHORITY' | 'MINDSET' | 'IMPROV';
 
@@ -24,153 +24,137 @@ export type VoiceExercise = {
 
 export const VOICE_EXERCISES: VoiceExercise[] = [
   // =================================================================
-  // 1️⃣ AJUSTE DE ESTABILIDAD (SSSS Controlado) - CORE
+  // 🧠 NIVEL 1: MINDSET E IDENTIDAD (Base Mental)
+  // =================================================================
+  {
+    id: 'key-phrase',
+    title: 'Misión: Identidad',
+    description: 'Define tu norte magnético en menos de 120 caracteres. Si dudas, borra.',
+    category: 'MINDSET',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['clarity', 'brevity'],
+    requiredMode: 'TEXT',
+    steps: [
+        'Piensa: ¿Cómo quieres que la gente te recuerde?',
+        'Tienes 120 caracteres.',
+        'Grábalo en piedra.'
+    ],
+    benefit: 'Claridad absoluta.',
+    tier: 'FREE',
+    dimension: 'MINDSET',
+    isCore: true,
+    customRoute: '/practice/key-phrase',
+    aiEnhanced: false 
+  },
+  {
+    id: 'obligatory-silence',
+    title: 'Misión: El Vacío',
+    description: 'Sobrevive 30 segundos de silencio absoluto mirando a los ojos.',
+    category: 'MINDSET',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['presence', 'calm'],
+    requiredMode: 'TEXT',
+    steps: [
+        'Elige tu nivel de dificultad.',
+        'Sostén la mirada en el ancla.',
+        'Si te mueves o hablas, pierdes.'
+    ],
+    benefit: 'Elimina el miedo al silencio.',
+    tier: 'FREE',
+    dimension: 'AUTHORITY',
+    isCore: true,
+    customRoute: '/practice/silence',
+    aiEnhanced: false 
+  },
+  {
+    id: 'less-is-more',
+    title: 'Misión: Síntesis',
+    description: 'Destila una idea compleja hasta que solo queden 12 palabras.',
+    category: 'MINDSET',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['brevity', 'impact'],
+    requiredMode: 'TEXT',
+    steps: [
+        'Vuelca todo sin filtro.',
+        'Corta a 3 oraciones.',
+        'Destila a 12 palabras.'
+    ],
+    benefit: 'Potencia de impacto máxima.',
+    tier: 'FREE',
+    dimension: 'MINDSET',
+    isCore: true,
+    customRoute: '/practice/synthesis',
+    aiEnhanced: false 
+  },
+
+  // =================================================================
+  // 🗣️ NIVEL 2: SOPORTE FÍSICO (El Motor)
   // =================================================================
   {
     id: 'stability-check',
-    title: 'Respirar con la Panza',
-    description: 'Sopla suave y mantén la línea recta. Si tiembla, estás nervioso.',
+    title: 'Misión: Estabilidad',
+    description: 'Mantén una exhalación SSSS perfecta por 20 segundos. Sin temblores.',
     category: 'BREATHING',
     difficulty: 'BEGINNER',
     targetMetrics: ['energyStability'],
     requiredMode: 'AUDIO',
     steps: [
-      'Inhala profundo por la nariz.',
-      'Sopla una "S" suave y constante (SSSS...).',
-      'Mantén la línea verde lo más recta posible.',
-      'Si tiembla, estás nervioso. Repite hasta estabilizar.'
+        'Inhala profundo.',
+        'Emite una "S" constante.',
+        'Si la línea tiembla o baja, reinicias.'
     ],
-    benefit: 'Reduce la ansiedad en segundos y te da control total.',
+    benefit: 'Control total de los nervios.',
     tier: 'FREE',
     dimension: 'SUPPORT',
     isCore: true,
     customRoute: '/practice/breathing'
   },
-
-  // =================================================================
-  // 2️⃣ MONITOR DE RETORNO (Auto-escucha)
-  // =================================================================
-  {
-    id: 'instant-feedback',
-    title: 'Escúchate al Instante',
-    description: 'Di una frase y escúchate al momento. ¡Así es como suenas!',
-    category: 'INTONATION',
-    difficulty: 'BEGINNER',
-    targetMetrics: ['pitchRange'],
-    requiredMode: 'AUDIO',
-    steps: [
-      'Graba tu "Intro" de reunión (5 seg).',
-      'Escucha el retorno inmediato.',
-      'Ajusta lo que no te guste y repite.'
-    ],
-    benefit: 'Te revela cómo suenas realmente. Insight inmediato.',
-    tier: 'FREE',
-    dimension: 'AUTHORITY',
-    isCore: true,
-    customRoute: '/practice/instant-playback'
-  },
-
-  // =================================================================
-  // 3️⃣ MEDIDOR DE VOLUMEN FUNCIONAL
-  // =================================================================
   {
     id: 'functional-volume',
-    title: 'Hablar Fuerte sin Gritar',
-    description: 'Mantén la barra en la ZONA VERDE. No dejes que se ponga roja.',
+    title: 'Misión: Proyección',
+    description: 'Llena la barra de energía hablando fuerte 15s sin tocar la zona roja.',
     category: 'PROJECTION',
     difficulty: 'INTERMEDIATE',
     targetMetrics: ['volume'],
     requiredMode: 'AUDIO',
     steps: [
-      'Habla a la pantalla como si fuera una persona.',
-      'Mantén la barra en la ZONA VERDE.',
-      'Evita el Azul (débil) y el Rojo (agresivo).'
+        'Proyecta tu voz para llenar la barra.',
+        'No grites (Zona Roja = Pierdes).',
+        'No susurres (Zona Azul = No carga).'
     ],
-    benefit: 'Proyección perfecta sin gritar. Presencia física.',
-    tier: 'STARTER',
+    benefit: 'Presencia física dominante.',
+    tier: 'FREE',
     dimension: 'RESONANCE',
     isCore: false,
     customRoute: '/practice/projection'
   },
 
   // =================================================================
-  // 4️⃣ CIERRE DE FRASE (Descendente)
+  // ⚡ NIVEL 3: RITMO Y TIEMPO (Dominio)
   // =================================================================
   {
-    id: 'sentence-closure',
-    title: 'Terminar Frases Seguro',
-    description: 'No preguntes al final. Termina tus frases bajando el tono.',
+    id: 'authority-pause',
+    title: 'Misión: Pausa',
+    description: 'Habla 15s y atrévete a meter una pausa de 3s. Si no, pierdes.',
     category: 'INTONATION',
     difficulty: 'INTERMEDIATE',
-    targetMetrics: ['pitchRange'],
+    targetMetrics: ['timing', 'silence_detection'],
     requiredMode: 'AUDIO',
     steps: [
-      'Di la frase propuesta.',
-      'Baja el tono al final (como poniendo un punto final firme).',
-      'Si subes el tono (pregunta), inténtalo de nuevo.'
+        'Habla continuo sobre cualquier tema.',
+        'Detente en seco por 3 segundos.',
+        'Si el tiempo acaba sin pausa, pierdes.'
     ],
-    benefit: 'Sensación de autoridad inmediata. Menos interrupciones.',
-    tier: 'ELITE',
-    dimension: 'AUTHORITY',
-    isCore: false,
-    customRoute: '/practice/inflection',
-    aiEnhanced: true
+    benefit: 'Autoridad a través del silencio.',
+    tier: 'FREE',
+    dimension: 'AGILITY',
+    isCore: true,
+    customRoute: '/practice/pause',
+    aiEnhanced: false 
   },
-
-  // =================================================================
-  // 5️⃣ PAUSA CONTROLADA (El Silencio)
-  // =================================================================
-  {
-    id: 'controlled-pause',
-    title: 'Hacer Pausas',
-    description: 'Habla, espera 1 segundo, y sigue. El silencio te da poder.',
-    category: 'MINDSET',
-    difficulty: 'ADVANCED',
-    targetMetrics: ['rhythmConsistency'],
-    requiredMode: 'AUDIO',
-    steps: [
-      'Di la primera parte de la frase.',
-      'ESPERA 1 segundo completo (respira).',
-      'Di la segunda parte con firmeza.'
-    ],
-    benefit: 'Aumenta tu impacto y reduce la prisa nerviosa.',
-    tier: 'ELITE',
-    dimension: 'MINDSET',
-    isCore: false,
-    customRoute: '/practice/breathing?mode=pauses',
-    aiEnhanced: true
-  },
-
-  // =================================================================
-  // 6️⃣ MINUTO DE ORO (Improvisación)
-  // =================================================================
-  {
-    id: 'improvisation-challenge',
-    title: 'Minuto de Oro',
-    description: 'Habla 60s sin parar sobre un tema aleatorio. Prohibido callarse.',
-    category: 'IMPROVISATION',
-    difficulty: 'ADVANCED',
-    targetMetrics: ['flow', 'silence'],
-    requiredMode: 'AUDIO',
-    steps: [
-        'Recibe un tema sorpresa.',
-        'Habla sin parar durante 60 segundos.',
-        'Si te callas más de 3s, pierdes.'
-    ],
-    benefit: 'Elimina el miedo al vacío y mejora tu agilidad mental.',
-    tier: 'FREE', // Visible para todos
-    dimension: 'IMPROV',
-    isCore: false,
-    customRoute: '/practice/improvisation',
-    aiEnhanced: true
-  },
-
-  // =================================================================
-  // 7️⃣ SINCRONIZACIÓN MENTAL (Lectura)
-  // =================================================================
   {
     id: 'mental-sync',
-    title: 'Sincronización Mental',
+    title: 'Misión: Sincronización',
     description: 'Lee al ritmo exacto del marcador. Ni antes, ni después.',
     category: 'MINDSET',
     difficulty: 'INTERMEDIATE',
@@ -178,10 +162,10 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     requiredMode: 'AUDIO',
     steps: [
         'Sigue la palabra iluminada.',
-        'Respeta la velocidad impuesta.',
-        'Mantén el flujo constante.'
+        'Mantén el ritmo exacto.',
+        'Termina junto con el marcador.'
     ],
-    benefit: 'Calibra tu velocidad interna y reduce la prisa.',
+    benefit: 'Control de velocidad interno.',
     tier: 'FREE',
     dimension: 'AGILITY',
     isCore: false,
@@ -190,26 +174,109 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
   },
 
   // =================================================================
-  // 8️⃣ TRABALENGUAS (Articulación)
+  // 🎤 NIVEL 4: TÉCNICA Y DICCIÓN (El Instrumento)
   // =================================================================
   {
     id: 'articulation-drill',
-    title: 'Trabalenguas Pro',
-    description: 'Repite frases complejas con dicción perfecta. La IA te evaluará.',
+    title: 'Misión: Dicción',
+    description: 'Logra >90% de precisión en un trabalenguas difícil. La IA no perdona.',
     category: 'ARTICULATION',
     difficulty: 'ADVANCED',
     targetMetrics: ['clarity', 'accuracy'],
     requiredMode: 'AUDIO',
     steps: [
-        'Escucha/Lee la frase compleja.',
-        'Repítela con máxima claridad.',
-        'Supera el 85% de precisión para avanzar.'
+        'Lee la frase compleja.',
+        'Articula exageradamente.',
+        'Supera el 90% para aprobar.'
     ],
-    benefit: 'Limpia tu dicción y agiliza tu lengua.',
+    benefit: 'Claridad cristalina.',
     tier: 'FREE',
     dimension: 'AGILITY',
     isCore: false,
     customRoute: '/practice/articulation',
     aiEnhanced: true
+  },
+  {
+    id: 'sentence-closure',
+    title: 'Misión: Cierre Seguro',
+    description: 'Detecta y corrige 3 "preguntas fantasma" consecutivas.',
+    category: 'INTONATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['pitchRange'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Di la frase con certeza.',
+        'Baja el tono al final.',
+        'Acumula 3 aciertos seguidos para ganar.'
+    ],
+    benefit: 'Seguridad percibida.',
+    tier: 'FREE',
+    dimension: 'AUTHORITY',
+    isCore: false,
+    customRoute: '/practice/inflection',
+    aiEnhanced: true
+  },
+
+  // =================================================================
+  // ⚔️ NIVEL 5: AGILIDAD MENTAL (La Arena)
+  // =================================================================
+  {
+    id: 'structured-minute',
+    title: 'Misión: Estructura',
+    description: 'Clava los tiempos: 10s Intro, 40s Cuerpo, 10s Cierre. Exactos.',
+    category: 'IMPROVISATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['structure', 'timing'],
+    requiredMode: 'TEXT',
+    steps: [
+        'Empieza con el reloj.',
+        'Cambia de sección cuando cambie el color.',
+        'Termina en el segundo 60.'
+    ],
+    benefit: 'Orden mental bajo presión.',
+    tier: 'FREE',
+    dimension: 'AGILITY',
+    isCore: true,
+    customRoute: '/practice/structured-minute',
+    aiEnhanced: false 
+  },
+  {
+    id: 'improvisation-challenge',
+    title: 'Misión: Flow',
+    description: 'Habla 60s sin parar. Si callas más de 3s, pierdes.',
+    category: 'IMPROVISATION',
+    difficulty: 'ADVANCED',
+    targetMetrics: ['flow', 'silence'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Recibe tema sorpresa.',
+        'Habla sin parar.',
+        'Sobrevive al minuto.'
+    ],
+    benefit: 'Agilidad mental pura.',
+    tier: 'FREE',
+    dimension: 'IMPROV',
+    isCore: false,
+    customRoute: '/practice/improvisation',
+    aiEnhanced: true
+  },
+  {
+    id: 'instant-feedback',
+    title: 'Misión: Auditoría',
+    description: 'Grábate y encuentra 3 errores en tu propia voz.',
+    category: 'INTONATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['pitchRange'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Graba una intro.',
+        'Escucha el retorno.',
+        'Marca si cumpliste los 3 criterios.'
+    ],
+    benefit: 'Conciencia real de tu sonido.',
+    tier: 'FREE',
+    dimension: 'AUTHORITY',
+    isCore: true,
+    customRoute: '/practice/instant-playback'
   }
 ];

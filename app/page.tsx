@@ -28,8 +28,8 @@ export default function Home() {
              </span>
           </div>
           
-          <Link href="/listen" className="text-sm md:text-lg font-black text-green-500 hover:text-green-400 transition-colors uppercase tracking-widest animate-pulse">
-             Acceso Libre
+          <Link href="/listen" className="text-sm md:text-lg font-black text-blue-500 hover:text-blue-400 transition-colors uppercase tracking-widest animate-pulse">
+             Ver App
           </Link>
       </header>
       
@@ -68,7 +68,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <span className="relative z-10 flex items-center gap-3">
                 <span className="material-symbols-outlined text-3xl">mic</span>
-                Analizar Señal (Gratis)
+                Analizar Señal
               </span>
             </button>
             <div className="flex flex-col gap-1">
@@ -77,7 +77,7 @@ export default function Home() {
                     100% Privado & Encriptado
                  </div>
                  <p className="text-[10px] text-slate-500 font-mono">
-                    Sin tarjeta de crédito requerida.
+                    Acceso total inmediato.
                  </p>
             </div>
           </div>
@@ -216,103 +216,7 @@ export default function Home() {
          </div>
       </section>
 
-      {/* SECCIÓN 5: PRICING (SISTEMA DE ACCESO) */}
-      <section className="py-20 md:py-32 px-6 relative bg-gradient-to-b from-[#05070A] to-[#0B0F15]">
-           <header className="text-center mb-16 space-y-6">
-             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight">Elige tu <span className="text-blue-500">Plan</span></h2>
-             <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
-                Empieza con lo básico o ve por todo. Tú decides.
-             </p>
-           </header>
 
-           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-              
-              {/* PLAN STARTER - TACTICAL ENTRY */}
-              <div className="p-8 md:p-12 rounded-[40px] border border-white/5 bg-[#0F1419] flex flex-col relative group hover:border-blue-500/20 transition-all">
-                 <div className="mb-8">
-                    <div className="flex items-center gap-2 mb-4">
-                        <span className="material-symbols-outlined text-blue-500">bolt</span>
-                        <span className="text-xs font-black text-blue-500 uppercase tracking-[0.2em]">Starter</span>
-                    </div>
-                    <div className="flex items-baseline gap-2 text-white">
-                        <span className="text-5xl font-black tracking-tighter">$12</span>
-                        <span className="text-slate-500 font-medium">/ mes</span>
-                    </div>
-                 </div>
-                 
-                 <p className="text-base text-slate-300 mb-10 font-medium italic leading-relaxed">
-                   "Perfecto para empezar a mejorar tu voz hoy mismo."
-                 </p>
-
-                 <ul className="space-y-5 mb-12 flex-1 text-sm font-bold text-slate-400">
-                    <li className="flex items-center gap-4">
-                       <span className="material-symbols-outlined text-blue-500">verified</span>
-                       100 Pruebas al mes
-                    </li>
-                    <li className="flex items-center gap-4">
-                       <span className="material-symbols-outlined text-blue-500">library_books</span>
-                       Todos los ejercicios
-                    </li>
-                    <li className="flex items-center gap-4">
-                       <span className="material-symbols-outlined text-slate-600">lock</span>
-                       <span className="text-slate-600 line-through decoration-slate-600/50">Medición Ilimitada</span>
-                    </li>
-                 </ul>
-                 <button 
-                  onClick={() => router.push("/upgrade")}
-                  className="w-full py-4 rounded-xl border border-white/10 hover:bg-white hover:text-black transition-all font-black uppercase tracking-widest text-xs"
-                 >
-                    Empezar
-                 </button>
-              </div>
-
-              {/* PLAN ELITE - FULL CONTROL */}
-              <div className="p-8 md:p-12 rounded-[40px] border border-amber-500/30 bg-[#0F1419] flex flex-col relative shadow-[0_0_50px_rgba(245,158,11,0.05)] transform md:scale-105 z-10">
-                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] py-2 px-6 rounded-full shadow-lg text-white">
-                    Recomendado para Iniciar
-                 </div>
-
-                 <div className="mb-8">
-                    <div className="flex items-center gap-2 mb-4">
-                        <span className="material-symbols-outlined text-amber-500">military_tech</span>
-                        <span className="text-xs font-black text-amber-500 uppercase tracking-[0.2em]">Elite</span>
-                    </div>
-                    <div className="flex items-baseline gap-2 text-white">
-                        <span className="text-5xl font-black tracking-tighter">$24</span>
-                        <span className="text-slate-500 font-medium">/ mes</span>
-                    </div>
-                 </div>
-                 
-                 <p className="text-base text-slate-400 mb-10 font-medium leading-relaxed">
-                   "Herramientas completas para cuando hablar es lo más importante."
-                 </p>
-
-                 <ul className="space-y-5 mb-12 flex-1 text-sm font-bold text-white">
-                    <li className="flex items-center gap-4">
-                       <div className="mt-0.5 text-amber-500">
-                           <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18,6c-3.31,0-6,2.69-6,6s2.69,6,6,6s6-2.69,6-6S21.31,6,18,6z M18,16c-2.21,0-4-1.79-4-4s1.79-4,4-4s4,1.79,4,4S20.21,16,18,16z M6,12c0-3.31,2.69-6,6-6v2c-2.21,0-4,1.79-4,4s1.79-4,4,4v2C8.69,18,6,15.31,6,12z"/></svg>
-                       </div>
-                       <span>Pruebas Ilimitadas</span>
-                    </li>
-                   <li className="flex items-start gap-4">
-                      <span className="material-symbols-outlined text-amber-500">psychology</span>
-                      <span>Detector de Confianza</span>
-                   </li>
-                   <li className="flex items-start gap-4">
-                      <span className="material-symbols-outlined text-amber-500">medical_services</span>
-                      <span>Guías de Ajuste Rápido</span>
-                   </li>
-                 </ul>
-                 <button 
-                  onClick={() => router.push("/upgrade")}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition-all font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-600/20"
-                 >
-                    Obtener Acceso Total
-                 </button>
-              </div>
-
-           </div>
-      </section>
 
       {/* FOOTER: CTA FINAL */}
       <section className="py-24 px-6 text-center">
@@ -326,7 +230,7 @@ export default function Home() {
             onClick={() => router.push("/listen")}
             className="px-12 py-5 bg-white text-black rounded-full font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors"
           >
-            Empezar Gratis
+            Empezar Ahora
           </button>
       </section>
 

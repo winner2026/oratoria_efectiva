@@ -161,7 +161,7 @@ export default function ProjectionPage() {
 
   const beginSession = () => {
       setPhase('active');
-      setTimeLeft(EXERCISE_DURATION);
+      setTimeLeft(15); // Mission: 15s
       setVolumeHistory([]);
       setMaxVolume(0);
       
@@ -169,36 +169,45 @@ export default function ProjectionPage() {
       timerRef.current = setInterval(() => {
           setTimeLeft(prev => {
               if (prev <= 1) {
-                  if (timerRef.current) clearInterval(timerRef.current);
-                  if (sampleIntervalRef.current) clearInterval(sampleIntervalRef.current);
-                  stopListening();
+                  stop()
                   return 0;
               }
               return prev - 1;
           });
       }, 1000);
       
-      // Sample volume every 100ms for scoring (using ref for real-time value)
+      // Sample volume every 100ms
       sampleIntervalRef.current = setInterval(() => {
-          setVolumeHistory(prev => [...prev, volumeRef.current]);
+          const vol = volumeRef.current;
+          setVolumeHistory(prev => [...prev, vol]);
+          
+          // INSTANT FAIL CONDITION
+          if (vol >= ZONES.SATURATION.min) {
+               stop();
+               setFinalScore(0); // Fail
+               setPhase('results');
+               setFinalStats({ samples: 0, avgVolume: vol, timeInOptimal: 0, consistency: 0, peakVolume: vol });
+               // Hack to show specific fail message
+               localStorage.setItem('last_fail_reason', 'saturado');
+          }
+
       }, 100);
   };
   
-  // Continuously update volume history while active
-  useEffect(() => {
-      if (phase === 'active' && isListening) {
-          const level = Math.min(100, volume * 400);
-          // This runs on every render when volume changes
-      }
-  }, [volume, phase, isListening]);
-  
-  // End exercise when timer hits 0
+  const stop = () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (sampleIntervalRef.current) clearInterval(sampleIntervalRef.current);
+      stopListening();
+  };
+
+  // End exercise when timer hits 0 (Winning path)
   useEffect(() => {
       if (timeLeft === 0 && phase === 'active') {
           const { score, stats } = calculateProjectionScore(volumeHistory);
           setFinalScore(score);
           setFinalStats(stats);
           setPhase('results');
+          localStorage.removeItem('last_fail_reason');
           
           // Save to local storage
           const exerciseResult = {
@@ -218,7 +227,20 @@ export default function ProjectionPage() {
 
    // --- RESULTS VIEW ---
    if (phase === 'results' && finalStats) {
-       const scoreData = getScoreLabel(finalScore);
+       const failReason = typeof window !== 'undefined' ? localStorage.getItem('last_fail_reason') : null;
+       
+       let scoreData = getScoreLabel(finalScore);
+       let feedbackText = "";
+
+       if (failReason === 'saturado') {
+           scoreData = { label: "¡GAME OVER!", color: "text-red-500", emoji: "💥" };
+           feedbackText = "Has tocado la zona roja. Tu audiencia se ha asustado. Mantén la fuerza pero controla el volumen.";
+       } else {
+           if (finalScore >= 60) feedbackText = "¡Excelente control de volumen! Proyectas con consistencia.";
+           else if (finalScore >= 40) feedbackText = "Buen intento. Intenta mantener un volumen más estable en la zona de proyección.";
+           else feedbackText = "Tu volumen fue muy inconsistente o bajo. ¡Usa el diafragma!";
+       }
+
        return (
            <div className="min-h-screen bg-slate-950 font-display text-white p-6 flex flex-col items-center justify-center overflow-y-auto pt-12 pb-24">
                <div className="mobile-container space-y-8 animate-fade-in">
@@ -229,7 +251,7 @@ export default function ProjectionPage() {
                           <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
                           <circle 
                               cx="50" cy="50" r="45" fill="none" 
-                              stroke="url(#gradient-proj)" strokeWidth="8"
+                              stroke={failReason ? "#ef4444" : "url(#gradient-proj)"} strokeWidth="8"
                               strokeLinecap="round"
                               strokeDasharray={`${finalScore * 2.83} 283`}
                               className="transition-all duration-1000"
@@ -252,13 +274,7 @@ export default function ProjectionPage() {
                   <div className="text-center space-y-2">
                       <div className="text-4xl">{scoreData.emoji}</div>
                       <h2 className={`text-2xl font-black ${scoreData.color}`}>{scoreData.label}</h2>
-                      <p className="text-slate-400 text-sm">
-                          {finalScore >= 60 
-                              ? "¡Excelente control de volumen! Proyectas con consistencia."
-                              : finalScore >= 40
-                              ? "Buen intento. Intenta mantener un volumen más estable en la zona de proyección."
-                              : "Tu volumen fue muy inconsistente. Practica mantener una intensidad constante."}
-                      </p>
+                      <p className="text-slate-400 text-sm">{feedbackText}</p>
                   </div>
                   
                   {/* Detailed Stats */}

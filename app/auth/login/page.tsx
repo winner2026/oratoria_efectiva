@@ -10,8 +10,9 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/listen";
 
-  const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl });
+  /* AUTOMATICALLY REDIRECTED FROM AUTH OPTIONS */
+  const handleGuestLogin = () => {
+    signIn("credentials", { callbackUrl });
   };
 
   return (
@@ -36,16 +37,6 @@ function LoginForm() {
         
         {/* LOGO & IDENTITY */}
         <div className="text-center mb-12 space-y-4">
-            {/* <div className="flex justify-center mb-6">
-                <div className="relative size-24 md:size-32">
-                    <img 
-                        src="/logo-new.png" 
-                        alt="Oratoria Efectiva" 
-                        className="object-contain w-full h-full drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-                    />
-                </div>
-            </div> */}
-            
             <h1 className="text-3xl font-black text-white tracking-widest uppercase mb-1">
                 ORATORIA EFECTIVA
             </h1>
@@ -65,29 +56,24 @@ function LoginForm() {
 
             <div className="text-center space-y-6">
                 <div>
-                     <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-2">Identificación Requerida</h2>
+                     <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-2">Bienvenido</h2>
                      <p className="text-xs text-slate-500 leading-relaxed">
-                         Acceso a estudiantes y profesionales.
-                         <br/>Por favor, inicia sesión para continuar.
+                         Acceso inmediato a todas las herramientas.
                      </p>
                 </div>
 
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
                 <button
-                    disabled
-                    className="w-full relative group/btn overflow-hidden rounded-xl bg-slate-800 text-slate-500 font-bold py-4 cursor-not-allowed opacity-70"
+                    onClick={handleGuestLogin}
+                    className="w-full relative group/btn overflow-hidden rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black py-4 transition-all shadow-[0_0_30px_-5px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.6)]"
                 >
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1s_infinite]"></div>
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                        <span className="material-symbols-outlined text-sm">block</span>
-                        <span className="uppercase tracking-widest text-xs">Login Google Deshabilitado</span>
+                        <span className="material-symbols-outlined text-lg">login</span>
+                        <span className="uppercase tracking-widest text-xs">Entrar a la App</span>
                     </div>
                 </button>
-                <div className="text-center mt-2">
-                    <Link href="/listen" className="text-[10px] text-blue-400 uppercase tracking-widest hover:text-blue-300 font-bold">
-                        Ingresar sin cuenta &rarr;
-                    </Link>
-                </div>
             </div>
         </div>
 

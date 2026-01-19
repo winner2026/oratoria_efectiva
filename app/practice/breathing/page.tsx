@@ -178,21 +178,32 @@ function BreathingContent() {
             const variance = history.reduce((a,b) => a + Math.pow(b - localMean, 2), 0) / history.length;
             const stdDev = Math.sqrt(variance);
 
+            let newScore = stabilityScore;
             if (stdDev < 3) {
                  setFeedback("stable");
-                 setStabilityScore(prev => Math.min(100, prev + 0.05));
+                 newScore = Math.min(100, stabilityScore + 0.05);
             } else if (stdDev < 8) {
                  setFeedback("shaky");
-                 setStabilityScore(prev => Math.max(0, prev - 0.1));
+                 newScore = Math.max(0, stabilityScore - 0.2);
             } else {
                  setFeedback("shaky");
-                 setStabilityScore(prev => Math.max(0, prev - 0.3));
+                 newScore = Math.max(0, stabilityScore - 0.5);
+            }
+            setStabilityScore(newScore);
+
+            // STRICT FAIL CONDITION
+            if (newScore < 40) {
+                 stopExercise();
+                 localStorage.setItem('last_breathing_fail', 'unstable');
+                 return;
             }
         }
         
     } else {
-        if (startTimeRef.current && (Date.now() - startTimeRef.current) > 500) {
+        // If silence detected after start (User stopped blowing)
+        if (startTimeRef.current && (Date.now() - startTimeRef.current) > 1000) {
              stopExercise();
+             localStorage.setItem('last_breathing_fail', 'stopped');
              return; 
         }
     }
@@ -387,49 +398,69 @@ function BreathingContent() {
          {phase === "results" && (
              <div className="max-w-md w-full animate-fade-in-up">
                  
-                 <div className="flex justify-center mb-6">
-                     <div className={`size-20 rounded-full flex items-center justify-center text-4xl shadow-xl ${isSuccess ? 'bg-green-500 text-white shadow-green-500/30' : 'bg-red-500 text-white shadow-red-500/30'}`}>
-                         <span className="material-symbols-outlined text-5xl">
-                             {isSuccess ? 'check' : 'close'}
-                         </span>
-                     </div>
-                 </div>
+                  {(() => {
+                      const failReason = typeof window !== 'undefined' ? localStorage.getItem('last_breathing_fail') : null;
 
-                  <div className="text-center mb-8">
-                      <div className={`text-xl font-black mb-2 ${getLevel(seconds).color}`}>
-                          {getLevel(seconds).name}
-                      </div>
-                      <h2 className="text-3xl font-black text-white mb-2">
-                          {isSuccess ? "OBJETIVO SUPERADO" : "INTENTO FINALIZADO"} 
-                      </h2>
-                      <p className="text-slate-400 text-sm">
-                          {seconds >= 30 
-                             ? "¡Increíble! Tienes pulmones de cantante de ópera."
-                             : seconds >= 20
-                             ? "¡Muy bien! Tienes el aire suficiente para oratoria."
-                             : seconds >= 15
-                             ? "Casi. Un poco más de práctica y llegarás al nivel ideal."
-                             : "Te falta aire. Necesitas practicar respiración diafragmática."
-                          }
-                      </p>
-                      
-                       {/* [CORE Scan] Ingest */}
-                       {(() => {
-                           // Ensure we only log once per result view if possible, but for MVP render-time is acceptable 
-                           // provided we don't care about dupes (CoreDiagnosticService handles loose history)
-                           import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
-                                CoreDiagnosticService.getInstance().ingest({
-                                    sourceExerciseId: 'stability-check',
-                                    layer: 'EJECUCION',
-                                    metricType: 'STABILITY',
-                                    value: stabilityScore,
-                                    rawUnit: 'score'
-                                });
-                           });
-                           return null;
-                       })()}
+                      if (failReason) {
+                          return (
+                              <div className="text-center mb-8">
+                                  <div className="flex justify-center mb-6">
+                                     <div className="size-24 rounded-full bg-red-500 flex items-center justify-center text-black shadow-lg shadow-red-500/40 animate-pulse">
+                                         <span className="material-symbols-outlined text-6xl">warning</span>
+                                     </div>
+                                  </div>
+                                  <h2 className="text-3xl font-black text-white mb-2">MISIÓN FALLIDA</h2>
+                                  <p className="text-red-400 font-bold uppercase tracking-widest mb-4">
+                                      {failReason === 'unstable' ? 'AIRE INESTABLE' : 'CORTE DE FLUJO'}
+                                  </p>
+                                  <p className="text-slate-400 text-sm">
+                                      {failReason === 'unstable' 
+                                          ? "Tu exhalación tembló. Necesitas control abdominal firme."
+                                          : "Dejaste de soplar antes de tiempo. Vacía los pulmones."
+                                      }
+                                  </p>
+                              </div>
+                          );
+                      }
 
-                  </div>
+                      return (
+                          <div className="text-center mb-8">
+                                <div className="flex justify-center mb-6">
+                                    <div className={`size-20 rounded-full flex items-center justify-center text-4xl shadow-xl ${isSuccess ? 'bg-green-500 text-white shadow-green-500/30' : 'bg-red-500 text-white shadow-red-500/30'}`}>
+                                        <span className="material-symbols-outlined text-5xl">
+                                            {isSuccess ? 'check' : 'close'}
+                                        </span>
+                                    </div>
+                                </div>
+                              <div className={`text-xl font-black mb-2 ${getLevel(seconds).color}`}>
+                                  {getLevel(seconds).name}
+                              </div>
+                              <h2 className="text-3xl font-black text-white mb-2">
+                                  {isSuccess ? "OBJETIVO SUPERADO" : "INTENTO FINALIZADO"} 
+                              </h2>
+                              <p className="text-slate-400 text-sm">
+                                  {seconds >= 30 ? "¡Increíble! Pulmones de acero." :
+                                   seconds >= 20 ? "¡Muy bien! Nivel profesional." :
+                                   "Sigue practicando para ganar capacidad."}
+                              </p>
+                          </div>
+                      );
+                  })()}
+
+                  {/* [CORE Scan] Ingest */}
+                  {(() => {
+                        import("@/services/CoreDiagnosticService").then(({ CoreDiagnosticService }) => {
+                            localStorage.removeItem('last_breathing_fail');
+                            CoreDiagnosticService.getInstance().ingest({
+                                sourceExerciseId: 'stability-check',
+                                layer: 'EJECUCION',
+                                metricType: 'STABILITY',
+                                value: stabilityScore,
+                                rawUnit: 'score'
+                            });
+                        });
+                        return null;
+                  })()}
 
                  <div className="grid grid-cols-2 gap-4 mb-8">
                      {/* Tiempo Card */}

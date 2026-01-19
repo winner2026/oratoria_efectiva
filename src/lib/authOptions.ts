@@ -1,8 +1,15 @@
-import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "complex_secret_fallback_123",
   providers: [
+    CredentialsProvider({
+      name: "Guest Access",
+      credentials: {},
+      async authorize(credentials, req) {
+        return { id: "guest-1", name: "Guest User", email: "guest@example.com", image: "" };
+      }
+    }),
     // GoogleProvider({
     //   clientId: process.env.GOOGLE_CLIENT_ID ?? "",
     //   clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
