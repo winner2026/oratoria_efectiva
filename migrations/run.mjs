@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import { Client } from "pg";
 
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
 
 async function runMigration() {
   const sql = fs.readFileSync("./migrations/0001_init.sql", "utf8");
