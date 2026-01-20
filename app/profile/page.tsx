@@ -120,27 +120,7 @@ export default function ProfilePage() {
 
 
         {/* SETTINGS LIST */}
-        <section className="space-y-4">
-            <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] px-2">Tus Cosas</h3>
-            
 
-
-            <button 
-               onClick={() => router.push('/gym')}
-               className="w-full flex items-center justify-between p-5 bg-[#0F1318] border border-white/5 rounded-[20px] hover:bg-white/5 transition-all group active:scale-[0.98]"
-            >
-                <div className="flex items-center gap-4">
-                    <div className="size-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
-                        <span className="material-symbols-outlined">fitness_center</span>
-                    </div>
-                    <div className="text-left">
-                        <span className="text-sm font-bold text-slate-200 block group-hover:text-white">Entrenar Voz</span>
-                        <span className="text-[10px] text-slate-500 font-medium">Jugar y practicar</span>
-                    </div>
-                </div>
-                <span className="material-symbols-outlined text-slate-600">chevron_right</span>
-            </button>
-        </section>
 
         {/* DANGER ZONE (Minimalist) */}
         <div className="pt-8 border-t border-white/5 flex justify-between items-center">

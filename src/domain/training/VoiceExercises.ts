@@ -319,5 +319,25 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     isCore: true,
     customRoute: '/practice?mode=voice',
     aiEnhanced: true
+  },
+  {
+    id: 'vocal-tuner',
+    title: 'Misión: Afinador',
+    description: 'Visualiza tu melodía en tiempo real. Evita el tono plano.',
+    category: 'INTONATION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['pitchRange', 'variationScore'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Habla y observa la línea.',
+        'Haz que la línea baile (picos y valles).',
+        'Evita la línea recta (monotonía).'
+    ],
+    benefit: 'Consciencia melódica instantánea.',
+    tier: 'FREE',
+    dimension: 'AGILITY',
+    isCore: false,
+    customRoute: '/practice/intonation',
+    aiEnhanced: false
   }
 ];
