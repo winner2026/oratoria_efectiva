@@ -157,36 +157,25 @@ export default function ListenPage() {
 
             {/* 2. TRIGGER PRINCIPAL (Escanear Autoridad) */}
             <section className="pt-4">
-              <button 
-                onClick={() => router.push("/practice?mode=voice")}
-                className="w-full relative group overflow-hidden rounded-[32px] bg-white text-black py-10 shadow-2xl transition-all active:scale-95"
+              <Link 
+                href="/gym"
+                className="w-full relative group overflow-hidden rounded-[32px] bg-white text-black py-10 shadow-2xl transition-all active:scale-95 block"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white via-slate-100 to-slate-300"></div>
                 <div className="relative flex flex-col items-center gap-4">
                    <div className="size-16 rounded-2xl bg-black text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                      <span className="material-symbols-outlined text-4xl">mic</span>
+                      <span className="material-symbols-outlined text-4xl">fitness_center</span>
                    </div>
-                   <div className="space-y-1">
-                      <h2 className="text-2xl font-black uppercase tracking-tighter text-black">Mi Voz Ahora</h2>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">Pulsa para ver</p>
+                   <div className="space-y-1 text-center">
+                      <h2 className="text-2xl font-black uppercase tracking-tighter text-black">Entrenar</h2>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">Ir al Gimnasio</p>
                    </div>
                 </div>
-              </button>
+              </Link>
             </section>
 
             {/* 3. NAVEGACIÓN SECUNDARIA (GRID) */}
             <section className="grid grid-cols-2 gap-4">
-                {/* Centro de Auditoría */}
-                <Link href="/my-sessions" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
-                   <div className="size-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative bg-blue-500/10 text-blue-400">
-                      <span className="material-symbols-outlined text-2xl">query_stats</span>
-                   </div>
-                   <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
-                      Historial
-                   </h4>
-                   <p className="text-[10px] text-slate-500 font-medium">Mira qué tal lo hiciste.</p>
-                </Link>
-
                {/* Arsenal Pro */}
                <Link href="/gym" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
                   <div className="size-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4 group-hover:scale-110 transition-transform">
@@ -206,7 +195,7 @@ export default function ListenPage() {
                </Link>
 
                {/* SOS Feedback (Nuevo Slot) */}
-               <Link href="/sos" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
+               <Link href="/sos" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group col-span-2">
                   <div className="size-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
                      <span className="material-symbols-outlined text-2xl">emergency</span>
                   </div>

@@ -299,5 +299,25 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     dimension: 'AUTHORITY',
     isCore: true,
     customRoute: '/practice/instant-playback'
+  },
+  {
+    id: 'voice-scanner',
+    title: 'Misión: Escáner de Voz',
+    description: 'Diagnóstico completo de tu presencia vocal en 15 segundos.',
+    category: 'PROJECTION',
+    difficulty: 'BEGINNER',
+    targetMetrics: ['rms', 'stability'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Habla normal durante 15s.',
+        'La IA analizará tu presencia.',
+        'Recibe tu auditoría.'
+    ],
+    benefit: 'Diagnóstico de autoridad.',
+    tier: 'FREE',
+    dimension: 'AUTHORITY',
+    isCore: true,
+    customRoute: '/practice?mode=voice',
+    aiEnhanced: true
   }
 ];
