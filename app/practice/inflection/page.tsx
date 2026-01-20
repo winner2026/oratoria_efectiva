@@ -165,9 +165,15 @@ export default function InflectionPage() {
 
         } else {
             setStreak(0); // RESET STREAK ON FAILURE
+            
+            let failureMsg = "El tono se mantuvo plano (monótono).";
+            if (drop < -5) {
+                failureMsg = "Detectamos una inflexión ascendente (pregunta).";
+            }
+
             setFeedback({ 
                 status: "fail", 
-                msg: "Fallo. Has perdido la racha. Cierra con más peso.", 
+                msg: failureMsg, 
                 dropHz: Math.round(drop) 
             });
         }
@@ -306,7 +312,7 @@ export default function InflectionPage() {
                                     {feedback.status === 'success' ? '✓' : '✗'}
                                 </div>
                                 <h3 className={`text-xl font-black mb-2 ${feedback.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
-                                    {feedback.status === 'success' ? 'AUTORIDAD CONFIRMADA' : 'FALLO DE ESTATUS'}
+                                    {feedback.status === 'success' ? 'AUTORIDAD CONFIRMADA' : 'AUTORIDAD NO CONFIRMADA'}
                                 </h3>
                                 <p className="text-slate-300 mb-6 text-sm">{feedback.msg}</p>
                                 
