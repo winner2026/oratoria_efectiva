@@ -176,15 +176,6 @@ export default function ListenPage() {
 
             {/* 3. NAVEGACIÓN SECUNDARIA (GRID) */}
             <section className="grid grid-cols-2 gap-4">
-               {/* Arsenal Pro */}
-               <Link href="/gym" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
-                  <div className="size-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4 group-hover:scale-110 transition-transform">
-                     <span className="material-symbols-outlined text-2xl">fitness_center</span>
-                  </div>
-                  <h4 className="text-sm font-bold text-white mb-1">Entrenar</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Juegos divertidos.</p>
-               </Link>
-
                {/* Ruta de Maestría */}
                <Link href="/courses" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
                   <div className="size-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
@@ -194,8 +185,8 @@ export default function ListenPage() {
                   <p className="text-[10px] text-slate-500 font-medium">Aprender trucos nuevos.</p>
                </Link>
 
-               {/* SOS Feedback (Nuevo Slot) */}
-               <Link href="/sos" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group col-span-2">
+               {/* SOS Feedback */}
+               <Link href="/sos" className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 hover:bg-white/5 transition-all group">
                   <div className="size-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
                      <span className="material-symbols-outlined text-2xl">emergency</span>
                   </div>
