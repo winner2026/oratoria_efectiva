@@ -18,6 +18,25 @@ export default function GymPage() {
     }));
   }, []);
 
+  // Scroll to last visited exercise
+  React.useEffect(() => {
+      const lastExerciseId = sessionStorage.getItem('last_exercise_id');
+      if (lastExerciseId) {
+          // Small delay to ensure rendering
+          setTimeout(() => {
+              const element = document.getElementById(`exercise-${lastExerciseId}`);
+              if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  // Highlight effect
+                  element.classList.add('ring-2', 'ring-blue-500', 'shadow-2xl', 'shadow-blue-500/20');
+                  setTimeout(() => element.classList.remove('ring-2', 'ring-blue-500', 'shadow-2xl', 'shadow-blue-500/20'), 2000);
+              }
+              // Clear it so it doesn't happen on refresh/next visit unless set again
+              sessionStorage.removeItem('last_exercise_id'); 
+          }, 300);
+      }
+  }, []);
+
   return (
     <div className="min-h-[100dvh] bg-slate-950 text-white pb-24 font-display">
       

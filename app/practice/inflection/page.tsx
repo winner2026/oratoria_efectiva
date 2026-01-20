@@ -5,25 +5,73 @@ import Link from "next/link";
 import { usePitchDetector } from "@/hooks/usePitchDetector";
 
 // --- Phrases to Practice (Affirmations of Power) ---
+// --- Phrases to Practice (Affirmations of Power) ---
 const PHRASES = [
     { text: "El proyecto es viable.", focus: "viable" },
     { text: "Yo soy el responsable.", focus: "responsable" },
     { text: "Vamos a cerrar el trato.", focus: "trato" },
     { text: "Esta es la mejor opción.", focus: "opción" },
     { text: "No acepto esa condición.", focus: "condición" },
-    { text: "El equipo está listo.", focus: "listo" }
+    { text: "El equipo está listo.", focus: "listo" },
+    { text: "Confío en mi decisión.", focus: "decisión" },
+    { text: "Hablemos de los resultados.", focus: "resultados" },
+    { text: "Esa es mi propuesta final.", focus: "final" },
+    { text: "Tengo la solución exacta.", focus: "exacta" },
+    { text: "Sé lo que estoy haciendo.", focus: "haciendo" },
+    { text: "El precio es justo.", focus: "justo" },
+    { text: "No hay vuelta atrás.", focus: "atrás" },
+    { text: "La estrategia es sólida.", focus: "sólida" },
+    { text: "Asumo el control total.", focus: "total" },
+    { text: "Esto no es negociable.", focus: "negociable" },
+    { text: "Vamos a ganar esto.", focus: "ganar" },
+    { text: "Soy la autoridad aquí.", focus: "autoridad" },
+    { text: "El plan está aprobado.", focus: "aprobado" },
+    { text: "No tengo ninguna duda.", focus: "duda" },
+    { text: "El riesgo es mínimo.", focus: "mínimo" },
+    { text: "Quiero una respuesta ahora.", focus: "ahora" },
+    { text: "Esto se hace así.", focus: "así" },
+    { text: "Conozco el camino correcto.", focus: "correcto" },
+    { text: "La meta está clara.", focus: "clara" },
+    { text: "Nadie lo hace mejor.", focus: "mejor" },
+    { text: "Es una oportunidad única.", focus: "única" },
+    { text: "Lo haré a mi manera.", focus: "manera" },
+    { text: "El éxito es inevitable.", focus: "inevitable" },
+    { text: "Yo defino los términos.", focus: "términos" }
 ];
 
 export default function InflectionPage() {
     const { isListening, startListening, stopListening, pitch } = usePitchDetector();
     const [phase, setPhase] = useState<"idle" | "recording" | "result">("idle");
-    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0); // Default 0, updated on mount
     const [pitchHistory, setPitchHistory] = useState<number[]>([]);
     const [recordingTime, setRecordingTime] = useState(0);
     const [feedback, setFeedback] = useState<{ status: "success" | "fail", msg: string, dropHz: number } | null>(null);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const historyRef = useRef<number[]>([]); // To avoid stale closure issues
+
+    // Load unique phrase for this session
+    useEffect(() => {
+        // Simple rotation logic based on usage history
+        const used = JSON.parse(localStorage.getItem('inflection_used_phrases') || '[]');
+        
+        // Find first unused index
+        let nextIndex = PHRASES.findIndex((_, i) => !used.includes(i));
+        
+        // If all used, reset history
+        if (nextIndex === -1) {
+            localStorage.setItem('inflection_used_phrases', '[]');
+            nextIndex = 0;
+        }
+
+        setCurrentPhraseIndex(nextIndex);
+        
+        // Mark as seen immediately (so refresh gives next one? No, mark as seen when COMPLETED? 
+        // Or just mark as seen now so next session is new. Let's mark as seen now.)
+        const newUsed = [...used, nextIndex];
+        localStorage.setItem('inflection_used_phrases', JSON.stringify(newUsed));
+
+    }, []);
 
     const currentPhrase = PHRASES[currentPhraseIndex];
 
@@ -56,10 +104,10 @@ export default function InflectionPage() {
         timerRef.current = setInterval(() => {
             setRecordingTime(prev => {
                 const next = prev + 1;
-                // Auto-stop after 4 seconds (phrases are short)
-                if (next >= 4) {
+                // Extended to 6 seconds to allow reading without interruption
+                if (next >= 6) {
                     analyzeResult();
-                    return 4;
+                    return 6;
                 }
                 return next;
             });
@@ -138,14 +186,32 @@ export default function InflectionPage() {
 
     const nextPhrase = () => {
         if (missionComplete) {
-            // Reset everything for replay
+            // Pick next unused phrase directly
+            const used = JSON.parse(localStorage.getItem('inflection_used_phrases') || '[]');
+            let nextIndex = PHRASES.findIndex((_, i) => !used.includes(i));
+            
+            if (nextIndex === -1) {
+                localStorage.setItem('inflection_used_phrases', '[]');
+                nextIndex = 0;
+            }
+            
+            const newUsed = [...used, nextIndex];
+            localStorage.setItem('inflection_used_phrases', JSON.stringify(newUsed));
+            
+            setCurrentPhraseIndex(nextIndex);
+            
+            // Reset state
             setStreak(0);
             setMissionComplete(false);
-            setCurrentPhraseIndex(0);
             setPhase("idle");
         } else {
-            setPhase("idle");
-            setCurrentPhraseIndex(prev => (prev + 1) % PHRASES.length);
+             // Just retry same phrase if not complete? 
+             // "No repitas las misma frase" - This implies sequential NON-repeating.
+             // But if I failed, I should retry the SAME phrase? Or move on?
+             // "Una para cada practica" -> Stick to 1 until done.
+             // The previous logic for nextPhrase allowed skipping.
+             // If mission NOT complete, we should probably just reset to IDLE to try again.
+             setPhase("idle");
         }
         setFeedback(null);
     };
@@ -256,7 +322,7 @@ export default function InflectionPage() {
                                     onClick={nextPhrase}
                                     className="w-full py-4 bg-white text-black font-black rounded-xl hover:scale-[1.02] transition-transform shadow-lg"
                                 >
-                                    Siguiente Frase
+                                    {feedback.status === 'success' && !missionComplete ? 'Continuar Racha' : missionComplete ? 'Nueva Frase' : 'Intentar de Nuevo'}
                                 </button>
                             </div>
                         )}

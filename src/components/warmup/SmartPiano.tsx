@@ -400,8 +400,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                                         onClick={startCalibration}
                                         className="w-full landscape:w-auto py-2 sm:py-4 px-6 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-base uppercase tracking-widest"
                                     >
-                                        <span className="material-symbols-outlined text-sm sm:text-base">biometrics</span>
-                                        Sincronizar
+                                        SINCRONIZAR
                                     </button>
                                 )}
                             </div>

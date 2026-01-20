@@ -58,6 +58,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false })
   // 🔓 RENDER NORMAL
   return (
     <div 
+      id={`exercise-${exercise.id}`}
       className={`group relative bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)] ${isExpanded ? 'ring-1 ring-blue-500/30 shadow-2xl shadow-blue-900/20' : ''}`}
     >
       <div className="p-6">
@@ -130,6 +131,9 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, locked = false })
               <Link 
                 href={exercise.customRoute || `/practice?exercise=${exercise.id}`}
                  onClick={() => {
+                  // Save ID for scroll persistence
+                  sessionStorage.setItem('last_exercise_id', exercise.id);
+                  
                   const { logEvent } = require('@/lib/events/logEvent');
                   logEvent("exercise_started", { 
                     exerciseId: exercise.id, 
