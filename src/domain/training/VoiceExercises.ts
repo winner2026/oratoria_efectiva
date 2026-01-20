@@ -339,5 +339,25 @@ export const VOICE_EXERCISES: VoiceExercise[] = [
     isCore: false,
     customRoute: '/practice/intonation',
     aiEnhanced: false
+  },
+  {
+    id: 'musical-scale',
+    title: 'Misión: Escala',
+    description: 'Afinación precisa con piano inteligente. Encuentra tu nota.',
+    category: 'INTONATION',
+    difficulty: 'INTERMEDIATE',
+    targetMetrics: ['pitchAccuracy', 'range'],
+    requiredMode: 'AUDIO',
+    steps: [
+        'Activa "Sincronizar" para detectar tu rango.',
+        'Toca solo las notas verdes (tu tono ideal).',
+        'Imita el sonido hasta que la tarjeta brille.'
+    ],
+    benefit: 'Control total de tu tono.',
+    tier: 'FREE',
+    dimension: 'RESONANCE',
+    isCore: false,
+    customRoute: '/practice/musical-scale',
+    aiEnhanced: true
   }
 ];

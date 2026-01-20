@@ -7,35 +7,40 @@ import Link from 'next/link';
 import Script from 'next/script';
 
 // NOTES DATA: A1 to A3 (Deep Male Range)
-const NOTES = [
-    { note: "A1", freq: 55.00, color: "white" },
-    { note: "A#1", freq: 58.27, color: "black" },
-    { note: "B1", freq: 61.74, color: "white" },
+// NOTES DATA: C1 to C8 (Full 7 Octaves for Classical Vocal Ranges)
+const generateNotes = () => {
+    const notes = [];
+    const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    // A4 = 440Hz reference
+    const getFreq = (stepsFromA4: number) => 440 * Math.pow(2, stepsFromA4 / 12);
 
-    { note: "C2", freq: 65.41, color: "white" },
-    { note: "C#2", freq: 69.30, color: "black" },
-    { note: "D2", freq: 73.42, color: "white" },
-    { note: "D#2", freq: 77.78, color: "black" },
-    { note: "E2", freq: 82.41, color: "white" },
-    { note: "F2", freq: 87.31, color: "white" },
-    { note: "F#2", freq: 92.50, color: "black" },
-    { note: "G2", freq: 98.00, color: "white" },
-    { note: "G#2", freq: 103.83, color: "black" },
-    { note: "A2", freq: 110.00, color: "white" },
-    { note: "A#2", freq: 116.54, color: "black" },
-    { note: "B2", freq: 123.47, color: "white" },
-
-    { note: "C3", freq: 130.81, color: "white" },
-    { note: "C#3", freq: 138.59, color: "black" },
-    { note: "D3", freq: 146.83, color: "white" },
-    { note: "D#3", freq: 155.56, color: "black" },
-    { note: "E3", freq: 164.81, color: "white" },
-    { note: "F3", freq: 174.61, color: "white" },
-    { note: "F#3", freq: 185.00, color: "black" },
-    { note: "G3", freq: 196.00, color: "white" },
-    { note: "G#3", freq: 207.65, color: "black" },
-    { note: "A3", freq: 220.00, color: "white" }
-];
+    for (let octave = 1; octave <= 7; octave++) {
+        for (let i = 0; i < 12; i++) {
+            const note = noteNames[i];
+            const noteWithOctave = `${note}${octave}`;
+            
+            // Calculate steps from A4 (which is in octave 4, index 9)
+            // A4 is 440. 
+            // C4 is -9 steps from A4. 
+            // C1 is C4 - 3 octaves = -9 - 36 = -45 steps?
+            // Let's use Tone.js logic or simple offset.
+            // A4 index absolute = 4 * 12 + 9 = 57 (if C0 is 0)
+            // current index = octave * 12 + i
+            const semitonesFromA4 = (octave * 12 + i) - 57;
+            const freq = getFreq(semitonesFromA4);
+            
+            notes.push({
+                note: noteWithOctave,
+                freq: Number(freq.toFixed(2)),
+                color: note.includes("#") ? "black" : "white"
+            });
+        }
+    }
+    // Add C8
+    notes.push({ note: "C8", freq: 4186.01, color: "white" });
+    return notes;
+};
+const NOTES = generateNotes();
 
 export default function SmartPiano({ onClose, isStandalone = false }: { onClose?: () => void, isStandalone?: boolean }) {
     const [isToneReady, setIsToneReady] = useState(false);
@@ -89,6 +94,17 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
         const idx = Math.floor(Math.random() * SUGGESTIONS.length);
         setSuggestion(SUGGESTIONS[idx]);
     };
+
+    useEffect(() => {
+        // Initial Center on Middle C (C4)
+        const timer = setTimeout(() => {
+             const midKey = keyRefs.current[36];
+             if (midKey) {
+                 midKey.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
+             }
+        }, 100);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Initialize Tone.js
     useEffect(() => {
@@ -263,8 +279,9 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                 setDetectedNoteIndex(null); 
                 pitchBufferRef.current = [];
                 
-                // Center Piano for exercise start (A2 - index 12/13)
-                const midKey = keyRefs.current[12];
+                // Center Piano for exercise start (Middle C - C4 is roughly index 36 in C1-start array)
+                // C1=0, C2=12, C3=24, C4=36
+                const midKey = keyRefs.current[36];
                 if (midKey) {
                     midKey.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
                 }
@@ -342,7 +359,7 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                              <p className="text-slate-400 text-[10px] sm:text-xs">Encuentra tu tono ideal.</p>
                         </div>
                     </div>
-                    {!isStandalone && onClose && (
+                    {onClose && (
                         <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors">
                             <span className="material-symbols-outlined">close</span>
                         </button>
@@ -424,16 +441,17 @@ export default function SmartPiano({ onClose, isStandalone = false }: { onClose?
                         )}
                     </div>
  
-                                {isStandalone && (
-                                    <Link href="/practice">
-                                        <button className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2 group">
-                                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">mic</span>
-                                            GRABAR ANÁLISIS
-                                        </button>
-                                    </Link>
+                                {isStandalone && onClose && (
+                                    <button 
+                                        onClick={onClose}
+                                        className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 group"
+                                    >
+                                        <span className="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+                                        SALIR DE MISIÓN
+                                    </button>
                                 )}
                     {/* Piano Keys Container */}
-                     <div className="flex-1 bg-[#101418] relative overflow-x-auto custom-scrollbar flex items-start sm:items-center py-4 snap-x snap-mandatory touch-pan-x">
+                     <div className="flex-1 bg-[#101418] relative overflow-x-auto custom-scrollbar scroll-smooth flex items-start sm:items-center py-4 snap-x snap-mandatory touch-pan-x">
                           <div className="flex relative h-48 sm:h-40 select-none min-w-max px-[20vw] sm:px-0 landscape:h-[calc(100vh-140px)] sm:landscape:h-40">
                               {NOTES.map((n, i) => {
                                   const isSafe = safeRange && i >= safeRange[0] && i <= safeRange[1];

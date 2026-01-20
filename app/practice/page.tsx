@@ -11,11 +11,6 @@ import { getRandomTip, VocalTip, getCategoryColor } from "@/lib/tips/vocalHygien
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 
-const SmartPiano = dynamic(() => import("@/components/warmup/SmartPiano"), {
-    ssr: false,
-    loading: () => <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center text-white">Cargando Piano...</div>
-});
-
 // 🎯 CONTROL DE ABANDONO TEMPRANO
 const MIN_RECORDING_DURATION = 3; // segundos
 
@@ -607,9 +602,7 @@ function PracticeContent() {
         )}
 
         {/* PIANO MODAL */}
-        {showPiano && (
-            <SmartPiano onClose={() => setShowPiano(false)} />
-        )}
+
 
         {/* 📋 TARJETA DE CONTEXTO DE EJERCICIO (Flotante) */}
         {currentExercise && (
@@ -746,15 +739,7 @@ function PracticeContent() {
         </div>
 
         {/* Piano Toggle (Solo visible si no graba) */}
-        {!isRecording && (
-            <button 
-                onClick={() => setShowPiano(true)}
-                className="ml-4 size-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all active:scale-95"
-                title="Abrir Piano de Calentamiento"
-            >
-                <span className="material-symbols-outlined text-blue-400">piano</span>
-            </button>
-        )}
+
 
         <div className="size-10"></div>
       </div>
