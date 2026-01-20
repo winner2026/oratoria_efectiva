@@ -13,7 +13,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#05070A] text-white font-display overflow-x-hidden selection:bg-blue-500/30">
       
       {/* GLOBAL FLOATING HEADER */}
-      <header className="absolute top-0 left-0 w-full p-6 z-50 flex items-center justify-between">
+      <header className="absolute top-0 left-0 w-full p-6 md:px-40 md:py-12 z-50 flex items-center justify-between">
           <div className="flex items-center gap-3">
              {/* <div className="relative size-10 md:size-12 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 p-2 shadow-2xl">
                 <Image 
@@ -23,7 +23,7 @@ export default function Home() {
                    className="object-contain p-1"
                 />
              </div> */}
-             <span className="font-black tracking-tighter text-sm md:text-base uppercase hidden md:block">
+             <span className="font-black tracking-tighter text-xs sm:text-sm md:text-xl uppercase block">
                 Oratoria <span className="text-blue-500">Efectiva</span>
              </span>
           </div>
@@ -42,6 +42,27 @@ export default function Home() {
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10 space-y-8">
+          {/* Micrófono 3D Animado con Círculo Giratorio Premium */}
+          <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-6 flex items-center justify-center">
+            {/* Brillo ambiental que pulsa */}
+            <div className="absolute inset-0 bg-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
+            
+            {/* El Círculo Giratorio (Gradiente de Amarillo a Naranja Rojizo) */}
+            <div className="absolute inset-0 rounded-full p-[2px] animate-spin-slow" 
+                 style={{ background: 'conic-gradient(from 0deg, #fbbf24, #f97316, #ef4444, #f97316, #fbbf24)' }}>
+              <div className="w-full h-full rounded-full bg-black"></div>
+            </div>
+
+            {/* Contenedor del Micrófono con Fondo Negro Puro */}
+            <div className="relative w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full bg-black overflow-hidden flex items-center justify-center p-3">
+              <img 
+                src="/microphone-3d.png?v=2" 
+                alt="Micrófono Profesional" 
+                className="w-full h-full object-contain animate-rotate-3d animate-float-glow mix-blend-lighten scale-110 rounded-full z-10"
+              />
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium uppercase tracking-[0.3em] text-blue-400 mb-4 animate-fade-in">
              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -63,7 +84,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
             <button 
               onClick={() => router.push("/listen")}
-              className="group relative px-10 py-6 bg-gradient-to-r from-blue-700 to-indigo-700 rounded-2xl font-black text-lg uppercase tracking-widest hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(37,99,235,0.6)] active:scale-95 border border-white/10"
+              className="group relative px-10 py-6 bg-gradient-to-r from-blue-700 to-indigo-700 rounded-2xl font-black text-lg uppercase tracking-widest hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(37,99,235,0.6)] active:scale-95 border border-white/10 animate-pulse-invite"
             >
               <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <span className="relative z-10 flex items-center gap-3">
@@ -100,11 +121,11 @@ export default function Home() {
       {/* SECCIÓN 2: LA VERDAD INCÓMODA (DOLORES PROFUNDOS) */}
       <section className="py-20 md:py-32 px-6 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center relative z-10">
-          <div className="space-y-8">
+          <div className="space-y-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tighter uppercase leading-tight">
-              Cómo funciona <br/> <span className="text-blue-500">tu voz</span>.
+              Cómo funciona <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 animate-pulse">tu voz</span>.
             </h2>
-            <div className="h-0.5 w-16 bg-blue-600/50" />
+            <div className="h-0.5 w-16 bg-blue-600/50 mx-auto" />
             <p className="text-base text-slate-400 leading-relaxed text-justify hyphens-auto">
               Si tu voz tiembla o se escucha bajo, nadie te prestará atención.
               <br/><br/>
@@ -197,19 +218,19 @@ export default function Home() {
          <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
             <div className="flex-1 space-y-12">
                   <div className="space-y-4">
-                     <span className="text-4xl font-black text-blue-500">01</span>
-                     <h5 className="font-bold uppercase tracking-widest text-xs text-slate-300">Ajustar</h5>
-                     <p className="text-[11px] text-slate-500 font-medium">Prepara tu garganta con un sonido guía.</p>
+                     <span className="text-5xl md:text-6xl font-black text-blue-500">01</span>
+                     <h5 className="font-bold uppercase tracking-widest text-base md:text-lg text-slate-300">Ajustar</h5>
+                     <p className="text-sm md:text-base text-slate-500 font-medium">Prepara tu garganta con un sonido guía.</p>
                   </div>
                   <div className="space-y-4">
-                     <span className="text-4xl font-light text-slate-600">02</span>
-                     <h5 className="font-bold uppercase tracking-widest text-xs text-slate-300">Medir</h5>
-                     <p className="text-[11px] text-slate-500 font-medium">Mira en la pantalla cómo suena tu voz.</p>
+                     <span className="text-5xl md:text-6xl font-black text-amber-500">02</span>
+                     <h5 className="font-bold uppercase tracking-widest text-base md:text-lg text-slate-300">Medir</h5>
+                     <p className="text-sm md:text-base text-slate-500 font-medium">Mira en la pantalla cómo suena tu voz.</p>
                   </div>
                   <div className="space-y-4">
-                     <span className="text-4xl font-light text-slate-600">03</span>
-                     <h5 className="font-bold uppercase tracking-widest text-xs text-slate-300">Corregir</h5>
-                     <p className="text-[11px] text-slate-500 font-medium">Haz pequeños cambios para sonar firme.</p>
+                     <span className="text-5xl md:text-6xl font-black text-purple-500">03</span>
+                     <h5 className="font-bold uppercase tracking-widest text-base md:text-lg text-slate-300">Corregir</h5>
+                     <p className="text-sm md:text-base text-slate-500 font-medium">Haz pequeños cambios para sonar firme.</p>
                   </div>
             </div>
             {/* Image removed as per user request to remove real-time calibration preview */}
@@ -228,7 +249,7 @@ export default function Home() {
           </p>
           <button 
             onClick={() => router.push("/listen")}
-            className="px-12 py-5 bg-white text-black rounded-full font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors"
+            className="px-12 py-5 bg-white text-black rounded-full font-bold uppercase tracking-widest hover:bg-slate-200 transition-all animate-pulse-invite"
           >
             Empezar Ahora
           </button>

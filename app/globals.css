@@ -100,4 +100,68 @@
   .animate-fade-in-up {
     animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
+
+  /* Animación de invitación para botones - pulso suave */
+  @keyframes pulse-invite {
+    0%, 100% { 
+      transform: scale(1); 
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    50% { 
+      transform: scale(1.03); 
+      box-shadow: 0 0 30px 5px rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  .animate-pulse-invite {
+    animation: pulse-invite 2s ease-in-out infinite;
+  }
+
+  .animate-pulse-invite:hover {
+    animation: none;
+    transform: scale(1.05);
+  }
+
+  /* Animación 3D de rotación suave para el micrófono */
+  @keyframes rotate-3d-slow {
+    0% { 
+      transform: perspective(1000px) rotateY(-15deg) rotateX(5deg);
+    }
+    50% { 
+      transform: perspective(1000px) rotateY(15deg) rotateX(-5deg);
+    }
+    100% { 
+      transform: perspective(1000px) rotateY(-15deg) rotateX(5deg);
+    }
+  }
+
+  .animate-rotate-3d {
+    animation: rotate-3d-slow 8s ease-in-out infinite;
+    transform-style: preserve-3d;
+  }
+
+  /* Efecto de brillo flotante */
+  @keyframes float-glow {
+    0%, 100% { 
+      transform: translateY(0px);
+      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
+    }
+    50% { 
+      transform: translateY(-10px);
+      filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.5));
+    }
+  }
+
+  .animate-float-glow {
+    animation: float-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 4s linear infinite;
+  }
 }
