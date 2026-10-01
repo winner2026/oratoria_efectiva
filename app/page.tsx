@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export const metadata = {
   title: 'Sin Miedo a Hablar - Oratoria Efectiva',
@@ -11,7 +12,21 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-300 font-sans selection:bg-orange-600/30">
-      
+
+      {/* Google Ads Tag */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=AW-18488283276"
+        strategy="afterInteractive"
+      />
+      <Script id="google-ads" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-18488283276');
+        `}
+      </Script>
+
       {/* 1. HERO SECTION */}
       <section className="relative pt-20 pb-16 px-6 overflow-hidden border-b border-neutral-900">
         <div className="max-w-4xl mx-auto text-center">
