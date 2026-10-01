@@ -1,260 +1,231 @@
-﻿
-"use client";
+import React from 'react';
+import Link from 'next/link';
 
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+export const metadata = {
+  title: 'Sin Miedo a Hablar - Oratoria Efectiva',
+  description: 'Recupera tu voz y hazla sonar con claridad.',
+};
 
-export default function Home() {
-  const router = useRouter();
+export default function HomePage() {
+  const checkoutUrl = 'https://pay.hotmart.com/F99862019P?off=dlcepqmr&hotfeature=51';
 
   return (
-    <main className="min-h-screen bg-[#05070A] text-white font-display overflow-x-hidden selection:bg-blue-500/30">
+    <div className="min-h-screen bg-neutral-950 text-neutral-300 font-sans selection:bg-orange-600/30">
       
-      {/* GLOBAL FLOATING HEADER */}
-      <header className="absolute top-0 left-0 w-full p-6 md:px-40 md:py-12 z-50 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-             {/* <div className="relative size-10 md:size-12 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 p-2 shadow-2xl">
-                <Image 
-                   src="/logo-new.png" 
-                   alt="Oratoria Efectiva Logo" 
-                   fill 
-                   className="object-contain p-1"
-                />
-             </div> */}
-             <span className="font-black tracking-tighter text-xs sm:text-sm md:text-xl uppercase block">
-                Oratoria <span className="text-blue-500">Efectiva</span>
-             </span>
-          </div>
-          
-          <Link href="/listen" className="text-sm md:text-lg font-black text-blue-500 hover:text-blue-400 transition-colors uppercase tracking-widest animate-pulse">
-             Ver App
-          </Link>
-      </header>
-      
-      {/* SECCIÓN 1: HERO IMPACTO */}
-      <section className="relative min-h-[90dvh] flex flex-col items-center justify-center pt-20 px-6 pb-12 md:pb-0">
-        {/* Background Glows */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-[10%] right-[-10%] w-[400px] h-[400px] bg-amber-600/10 rounded-full blur-[100px]" />
-        </div>
-
-        <div className="max-w-6xl mx-auto text-center relative z-10 space-y-8">
-          {/* Micrófono 3D Animado con Círculo Giratorio Premium */}
-          <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-6 flex items-center justify-center">
-            {/* Brillo ambiental que pulsa */}
-            <div className="absolute inset-0 bg-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
-            
-            {/* El Círculo Giratorio (Gradiente de Amarillo a Naranja Rojizo) */}
-            <div className="absolute inset-0 rounded-full p-[2px] animate-spin-slow" 
-                 style={{ background: 'conic-gradient(from 0deg, #fbbf24, #f97316, #ef4444, #f97316, #fbbf24)' }}>
-              <div className="w-full h-full rounded-full bg-black"></div>
-            </div>
-
-            {/* Contenedor del Micrófono con Fondo Negro Puro */}
-            <div className="relative w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full bg-black overflow-hidden flex items-center justify-center p-3">
-              <img 
-                src="/microphone-3d.png?v=2" 
-                alt="Micrófono Profesional" 
-                className="w-full h-full object-contain animate-rotate-3d animate-float-glow mix-blend-lighten scale-110 rounded-full z-10"
-              />
-            </div>
-          </div>
-
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium uppercase tracking-[0.3em] text-blue-400 mb-4 animate-fade-in">
-             <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-             </span>
-             ENTRENADOR VOCAL v3.0
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] text-white uppercase">
-            Habla claro. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-indigo-400 to-slate-400">Habla con seguridad.</span>
+      {/* 1. HERO SECTION */}
+      <section className="relative pt-20 pb-16 px-6 overflow-hidden border-b border-neutral-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-8 text-white leading-[1.1]">
+            <span className="text-orange-600">Sin Miedo a Hablar:</span> recupera tu voz y hazla sonar con claridad
           </h1>
-
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed text-center">
-            Mejora tu voz en segundos. <br />
-            <span className="text-slate-200">Sin teoría aburrida. Solo práctica.</span>
+          
+          <p className="text-xl md:text-2xl text-neutral-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Aprende a hablar con identidad, sin miedo, y con el poder de ser escuchado. Descubre cómo tu palabra puede tener presencia, peso y verdad.
           </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
-            <button 
-              onClick={() => router.push("/listen")}
-              className="group relative px-10 py-6 bg-gradient-to-r from-blue-700 to-indigo-700 rounded-2xl font-black text-lg uppercase tracking-widest hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(37,99,235,0.6)] active:scale-95 border border-white/10 animate-pulse-invite"
-            >
-              <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span className="relative z-10 flex items-center gap-3">
-                <span className="material-symbols-outlined text-3xl">mic</span>
-                Analizar Señal
-              </span>
-            </button>
-            <div className="flex flex-col gap-1">
-                 <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
-                    <span className="material-symbols-outlined text-sm">lock</span>
-                    100% Privado & Encriptado
-                 </div>
-                 <p className="text-[10px] text-slate-500 font-mono">
-                    Acceso total inmediato.
-                 </p>
+          
+          {/* VSL (Video Sales Letter) */}
+          <div className="w-full max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 bg-black">
+            <div className="relative pb-[56.25%] h-0">
+              <iframe 
+                src="https://www.youtube.com/embed/FQxA4yntAEY?si=XZlIadv_fLx5l-Lb" 
+                title="Video de presentación" 
+                className="absolute top-0 left-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
-        </div>
 
-        {/* Hero Image / Interface Mockup */}
-        <div className="mt-12 md:mt-20 relative max-w-5xl mx-auto w-full group">
-           <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-amber-600 rounded-[40px] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-           <div className="relative bg-[#0A0F14] rounded-[32px] overflow-hidden border border-white/10 shadow-2xl">
-              <img 
-                src="/vocal_command_center_hero_1768166681157.png" 
-                alt="Vocal Command Center"
-                className="w-full h-auto object-cover opacity-90 brightness-75 group-hover:brightness-100 transition-all duration-700"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0A0F14] to-transparent pointer-events-none" />
-           </div>
+          <a 
+            href={checkoutUrl}
+            className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-12 rounded-full text-xl transition-all hover:scale-105 shadow-[0_0_30px_-5px_rgba(234,88,12,0.5)]"
+          >
+            COMPRAR AHORA
+          </a>
         </div>
       </section>
 
-      {/* SECCIÓN 2: LA VERDAD INCÓMODA (DOLORES PROFUNDOS) */}
-      <section className="py-20 md:py-32 px-6 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center relative z-10">
-          <div className="space-y-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tighter uppercase leading-tight">
-              Cómo funciona <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 animate-pulse">tu voz</span>.
-            </h2>
-            <div className="h-0.5 w-16 bg-blue-600/50 mx-auto" />
-            <p className="text-base text-slate-400 leading-relaxed text-justify hyphens-auto">
-              Si tu voz tiembla o se escucha bajo, nadie te prestará atención.
-              <br/><br/>
-              No es culpa de tus ideas. Es "ruido" en tu sonido.
-              <br/><br/>
-              No necesitas talento. Necesitas <strong className="text-slate-200">controlar tu aire</strong>.
+      {/* 2. SOBRE EL CONTENIDO */}
+      <section className="py-20 px-6 bg-neutral-900">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-sm font-black text-orange-600 tracking-widest uppercase mb-4 border-b border-orange-600/30 pb-2">
+            Sobre el contenido
+          </h2>
+          
+          <div className="space-y-6 text-xl text-neutral-300 leading-relaxed font-light">
+            <p>
+              Con el curso <strong className="text-white">Sin Miedo a Hablar</strong>, recupera tu voz y hazla sonar con claridad.
+            </p>
+            <p>
+              Aprende a identificar el origen de tu miedo, a desactivarlo desde su raíz, a usar tu respiración como ancla, y a proyectar una voz firme, sin impostaciones, sin máscaras.
+            </p>
+            <p className="text-white font-medium border-l-4 border-orange-600 pl-6 my-8 py-2">
+              Al finalizar, no solo vas a hablar mejor. Vas a hablar con identidad, sin miedo, y con el poder de ser escuchado.
+            </p>
+            <p>
+              Inscríbete ahora y descubre cómo tu palabra puede tener presencia, peso y verdad.
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-6">
-             <div className="p-8 bg-[#0F1419] border border-white/5 rounded-3xl space-y-3 group hover:border-blue-500/30 transition-colors shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                   <span className="material-symbols-outlined text-6xl text-slate-500">visibility_off</span>
-                </div>
-                <h4 className="font-bold text-lg text-slate-200 uppercase">Voz Insegura</h4>
-                <p className="text-sm text-slate-500 leading-relaxed text-justify">
-                   Cuando hablas monótono o dudas, la gente deja de escuchar. Te conviertes en ruido de fondo.
-                </p>
-             </div>
-             
-             <div className="p-8 bg-[#0F1419] border border-white/5 rounded-3xl space-y-3 group hover:border-blue-500/30 transition-colors shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                   <span className="material-symbols-outlined text-6xl text-slate-500">theater_comedy</span>
-                </div>
-                <h4 className="font-bold text-lg text-slate-200 uppercase">Tensión Física</h4>
-                <p className="text-sm text-slate-500 leading-relaxed text-justify">
-                   Si te pones tenso, tu garganta se cierra. Tu voz sale fina y débil, aunque tú te sientas seguro.
-                </p>
-             </div>
-             
-             <div className="p-8 bg-[#0F1419] border border-white/5 rounded-3xl space-y-3 group hover:border-blue-500/30 transition-colors shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                   <span className="material-symbols-outlined text-6xl text-slate-500">trending_flat</span>
-                </div>
-                <h4 className="font-bold text-lg text-slate-200 uppercase">Poco Volumen</h4>
-                <p className="text-sm text-slate-500 leading-relaxed text-justify">
-                   Si no usas bien tu aire, tu voz no viaja. Nadie te escucha si hay ruido en la sala.
-                </p>
-             </div>
+
+          <div className="mt-16 text-center">
+            <p className="text-orange-500 font-bold tracking-widest uppercase mb-4 text-sm animate-pulse">
+              ESTA OFERTA PUEDE TERMINAR EN BREVE
+            </p>
+            <a 
+              href={checkoutUrl}
+              className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-4 px-10 rounded-full text-lg transition-transform hover:scale-105"
+            >
+              COMPRAR AHORA
+            </a>
           </div>
         </div>
       </section>
 
-      {/* SECCIÓN 3: LA SOLUCIÓN (INGENIERÍA VOCAL) */}
-      <section className="py-20 md:py-40 px-6 relative overflow-hidden bg-[#05070A]">
-        <div className="max-w-6xl mx-auto text-center mb-16 md:mb-24 space-y-6">
-           <h2 className="text-4xl md:text-5xl font-bold tracking-tight uppercase leading-tight">Resultados reales. <br /><span className="text-blue-500">Sin mentiras.</span></h2>
-           <p className="text-slate-400 uppercase tracking-widest font-medium text-xs max-w-xl mx-auto leading-loose">
-             Dejamos las opiniones. Usamos <span className="text-slate-200 border-b border-blue-500/50">datos simples</span>.
-           </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-           <div className="p-10 bg-[#0F1419] border border-white/5 rounded-[40px] hover:bg-[#13181E] transition-all group hover:-translate-y-2 relative">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
-               <div className="size-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-8 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-4xl">monitor_heart</span>
-               </div>
-               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Detector de Errores</h3>
-               <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                 Analizamos tu voz al instante. Te decimos si tiemblas o si hablas muy bajo.
-               </p>
-           </div>
-
-           <div className="p-10 bg-[#0F1419] border border-amber-500/10 rounded-[40px] hover:bg-[#13181E] transition-all group hover:-translate-y-2 relative shadow-[0_0_50px_rgba(245,158,11,0.05)]">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors"></div>
-               <div className="size-16 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 mb-8 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-4xl">psychology_alt</span>
-               </div>
-               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Escucha tu Tono</h3>
-               <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                 ¿Suenas seguro o con dudas? Te mostramos cómo te escuchan los demás realmente.
-               </p>
-           </div>
-
-           <div className="p-10 bg-[#0F1419] border border-white/5 rounded-[40px] hover:bg-[#13181E] transition-all group hover:-translate-y-2 relative">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-colors"></div>
-               <div className="size-16 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-8 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-4xl">prescriptions</span>
-               </div>
-               <h3 className="text-2xl font-black uppercase mb-4 tracking-tight text-white">Ejercicios Rápidos</h3>
-               <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                 Nada de charlas largas. Solo ejercicios de 2 minutos para arreglar lo que falla.
-               </p>
-           </div>
-        </div>
-      </section>
-
-      {/* SECCIÓN 4: CÓMO FUNCIONA (PASOS) */}
-      <section className="py-20 md:py-32 px-6 border-t border-white/5">
-         <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-            <div className="flex-1 space-y-12">
-                  <div className="space-y-4">
-                     <span className="text-5xl md:text-6xl font-black text-blue-500">01</span>
-                     <h5 className="font-bold uppercase tracking-widest text-base md:text-lg text-slate-300">Ajustar</h5>
-                     <p className="text-sm md:text-base text-slate-500 font-medium">Prepara tu garganta con un sonido guía.</p>
-                  </div>
-                  <div className="space-y-4">
-                     <span className="text-5xl md:text-6xl font-black text-amber-500">02</span>
-                     <h5 className="font-bold uppercase tracking-widest text-base md:text-lg text-slate-300">Medir</h5>
-                     <p className="text-sm md:text-base text-slate-500 font-medium">Mira en la pantalla cómo suena tu voz.</p>
-                  </div>
-                  <div className="space-y-4">
-                     <span className="text-5xl md:text-6xl font-black text-purple-500">03</span>
-                     <h5 className="font-bold uppercase tracking-widest text-base md:text-lg text-slate-300">Corregir</h5>
-                     <p className="text-sm md:text-base text-slate-500 font-medium">Haz pequeños cambios para sonar firme.</p>
-                  </div>
-            </div>
-            {/* Image removed as per user request to remove real-time calibration preview */}
-         </div>
-      </section>
-
-
-
-      {/* FOOTER: CTA FINAL */}
-      <section className="py-24 px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-tight mb-8">
-             Controla tu voz. <br /> <span className="text-blue-500">Cuando quieras.</span>
+      {/* 3. SOBRE EL CREADOR */}
+      <section className="py-20 px-6 bg-neutral-950">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-sm font-black text-orange-600 tracking-widest uppercase mb-8 border-b border-orange-600/30 pb-2">
+            Conoce mejor a quien ha creado el contenido
           </h2>
-          <p className="text-slate-500 font-mono text-sm max-w-xl mx-auto uppercase mb-12">
-             Prueba, mide y mejora antes de hablar.
-          </p>
-          <button 
-            onClick={() => router.push("/listen")}
-            className="px-12 py-5 bg-white text-black rounded-full font-bold uppercase tracking-widest hover:bg-slate-200 transition-all animate-pulse-invite"
-          >
-            Empezar Ahora
-          </button>
+          
+          <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 md:p-12">
+            <div className="flex items-center gap-6 mb-8">
+              <img 
+                src="/profile.png" 
+                alt="Víctor Martínez" 
+                className="w-24 h-24 rounded-full object-cover border-2 border-orange-600 shrink-0 shadow-[0_0_15px_rgba(234,88,12,0.3)]"
+              />
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-1">Víctor Martínez</h3>
+                <p className="text-orange-500 font-medium">Oratoria_Efectiva</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4 text-neutral-400">
+              <p>
+                ¡Bienvenido a Oratoria Efectiva con Víctor Martínez! Un viaje de transformación profunda a través del poder de tu voz.
+              </p>
+              <p>
+                Aprende a comunicar con autenticidad y dominar el arte de hablar en público para impactar vidas, abrir puertas y alcanzar tu máximo potencial.
+              </p>
+              <p>
+                Descubre la fuerza que ya vive en ti y libérala con confianza y propósito. Entrena para superar bloqueos internos, estructurar ideas que dejen huella y construir una presencia auténtica frente a cualquier audiencia.
+              </p>
+              <p className="text-white font-medium italic pt-4">
+                Este es tu momento. Esta es tu oportunidad. Y nosotros estamos aquí para acompañarte.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-    </main>
+      {/* 4. GARANTÍA */}
+      <section className="py-20 px-6 bg-orange-600 text-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-sm font-black text-orange-950 tracking-widest uppercase mb-10 border-b border-orange-700 pb-2">
+            G A R A N T Í A
+          </h2>
+          
+          <div className="text-7xl mb-6">🛡️</div>
+          <h3 className="text-4xl font-bold mb-4">Garantía incondicional de 7 días</h3>
+          <p className="text-xl opacity-90 max-w-xl mx-auto">
+            Tendrás tu dinero de vuelta sin preguntas hasta 7 días después de la compra.
+          </p>
+        </div>
+      </section>
+
+      {/* 5. PRECIO Y CIERRE */}
+      <section className="py-24 px-6 bg-neutral-950 text-center">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-neutral-400 mb-6 flex items-center justify-center gap-2">
+            <span>📱</span> Accede al contenido desde cualquier dispositivo.
+          </p>
+          
+          <div className="mb-10">
+            <p className="text-orange-500 font-bold tracking-widest uppercase text-sm mb-2">POR APENAS</p>
+            <p className="text-7xl font-black text-white">US$ 17.00</p>
+          </div>
+          
+          <a 
+            href={checkoutUrl}
+            className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-12 rounded-full text-xl transition-transform hover:scale-105 shadow-[0_10px_40px_rgba(234,88,12,0.4)] mb-6"
+          >
+            COMPRAR AHORA
+          </a>
+          
+          <p className="text-sm text-neutral-500 font-bold flex items-center justify-center gap-2">
+            <span>🔒</span> PAGO 100% SEGURO CON ACCESO INMEDIATO
+          </p>
+        </div>
+      </section>
+
+      {/* 6. PREGUNTAS FRECUENTES */}
+      <section className="py-24 px-6 bg-neutral-900 border-t border-neutral-800">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Preguntas Frecuentes</h2>
+          
+          <div className="space-y-6">
+            <details className="group bg-neutral-950 border border-neutral-800 rounded-2xl cursor-pointer">
+              <summary className="font-bold text-lg text-white p-6 list-none flex justify-between items-center">
+                ¿Para quién es este producto?
+                <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-6 pb-6 text-neutral-400">
+                Para cualquier profesional, emprendedor o persona que sienta que el miedo escénico lo paraliza o le impide comunicar sus ideas con la fuerza y claridad que merece.
+              </div>
+            </details>
+
+            <details className="group bg-neutral-950 border border-neutral-800 rounded-2xl cursor-pointer">
+              <summary className="font-bold text-lg text-white p-6 list-none flex justify-between items-center">
+                ¿Cómo funciona el 'Plazo de Garantía'?
+                <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-6 pb-6 text-neutral-400">
+                Tienes 7 días a partir de la confirmación de tu pago para evaluar el curso. Si dentro de ese plazo consideras que no es para ti, puedes solicitar el reembolso total a través de Hotmart y te devolveremos tu dinero sin hacer preguntas.
+              </div>
+            </details>
+
+            <details className="group bg-neutral-950 border border-neutral-800 rounded-2xl cursor-pointer">
+              <summary className="font-bold text-lg text-white p-6 list-none flex justify-between items-center">
+                ¿Qué es y cómo funciona el Certificado de Conclusión digital?
+                <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-6 pb-6 text-neutral-400">
+                Al completar todas las lecciones del curso, la plataforma generará automáticamente un certificado a tu nombre que valida tu participación y aprendizaje en Oratoria Efectiva.
+              </div>
+            </details>
+
+            <details className="group bg-neutral-950 border border-neutral-800 rounded-2xl cursor-pointer">
+              <summary className="font-bold text-lg text-white p-6 list-none flex justify-between items-center">
+                ¿Cómo acceder al producto?
+                <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-6 pb-6 text-neutral-400">
+                Inmediatamente después de confirmar tu pago, recibirás un correo electrónico de Hotmart con tus datos de acceso y el enlace directo para entrar a la plataforma de alumnos y ver los videos.
+              </div>
+            </details>
+
+            <details className="group bg-neutral-950 border border-neutral-800 rounded-2xl cursor-pointer">
+              <summary className="font-bold text-lg text-white p-6 list-none flex justify-between items-center">
+                ¿Cómo hago para comprar?
+                <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-6 pb-6 text-neutral-400">
+                Solo debes hacer clic en cualquiera de los botones "COMPRAR AHORA" de esta página. Serás redirigido al formulario de pago seguro de Hotmart donde podrás elegir tu método de pago local y completar la transacción de manera encriptada.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-10 bg-neutral-950 text-center border-t border-neutral-900">
+        <p className="text-neutral-500 text-sm font-medium">
+          Copyright &copy; {new Date().getFullYear()}<br/>
+          Todos los derechos reservados.
+        </p>
+      </footer>
+
+    </div>
   );
 }
