@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import CtaButton from '@/components/CtaButton';
 
 export const metadata = {
   title: 'Sin Miedo a Hablar - Oratoria Efectiva',
@@ -36,12 +37,13 @@ export default function HomePage() {
             </div>
           </div>
 
-          <a 
+          <CtaButton 
             href={checkoutUrl}
             className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-12 rounded-full text-xl transition-all hover:scale-105 shadow-[0_0_30px_-5px_rgba(234,88,12,0.5)]"
+            location="hero"
           >
             COMPRAR AHORA
-          </a>
+          </CtaButton>
         </div>
       </section>
 
@@ -71,12 +73,13 @@ export default function HomePage() {
             <p className="text-orange-500 font-bold tracking-widest uppercase mb-4 text-sm animate-pulse">
               ESTA OFERTA PUEDE TERMINAR EN BREVE
             </p>
-            <a 
+            <CtaButton 
               href={checkoutUrl}
               className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-4 px-10 rounded-full text-lg transition-transform hover:scale-105"
+              location="mid_page"
             >
               COMPRAR AHORA
-            </a>
+            </CtaButton>
           </div>
         </div>
       </section>
@@ -146,12 +149,13 @@ export default function HomePage() {
             <p className="text-7xl font-black text-white">US$ 17.00</p>
           </div>
           
-          <a 
+          <CtaButton 
             href={checkoutUrl}
             className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-12 rounded-full text-xl transition-transform hover:scale-105 shadow-[0_10px_40px_rgba(234,88,12,0.4)] mb-6"
+            location="pricing"
           >
             COMPRAR AHORA
-          </a>
+          </CtaButton>
           
           <p className="text-sm text-neutral-500 font-bold flex items-center justify-center gap-2">
             <span>🔒</span> PAGO 100% SEGURO CON ACCESO INMEDIATO
