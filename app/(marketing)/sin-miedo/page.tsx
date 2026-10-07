@@ -143,7 +143,7 @@ export default function SinMiedoSalesPage() {
           
           <div className="mb-10">
             <p className="text-orange-500 font-bold tracking-widest uppercase text-sm mb-2">POR APENAS</p>
-            <p className="text-7xl font-black text-white">US$ 17.00</p>
+            <p className="text-7xl font-black text-white">US$ 170.00</p>
           </div>
           
           <a 

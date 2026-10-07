@@ -46,6 +46,7 @@
     "check-usage.mjs",
     "check-schema.mjs",
     "test-increment.mjs",
-    "test-increment-usage.mjs"
+    "test-increment-usage.mjs",
+    "security-audit.ts"
   ]
 }

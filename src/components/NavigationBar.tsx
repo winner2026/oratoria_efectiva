@@ -55,23 +55,15 @@ const NavigationBar = () => {
   return (
     <>
       {/* GLOBAL TOP HEADER FOR APP */}
-      <header className="fixed top-0 left-0 w-full p-4 md:p-6 z-40 bg-gradient-to-b from-[#0A0F14] to-transparent pointer-events-none flex items-center justify-between">
+      <header className="fixed top-0 left-0 w-full p-4 md:p-6 z-40 bg-gradient-to-b from-[#090810] to-transparent pointer-events-none flex items-center justify-between">
           <div className="flex items-center gap-3 pointer-events-auto">
-             {/* <div className="relative size-8 md:size-10 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 p-1.5 shadow-2xl">
-                <Image 
-                   src="/logo-new.png" 
-                   alt="Oratoria Efectiva Logo" 
-                   fill 
-                   className="object-contain p-0.5"
-                />
-             </div> */}
-             <span className="font-black tracking-tighter text-xs md:text-sm uppercase text-white/50">
-                Oratoria <span className="text-blue-500">Efectiva</span>
+             <span className="font-black tracking-tighter text-xs md:text-sm uppercase text-slate-400">
+                Oratoria <span className="text-brand-orange">Efectiva</span>
              </span>
           </div>
       </header>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 pb-safe">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#090810]/95 backdrop-blur-2xl border-t border-white/10 pb-safe">
         <div className="max-w-md mx-auto px-4 h-20 flex items-center justify-between">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -80,17 +72,17 @@ const NavigationBar = () => {
                 key={item.href} 
                 href={item.href}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 min-w-[64px] ${
-                  isActive ? 'text-blue-500' : 'text-slate-500 hover:text-slate-300'
+                  isActive ? 'text-brand-orange' : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
                 <div className={`relative flex items-center justify-center p-2 rounded-2xl transition-all ${
-                  isActive ? 'bg-blue-500/10' : ''
+                  isActive ? 'bg-brand-orange/15 border border-brand-orange/30' : ''
                 }`}>
                   <span className={`material-symbols-outlined text-[22px] ${isActive ? 'fill-1' : ''}`}>
                     {item.icon}
                   </span>
                   {isActive && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-brand-orange rounded-full shadow-glow-orange" />
                   )}
                 </div>
                 <span className="text-[9px] font-bold uppercase tracking-widest leading-none">
@@ -100,16 +92,15 @@ const NavigationBar = () => {
             );
           })}
           
-          {/* Logout Item */}
           {/* Profile Item */}
           <Link 
             href="/profile"
             className={`flex flex-col items-center gap-1 transition-all duration-300 min-w-[64px] ${
-              pathname === '/profile' ? 'text-blue-500' : 'text-slate-500 hover:text-slate-300'
+              pathname === '/profile' ? 'text-brand-orange' : 'text-slate-500 hover:text-slate-300'
             }`}
           >
             <div className={`relative flex items-center justify-center p-2 rounded-2xl transition-all ${
-              pathname === '/profile' ? 'bg-blue-500/10' : 'hover:bg-slate-800'
+              pathname === '/profile' ? 'bg-brand-orange/15 border border-brand-orange/30' : 'hover:bg-white/5'
             }`}>
               <span className={`material-symbols-outlined text-[22px] ${pathname === '/profile' ? 'fill-1' : ''}`}>
                 person
