@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
     // Active Users (Users with >= 1 session linked)
     const activeUsersResult = await prisma.voiceSession.groupBy({
       by: ['userId'],
-      where: { user: { isNot: null } },
       _count: { id: true }
     });
     const activeUsersCount = activeUsersResult.length;
