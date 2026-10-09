@@ -23,9 +23,9 @@ interface AnalysisResultData {
     wordsPerMinute: number;
     avgPauseDuration: number;
     pauseCount: number;
-    pitchVariation: number;
-    energyStability: number;
-    brightnessScore: number;
+    pitchVariation: number | null;
+    energyStability: number | null;
+    spectralBand3Score: number | null;
   };
   feedback: {
     diagnostico: string;
@@ -39,7 +39,6 @@ interface AnalysisResultData {
   };
   metricExplanations: {
     fuerzaVocal: MetricExplanation;
-    calmaVocal: MetricExplanation;
     dinamicaEntonacion: MetricExplanation;
     estabilidadEspectral: MetricExplanation;
     ritmoHabla?: MetricExplanation;
@@ -210,55 +209,6 @@ export default function DiagnosticoGratuitoPage() {
     }, 400);
   };
 
-  const generateFallbackAudioAndAnalyze = async () => {
-    setIsRecording(true);
-    setRecordingSeconds(0);
-
-    // Simulated Aureal 3-Band animation loop
-    const simulateAudioAnimation = () => {
-      const time = Date.now() / 150;
-      const simulatedVol = Math.abs(Math.sin(time)) * 0.6 + 0.2;
-      setVolumeLevel(simulatedVol);
-      
-      setBassLevel(Math.round(Math.abs(Math.sin(time * 0.8)) * 70 + 25));
-      setMidsLevel(Math.round(Math.abs(Math.sin(time * 1.2)) * 85 + 15));
-      setHighsLevel(Math.round(Math.abs(Math.sin(time * 1.5)) * 60 + 20));
-
-      const bars = Array.from({ length: 16 }, (_, i) => 
-        Math.round(Math.abs(Math.sin(time + i * 0.5)) * 80 + 20)
-      );
-      setFrequencyBars(bars);
-
-      animFrameRef.current = requestAnimationFrame(simulateAudioAnimation);
-    };
-    simulateAudioAnimation();
-
-    const interval = setInterval(() => {
-      setRecordingSeconds((prev) => {
-        if (prev >= 3) {
-          clearInterval(interval);
-          if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-          setIsRecording(false);
-          setIsAnalyzing(true);
-          
-          // Generate 2-second sine wave Audio PCM Buffer Blob
-          const sampleRate = 44100;
-          const numSamples = sampleRate * 2;
-          const buffer = new Float32Array(numSamples);
-          for (let i = 0; i < numSamples; i++) {
-            buffer[i] = Math.sin(2 * Math.PI * 440 * (i / sampleRate)) * 0.5;
-          }
-
-          // Create WAV file binary header
-          const wavBuffer = createWavBlobFromFloat32(buffer, sampleRate);
-          sendAudioToApi(wavBuffer);
-          return 3;
-        }
-        return prev + 1;
-      });
-    }, 500);
-  };
-
   const sendAudioToApi = async (audioBlob: Blob) => {
     try {
       const formData = new FormData();
@@ -298,7 +248,7 @@ export default function DiagnosticoGratuitoPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
           </span>
-          DIAGNÓSTICO GRATUITO DE 60 SEGUNDOS
+          DIAGNÓSTICO VOCAL DE 15 SEGUNDOS
         </div>
 
         {/* Headlines */}
@@ -312,7 +262,7 @@ export default function DiagnosticoGratuitoPage() {
             </h1>
 
             <p className="text-slate-400 text-sm md:text-base font-medium max-w-lg mx-auto leading-relaxed">
-              Sin registros ni contraseñas. Habla 15 a 60 segundos y la IA analizará tus pausas, ritmo y nivel de firmeza percibida en tiempo real.
+              Sin registros ni contraseñas. Habla durante 15 segundos y la IA analizará tus pausas, ritmo y algunas características vocales.
             </p>
           </>
         )}
@@ -475,7 +425,7 @@ export default function DiagnosticoGratuitoPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
                 <div>
                   <h2 className="text-xl font-black uppercase tracking-tight text-white">Tu Diagnóstico Vocal</h2>
-                  <p className="text-xs text-slate-400 font-medium">Análisis de tu grabación de 60 segundos</p>
+                  <p className="text-xs text-slate-400 font-medium">Análisis de tu grabación de 15 segundos</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -556,24 +506,16 @@ export default function DiagnosticoGratuitoPage() {
                       <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.fuerzaVocal.valueFormatted}</span>
                     </div>
                     <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-amber-500/20">
-                      <div 
-                        className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500" 
-                        style={{ width: `${analysisResult.metrics.energyStability * 100}%` }} 
-                      />
+                      {analysisResult.metrics.energyStability !== null ? (
+                        <div
+                          className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500"
+                          style={{ width: `${Math.max(0, Math.min(100, analysisResult.metrics.energyStability * 100))}%` }}
+                        />
+                      ) : (
+                        <span className="block text-[10px] text-slate-400 px-2">Medición no disponible</span>
+                      )}
                     </div>
                     <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.fuerzaVocal.explanation}</p>
-                  </div>
-
-                  {/* 2. Estabilidad de la señal */}
-                  <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold">
-                      <span className="text-white uppercase">Estabilidad de la señal</span>
-                      <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.calmaVocal.valueFormatted}</span>
-                    </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-amber-500/20">
-                      <div className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500" style={{ width: '100%' }} />
-                    </div>
-                    <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.calmaVocal.explanation}</p>
                   </div>
 
                   {/* 3. Variación de entonación */}
@@ -594,7 +536,7 @@ export default function DiagnosticoGratuitoPage() {
                     <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-amber-500/20">
                       <div 
                         className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500" 
-                        style={{ width: `${Math.round(analysisResult.metrics.brightnessScore)}%` }} 
+                        style={{ width: `${analysisResult.metrics.spectralBand3Score !== null ? Math.max(0, Math.min(100, analysisResult.metrics.spectralBand3Score)) : 0}%` }} 
                       />
                     </div>
                     <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.estabilidadEspectral.explanation}</p>
@@ -633,12 +575,6 @@ export default function DiagnosticoGratuitoPage() {
                       <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Consistencia Vocal (RMS):</strong>
                       <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.fuerzaVocal.explanation}</p>
                       <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.fuerzaVocal.limitations}</p>
-                    </div>
-
-                    <div className="border-t border-white/5 pt-2">
-                      <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Estabilidad de Señal:</strong>
-                      <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.calmaVocal.explanation}</p>
-                      <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.calmaVocal.limitations}</p>
                     </div>
 
                     <div className="border-t border-white/5 pt-2">
@@ -723,56 +659,3 @@ export default function DiagnosticoGratuitoPage() {
     </main>
   );
 }
-
-function createWavBlobFromFloat32(float32Array: Float32Array, sampleRate: number): Blob {
-  const numChannels = 1;
-  const bytesPerSample = 2; // 16-bit PCM
-  const blockAlign = numChannels * bytesPerSample;
-  const byteRate = sampleRate * blockAlign;
-  const dataSize = float32Array.length * bytesPerSample;
-  const buffer = new ArrayBuffer(44 + dataSize);
-  const view = new DataView(buffer);
-
-  /* RIFF identifier */
-  writeString(view, 0, 'RIFF');
-  /* RIFF chunk length */
-  view.setUint32(4, 36 + dataSize, true);
-  /* RIFF type */
-  writeString(view, 8, 'WAVE');
-  /* format chunk identifier */
-  writeString(view, 12, 'fmt ');
-  /* format chunk length */
-  view.setUint32(16, 16, true);
-  /* sample format (raw PCM) */
-  view.setUint16(20, 1, true);
-  /* channel count */
-  view.setUint16(22, numChannels, true);
-  /* sample rate */
-  view.setUint32(24, sampleRate, true);
-  /* byte rate */
-  view.setUint32(28, byteRate, true);
-  /* block align */
-  view.setUint16(32, blockAlign, true);
-  /* bits per sample */
-  view.setUint16(34, 16, true);
-  /* data chunk identifier */
-  writeString(view, 36, 'data');
-  /* data chunk length */
-  view.setUint32(40, dataSize, true);
-
-  // Write PCM samples
-  let offset = 44;
-  for (let i = 0; i < float32Array.length; i++, offset += 2) {
-    const s = Math.max(-1, Math.min(1, float32Array[i]));
-    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-  }
-
-  return new Blob([buffer], { type: 'audio/wav' });
-}
-
-function writeString(view: DataView, offset: number, string: string) {
-  for (let i = 0; i < string.length; i++) {
-    view.setUint8(offset + i, string.charCodeAt(i));
-  }
-}
-
