@@ -108,6 +108,12 @@ export async function POST(req: NextRequest) {
             explanation: "Rango de variación de la frecuencia fundamental (F0).",
             limitations: "Requiere detección de pitch fiable. Valores ausentes indican imposibilidad técnica de medición."
           },
+          estabilidadEspectral: {
+            title: "Índice espectral experimental",
+            valueFormatted: result.metrics.spectralBand3Score != null ? `${result.metrics.spectralBand3Score}/100` : "N/A",
+            explanation: "Índice heurístico de energía alrededor de 3 kHz en relación con otras bandas analizadas.",
+            limitations: "No es una medida validada de claridad vocal; depende del micrófono, el entorno y la calidad de grabación."
+          },
           ritmoHabla: {
             title: "Ritmo (WPM)",
             valueFormatted: `${result.metrics.wordsPerMinute} WPM`,
