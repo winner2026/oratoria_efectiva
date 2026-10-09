@@ -23,7 +23,7 @@ const WEAKNESS_TO_EXERCISE_MAP: Record<WeaknessType, { exerciseId: string; title
     exerciseId: 'authority-pause',
     title: 'Misión: Pausa de Autoridad',
     route: '/practice/pause',
-    rationale: 'Muestra con pausas breves o escasas. Practica la inserción de silencios de 3 segundos para estructurar tus ideas.',
+    rationale: 'Practica la inserción de silencios de 2 segundos antes de ideas clave para estructurarlas.',
   },
   FILLER_OVERUSE: {
     exerciseId: 'filler-killer',

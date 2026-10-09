@@ -545,10 +545,10 @@ export default function DiagnosticoGratuitoPage() {
                     <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.dinamicaEntonacion.explanation}</p>
                   </div>
 
-                  {/* 4. Claridad espectral */}
+                  {/* 4. Presencia espectral estimada */}
                   <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold">
-                      <span className="text-white uppercase">Claridad espectral</span>
+                      <span className="text-white uppercase">Presencia espectral estimada</span>
                       <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.estabilidadEspectral.valueFormatted}</span>
                     </div>
                     <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-amber-500/20">
@@ -602,7 +602,7 @@ export default function DiagnosticoGratuitoPage() {
                     </div>
 
                     <div className="border-t border-white/5 pt-2">
-                      <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Claridad Espectral (FFT 1024):</strong>
+                      <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Presencia Espectral Estimada (FFT 1024):</strong>
                       <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.estabilidadEspectral.explanation}</p>
                       <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.estabilidadEspectral.limitations}</p>
                     </div>
