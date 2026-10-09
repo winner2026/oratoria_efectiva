@@ -67,6 +67,7 @@ export default function DiagnosticoGratuitoPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResultData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [isRetryingSave, setIsRetryingSave] = useState(false);
   const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
 
@@ -266,8 +267,19 @@ export default function DiagnosticoGratuitoPage() {
             </h1>
 
             <p className="text-slate-400 text-sm md:text-base font-medium max-w-lg mx-auto leading-relaxed">
-              Sin registros ni contraseñas. Habla durante 15 segundos y la IA analizará tus pausas, ritmo y algunas características vocales.
+              Habla durante 15 segundos y la IA analizará tus pausas, ritmo y algunas características vocales.
             </p>
+            <label className="flex items-start gap-3 max-w-lg mx-auto text-left text-xs leading-relaxed text-slate-400 bg-white/[0.03] border border-white/10 rounded-xl p-4">
+              <input
+                type="checkbox"
+                checked={consentAccepted}
+                onChange={(event) => setConsentAccepted(event.target.checked)}
+                className="mt-0.5 accent-amber-500"
+              />
+              <span>
+                Autorizo que mi grabación sea procesada por servicios externos de IA y que se guarden la transcripción y las métricas de esta sesión para mostrar el análisis. Entiendo que es un piloto experimental y no incluiré información sensible ni datos de otras personas.
+              </span>
+            </label>
           </>
         )}
 
@@ -276,7 +288,8 @@ export default function DiagnosticoGratuitoPage() {
           {!isRecording && !isAnalyzing && !analysisResult && (
             <button
               onClick={startFreeDiagnostic}
-              className="px-10 py-6 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-amber-300/40 cursor-pointer"
+              disabled={!consentAccepted}
+              className="px-10 py-6 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-amber-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <span className="material-symbols-outlined text-3xl">mic</span>
               Iniciar Escáner Gratuito
