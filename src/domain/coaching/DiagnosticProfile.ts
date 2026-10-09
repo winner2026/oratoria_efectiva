@@ -16,8 +16,8 @@ export function buildDiagnosticProfile(
     avgPauseDuration: number;
     pauseCount: number;
     fillerCount: number;
-    pitchVariation: number;
-    energyStability: number;
+    pitchVariation: number | null;
+    energyStability: number | null;
   },
   authorityScore: {
     score: number;
@@ -31,12 +31,20 @@ export function buildDiagnosticProfile(
   const primaryWeakness = evaluatedWeaknesses.length > 0 ? evaluatedWeaknesses[0] : null;
   const secondaryWeaknesses = evaluatedWeaknesses.length > 1 ? evaluatedWeaknesses.slice(1) : [];
 
-  // Redacción no juzgadora basada estrictamente en comportamientos observables
+  // No atribuir fortalezas no medidas cuando una dimensión es desconocida.
   let behavioralSummary = '';
   if (primaryWeakness) {
-    behavioralSummary = `En esta muestra, detectamos características asociadas a menor firmeza percibida: ${primaryWeakness.description.toLowerCase()}`;
+    behavioralSummary = `En esta muestra, detectamos un patrón que conviene revisar: ${primaryWeakness.description.toLowerCase()}`;
   } else {
-    behavioralSummary = 'La muestra demuestra excelente estabilidad energética, ritmo constante y pausas estratégicas bien estructuradas.';
+    const unavailableMetrics: string[] = [];
+    if (metrics.pitchVariation === null) unavailableMetrics.push('variación tonal');
+    if (metrics.energyStability === null) unavailableMetrics.push('estabilidad energética');
+
+    if (unavailableMetrics.length > 0) {
+      behavioralSummary = `No se detectaron debilidades claras en las métricas disponibles. No puede confirmarse una evaluación vocal completa porque no se pudo medir: ${unavailableMetrics.join(' y ')}.`;
+    } else {
+      behavioralSummary = 'No se detectaron debilidades destacadas en las métricas evaluadas de esta muestra. El resultado es orientativo y no demuestra por sí solo una técnica vocal excelente.';
+    }
   }
 
   return {
