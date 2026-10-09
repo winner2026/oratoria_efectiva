@@ -2,17 +2,22 @@ export const runtime = "nodejs";
 export const maxDuration = 60; 
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/authOptions';
 import { prisma } from '@/infrastructure/db/client';
 import { decodeAudio } from '@/infrastructure/audio/PitchAnalysis';
 import { analyzeSpectralCharacteristics } from '@/infrastructure/audio/SpectralAnalysis';
 import { CoachingRepository } from '@/infrastructure/db/repositories/coachingRepository';
 import { diagnoseAndPrescribeUseCase } from '@/application/coaching/diagnoseAndPrescribeUseCase';
 import { VoiceSessionStore } from '@/infrastructure/db/voiceSessionStore';
-
 import { analyzeVoiceUseCase } from '@/application/analyzeVoice/analyzeVoiceUseCase';
 import { getOrCreateVisitorIdServer } from '@/lib/auth/visitorIdentity';
 
 export async function POST(req: NextRequest) {
+  let usageReserved = false;
+  let limitIdentifier = '';
+  let ipIdentifier = '';
+
   try {
     const formData = await req.formData();
     const audioFile = formData.get('audio') as File | null;
@@ -23,41 +28,77 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No se recibió audio' }, { status: 400 });
     }
 
-    // RESERVA ATÓMICA DE USO
-    try {
-      await prisma.$transaction(async (tx) => {
-        const usage = await tx.usage.upsert({
-          where: { fingerprint: visitorId },
-          update: {},
-          create: {
-            fingerprint: visitorId,
-            planType: "FREE",
-            totalAnalyses: 0
-          }
-        });
-
-        if (usage.totalAnalyses >= 1 && usage.planType === "FREE") {
-          throw new Error("FREE_LIMIT_REACHED");
-        }
-
-        await tx.usage.update({
-          where: { fingerprint: visitorId },
-          data: { totalAnalyses: { increment: 1 } }
-        });
-      }, { isolationLevel: 'Serializable' });
-    } catch (error) {
-      if (error instanceof Error && error.message === "FREE_LIMIT_REACHED") {
-        return NextResponse.json({ 
-          error: 'Has alcanzado el límite de análisis gratuitos. Regístrate o suscríbete para continuar.',
-          code: 'FREE_LIMIT_REACHED'
-        }, { status: 403 });
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    
+    limitIdentifier = userId ? `user_${userId}` : `anon_${visitorId}`;
+    ipIdentifier = `ip_${ip}`;
+    
+    let isPaidUser = false;
+    if (userId) {
+      const user = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } });
+      if (user && user.plan !== "FREE") {
+        isPaidUser = true;
       }
-      throw error;
+    }
+
+    // RESERVA ATÓMICA DE USO (Solo para FREE o Anónimos)
+    if (!isPaidUser) {
+      try {
+        await prisma.$transaction(async (tx) => {
+          const usage = await tx.usage.upsert({
+            where: { fingerprint: limitIdentifier },
+            update: {},
+            create: {
+              fingerprint: limitIdentifier,
+              planType: "FREE",
+              totalAnalyses: 0,
+              userId: userId || null
+            }
+          });
+
+          // Extra capa: si es anónimo, también limitamos por IP
+          if (!userId) {
+             const ipUsage = await tx.usage.findUnique({
+                where: { fingerprint: ipIdentifier }
+             });
+             if (ipUsage && ipUsage.totalAnalyses >= 1) {
+                throw new Error("FREE_LIMIT_REACHED");
+             }
+          }
+
+          if (usage.totalAnalyses >= 1) {
+            throw new Error("FREE_LIMIT_REACHED");
+          }
+
+          await tx.usage.update({
+            where: { fingerprint: limitIdentifier },
+            data: { totalAnalyses: { increment: 1 } }
+          });
+          
+          if (!userId) {
+             await tx.usage.upsert({
+                where: { fingerprint: ipIdentifier },
+                update: { totalAnalyses: { increment: 1 } },
+                create: { fingerprint: ipIdentifier, planType: "FREE", totalAnalyses: 1 }
+             });
+          }
+        }, { isolationLevel: 'Serializable' });
+        usageReserved = true;
+      } catch (error) {
+        if (error instanceof Error && error.message === "FREE_LIMIT_REACHED") {
+          return NextResponse.json({ 
+            error: 'Has alcanzado el límite de análisis gratuitos. Regístrate o suscríbete para continuar.',
+            code: 'FREE_LIMIT_REACHED'
+          }, { status: 403 });
+        }
+        throw error;
+      }
     }
 
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
     
-    // 1. Análisis Bioacústico Completo Unificado (Usa Whisper, Pitch y RMS validado)
     const result = await analyzeVoiceUseCase({
       audioBuffer,
       audioFileName: audioFile.name,
@@ -69,9 +110,8 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    // 2. Ejecutar Caso de Uso del Motor de Coaching Adaptativo
-    const userState = await CoachingRepository.getUserCoachingState(visitorId);
-    const sessionHistory = await CoachingRepository.getUserSessionHistory(visitorId);
+    const userState = await CoachingRepository.getUserCoachingState(limitIdentifier);
+    const sessionHistory = await CoachingRepository.getUserSessionHistory(limitIdentifier);
 
     const coachingOutput = diagnoseAndPrescribeUseCase({
       userState,
@@ -80,18 +120,16 @@ export async function POST(req: NextRequest) {
       authorityScore: result.authorityScore,
     });
 
-    // 3. Persistir Estado y Sesión
     await CoachingRepository.saveUserCoachingState(coachingOutput.updatedUserState);
     await CoachingRepository.saveCoachingSession(coachingOutput.session);
 
     const finalScore = coachingOutput.communicationProfile.overallIndex;
     const finalLevel = finalScore >= 75 ? "HIGH" : finalScore >= 50 ? "MEDIUM" : "LOW";
 
-    // 4. Guardar en PostgreSQL
     const simulateDbFailure = req.headers.get('x-simulate-db-failure') === 'true';
 
     const saveResult = await VoiceSessionStore.createSession({
-      userId: visitorId,
+      userId: userId || visitorId,
       transcription: result.transcription,
       transcriptionWithSilences: result.transcriptionWithSilences,
       wordsPerMinute: result.metrics.wordsPerMinute,
@@ -163,7 +201,7 @@ export async function POST(req: NextRequest) {
             primaryExercise: {
               title: coachingOutput.prescription.exerciseTitle,
               explanation: coachingOutput.prescription.rationale,
-                instruction: coachingOutput.prescription.instruction,
+              instruction: coachingOutput.prescription.instruction,
               customRoute: coachingOutput.prescription.customRoute,
             }
           },
@@ -175,6 +213,22 @@ export async function POST(req: NextRequest) {
 
   } catch (error: unknown) {
     console.error('[ANALYSIS] Error:', error);
+    
+    // ROLLBACK USAGE ON ERROR
+    if (usageReserved) {
+      try {
+        const identifiers = [limitIdentifier];
+        if (ipIdentifier) identifiers.push(ipIdentifier);
+        
+        await prisma.usage.updateMany({
+          where: { fingerprint: { in: identifiers } },
+          data: { totalAnalyses: { decrement: 1 } }
+        });
+      } catch (rollbackError) {
+        console.error("[ANALYSIS] Failed to rollback usage:", rollbackError);
+      }
+    }
+
     const message = error instanceof Error ? error.message : '';
     const noSpeechDetected = message.includes('No se detectó habla en la grabación')
       || message.includes('Whisper no detectó ningún contenido de audio');
@@ -186,7 +240,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // No exponer detalles internos de servicios o infraestructura al cliente.
     return NextResponse.json({ error: 'Error procesando el audio. Inténtalo nuevamente.' }, { status: 500 });
   }
 }
