@@ -94,7 +94,10 @@ export async function analyzePitch(
 
     // Detectar F0 con YIN (bueno para estimación de voz)
     console.log('[PITCH] Detecting frequencies...');
-    const detectPitch = YIN({ sampleRate });
+    // El umbral por defecto (0.1) estaba admitiendo mínimos espurios de retardo
+    // muy corto en señales de voz; eso producía F0 > 500 Hz y descartaba toda la muestra.
+    // El umbral más estricto se valida con señales sintéticas y debe calibrarse con voz real.
+    const detectPitch = YIN({ sampleRate, threshold: 0.01 });
     
     // YIN devuelve un detector que procesa un buffer y devuelve una frecuencia
     // Necesitamos procesar el audio en ventanas para obtener un array de frecuencias
