@@ -49,6 +49,7 @@ interface AnalysisResultData {
       primaryExercise: {
         title: string;
         explanation: string;
+        instruction: string;
         customRoute: string;
       };
     };
