@@ -21,9 +21,9 @@ export type VoiceMetrics = {
   pitchRange?: number | null; 
 
   // 🌈 Métricas Espectrales (Timbre)
-  spectralBand1Score?: number; 
-  spectralBand2Score?: number; 
-  spectralBand3Score?: number; 
+  spectralBand1Score?: number | null;
+  spectralBand2Score?: number | null;
+  spectralBand3Score?: number | null; 
 };
 
 type TranscriptionSegment = {
