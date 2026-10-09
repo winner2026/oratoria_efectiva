@@ -47,9 +47,9 @@ function fft(input: Float32Array): Float32Array {
 
 // Enfoque robusto: Filtros Simples.
 type SpectralMetrics = {
-  spectralBand1Score: number; // 0-100 (150Hz dominante - Banda baja)
-  spectralBand2Score: number; // 0-100 (500Hz dominante - Banda media)
-  spectralBand3Score: number; // 0-100 (3000Hz dominante - Banda alta)
+  spectralBand1Score: number | null; // Índice heurístico de energía en banda baja; null si no medible
+  spectralBand2Score: number | null; // Índice heurístico de energía en banda media; null si no medible
+  spectralBand3Score: number | null; // Índice heurístico de energía en banda alta; null si no medible
 };
 
 export function calculateRMSStability(
@@ -121,6 +121,19 @@ export function calculateRMSStability(
 export function analyzeSpectralCharacteristics(float32Audio: Float32Array, sampleRate: number = 44100): SpectralMetrics {
   const windowSize = 2048;
   const numWindows = 30;
+
+  // Rechazar silencio digital/entrada esencialmente vacía en vez de puntuarlo.
+  let peakAbs = 0;
+  for (const sample of float32Audio) {
+    if (!Number.isFinite(sample)) {
+      return { spectralBand1Score: null, spectralBand2Score: null, spectralBand3Score: null };
+    }
+    const absSample = Math.abs(sample);
+    if (absSample > peakAbs) peakAbs = absSample;
+  }
+  if (float32Audio.length < windowSize || peakAbs < 1e-4) {
+    return { spectralBand1Score: null, spectralBand2Score: null, spectralBand3Score: null };
+  }
   const step = Math.floor(float32Audio.length / numWindows);
   
   let totalChestEnergy = 0;
@@ -143,7 +156,7 @@ export function analyzeSpectralCharacteristics(float32Audio: Float32Array, sampl
     windowsProcessed++;
   }
 
-  if (windowsProcessed === 0) return { spectralBand1Score: 0, spectralBand2Score: 0, spectralBand3Score: 0 };
+  if (windowsProcessed === 0) return { spectralBand1Score: null, spectralBand2Score: null, spectralBand3Score: null };
 
   const avgChest = totalChestEnergy / windowsProcessed;
   const avgNasal = totalNasalEnergy / windowsProcessed;
