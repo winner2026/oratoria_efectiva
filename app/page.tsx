@@ -21,7 +21,7 @@ export default function Home() {
         <nav className="hidden md:flex gap-6 items-center text-sm font-semibold uppercase tracking-wider text-slate-400">
           <Link href="/voz_efectiva" className="hover:text-white transition-colors">Diagnóstico Gratuito</Link>
           <Link href="/sin_miedo_a_hablar" className="hover:text-white transition-colors">Curso Intensivo</Link>
-          <a href="https://www.youtube.com/@oratoriaefectiva" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-red-500 transition-colors">
+          <a href="https://www.youtube.com/@oratoria_efectiva" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-red-500 transition-colors">
             <span className="material-symbols-outlined text-xl">play_circle</span>
             YouTube
           </a>
@@ -50,7 +50,7 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
           <a 
-            href="https://www.youtube.com/@oratoriaefectiva" 
+            href="https://www.youtube.com/@oratoria_efectiva" 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-600/20"
