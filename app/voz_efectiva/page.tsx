@@ -95,8 +95,10 @@ export default function DiagnosticoGratuitoPage() {
       body: JSON.stringify({ eventType: 'diagnostic_started', source: 'youtube_cta' }),
     }).catch(() => {});
 
+    let microphoneStream: MediaStream | null = null;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      microphoneStream = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
 
@@ -174,9 +176,13 @@ export default function DiagnosticoGratuitoPage() {
         });
       }, 1000);
     } catch (err) {
-      console.warn("Microphone access unavailable or blocked. Generating synthetic audio sample for verification...", err);
-      // Fallback for automated environments: generate real audio WAV Blob
-      generateFallbackAudioAndAnalyze();
+      console.warn("Microphone access unavailable or blocked.", err);
+      microphoneStream?.getTracks().forEach((track) => track.stop());
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
+      setIsRecording(false);
+      setIsAnalyzing(false);
+      setErrorMessage("No se pudo acceder al micrófono. Habilita el permiso del navegador y vuelve a intentarlo.");
     }
   };
 
