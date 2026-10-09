@@ -14,8 +14,8 @@ export type DiagnoseAndPrescribeInput = {
     avgPauseDuration: number;
     pauseCount: number;
     fillerCount: number;
-    pitchVariation: number;
-    energyStability: number;
+    pitchVariation: number | null;
+    energyStability: number | null;
   };
   authorityScore: {
     score: number;
