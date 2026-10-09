@@ -133,9 +133,20 @@ export async function POST(req: NextRequest) {
       },
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[ANALYSIS] Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Error procesando el audio.';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    const message = error instanceof Error ? error.message : '';
+    const noSpeechDetected = message.includes('No se detectó habla en la grabación')
+      || message.includes('Whisper no detectó ningún contenido de audio');
+
+    if (noSpeechDetected) {
+      return NextResponse.json(
+        { error: 'No se detectó habla en la grabación. Asegúrate de hablar claramente y revisa tu micrófono.', code: 'NO_SPEECH_DETECTED' },
+        { status: 422 }
+      );
+    }
+
+    // No exponer detalles internos de servicios o infraestructura al cliente.
+    return NextResponse.json({ error: 'Error procesando el audio. Inténtalo nuevamente.' }, { status: 500 });
   }
 }
