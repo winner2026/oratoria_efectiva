@@ -131,6 +131,7 @@ export async function POST(req: NextRequest) {
             primaryExercise: {
               title: coachingOutput.prescription.exerciseTitle,
               explanation: coachingOutput.prescription.rationale,
+                instruction: coachingOutput.prescription.instruction,
               customRoute: coachingOutput.prescription.customRoute,
             }
           },

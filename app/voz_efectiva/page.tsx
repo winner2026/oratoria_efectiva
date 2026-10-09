@@ -637,7 +637,7 @@ export default function DiagnosticoGratuitoPage() {
                     Tu misión de hoy · 3 minutos
                   </span>
                   <p className="text-xs font-semibold text-slate-950 leading-relaxed">
-                    Lee un párrafo en voz alta. Antes de la idea más importante, haz una pausa breve de 2 segundos y continúa con firmeza.
+                    {analysisResult.coaching.prescription.primaryExercise.instruction}
                   </p>
                 </div>
 
