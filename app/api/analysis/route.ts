@@ -12,7 +12,7 @@ import { VoiceSessionStore } from '@/infrastructure/db/voiceSessionStore';
 // 🛑 PURE SIGNAL ANALYSIS (NO AI)
 async function performTechnicalAnalysis(audioBuffer: Buffer) {
     try {
-        const float32Audio = await decodeAudio(audioBuffer);
+        const { audio: float32Audio } = await decodeAudio(audioBuffer);
         const spectral = analyzeSpectralCharacteristics(float32Audio);
         
         // 1. Duración
@@ -107,11 +107,11 @@ async function performTechnicalAnalysis(audioBuffer: Buffer) {
                 avgPauseDuration: pauseCount > 0 ? 0.8 : 0.2,
                 pauseCount: pauseCount,
                 fillerCount: estimatedWpm > 165 ? 4 : 1,
-                pitchVariation: spectral.brightnessScore / 100,
+                pitchVariation: spectral.spectralBand1Score / 100,
                 energyStability: stabilityScore / 100,
-                nasalityScore: spectral.nasalityScore,
-                brightnessScore: spectral.brightnessScore,
-                depthScore: spectral.depthScore,
+                nasalityScore: spectral.spectralBand2Score,
+                brightnessScore: spectral.spectralBand1Score,
+                depthScore: spectral.spectralBand3Score,
             },
             authorityScore: {
                 level: stabilityScore >= 75 ? "HIGH" : stabilityScore >= 50 ? "MEDIUM" : "LOW",
@@ -123,7 +123,7 @@ async function performTechnicalAnalysis(audioBuffer: Buffer) {
             feedback: {
                 diagnostico,
                 score_seguridad: stabilityScore,
-                score_claridad: spectral.brightnessScore,
+                score_claridad: spectral.spectralBand1Score,
                 score_estructura: 100 - (pauseCount > 5 ? 20 : 0),
                 rephrase_optimized: "Análisis basado en métricas físicas de frecuencia y amplitud.",
                 lo_que_suma: ["Presión constante", "Tono audible"],

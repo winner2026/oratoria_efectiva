@@ -75,11 +75,11 @@ export async function analyzeVoiceUseCase({
   let rmsStability: number | null = null; // No fabricamos un valor por defecto (ni 0.5 ni 0)
 
   try {
-    const float32Audio = await decodeAudio(audioBuffer);
+    const { audio: float32Audio, sampleRate } = await decodeAudio(audioBuffer);
     spectralMetrics = analyzeSpectralCharacteristics(float32Audio);
     
     // Pasamos los segmentos de Whisper para el cruce VAD híbrido
-    rmsStability = calculateRMSStability(float32Audio, 44100, transcriptionResult.segments);
+    rmsStability = calculateRMSStability(float32Audio, sampleRate, transcriptionResult.segments);
     
     console.log('[ANALYZE] Spectral Metrics:', spectralMetrics);
     console.log('[ANALYZE] Intensity Consistency (RMS):', rmsStability);

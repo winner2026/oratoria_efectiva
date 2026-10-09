@@ -4,7 +4,7 @@ import { TrainingPrescription, prescribeTraining } from './TrainingPrescription'
 import { UserCoachingState } from './TrainingPlan';
 import { DiagnosticProfile } from './DiagnosticProfile';
 import { VoiceMetrics } from '../voice/VoiceMetrics';
-import { ADSOutput } from '../../infrastructure/openai/authorityAnalyst';
+import { ADSOutput } from '../authority/ADS/types';
 
 export type AdaptiveNextStep = {
   nextFocus: string;
@@ -78,7 +78,7 @@ export function determineAdaptiveNextStep(
 
   // En un MVP real generaríamos una 'TrainingPrescription' completa basada en 'recommendedExerciseId'
   let prescription = prescribeTraining(latestDiagnostic); // Fallback old prescriber
-  prescription.title = `Misión: ${nextFocus}`;
+  prescription.exerciseTitle = `Misión: ${nextFocus}`;
   prescription.rationale = reasoning;
 
   // Progresión de curriculum (simplificada)
