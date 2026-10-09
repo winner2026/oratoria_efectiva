@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { convertBlobToWav } from "@/lib/audio/browserWav";
 
 interface MetricExplanation {
   title: string;
@@ -187,41 +188,79 @@ export default function DiagnosticoGratuitoPage() {
   };
 
   const stopRecordingAndAnalyze = async () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     if (audioCtxRef.current) {
       audioCtxRef.current.close().catch(() => {});
+      audioCtxRef.current = null;
     }
 
     setIsRecording(false);
-
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop();
-      // Stop all tracks
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-    }
-
     setIsAnalyzing(true);
 
-    // Wait short moment for last data chunk
-    setTimeout(async () => {
-      const recordedType = mediaRecorderRef.current?.mimeType || 'audio/webm';
-      const audioBlob = new Blob(audioChunksRef.current, { type: recordedType });
-      await sendAudioToApi(audioBlob);
-    }, 400);
+    const recorder = mediaRecorderRef.current;
+    if (!recorder) {
+      setIsAnalyzing(false);
+      setErrorMessage("No se encontró la grabación. Vuelve a intentarlo.");
+      return;
+    }
+
+    try {
+      // Esperamos el evento "stop": MediaRecorder entrega el último chunk mediante
+      // "dataavailable" antes de "stop". No dependemos de un timeout fijo.
+      const recordedBlob = await new Promise<Blob>((resolve, reject) => {
+        const finalizeRecording = () => {
+          resolve(new Blob(audioChunksRef.current, {
+            type: recorder.mimeType || "audio/webm",
+          }));
+        };
+
+        if (recorder.state === "inactive") {
+          finalizeRecording();
+          return;
+        }
+
+        recorder.addEventListener("stop", finalizeRecording, { once: true });
+        recorder.addEventListener(
+          "error",
+          () => reject(new Error("El navegador no pudo finalizar la grabación.")),
+          { once: true },
+        );
+
+        try {
+          recorder.stop();
+          recorder.stream.getTracks().forEach((track) => track.stop());
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error("No se pudo finalizar la grabación."));
+        }
+      });
+
+      await sendAudioToApi(recordedBlob);
+    } catch (error) {
+      console.error("[AUDIO] Error al finalizar la grabación:", error);
+      setErrorMessage(error instanceof Error ? error.message : "No se pudo finalizar la grabación.");
+      setIsAnalyzing(false);
+    }
   };
 
   const sendAudioToApi = async (audioBlob: Blob) => {
     try {
-      const formData = new FormData();
-      const audioExtension = audioBlob.type.includes('wav') ? 'wav'
-        : audioBlob.type.includes('mp4') ? 'mp4'
-        : audioBlob.type.includes('mp3') ? 'mp3'
-        : 'webm';
-      formData.append('audio', audioBlob, `grabacion-oratoria.${audioExtension}`);
+      // Convierte WebM/MP4 al formato WAV PCM16 en el dispositivo del usuario.
+      // La API recibe WAV directamente y no necesita FFmpeg para este paso.
+      const wavBlob = await convertBlobToWav(audioBlob);
+      if (wavBlob.size <= 44 || wavBlob.type !== "audio/wav") {
+        throw new Error("La grabación convertida no contiene audio WAV válido. Vuelve a grabar.");
+      }
 
-      const res = await fetch('/api/analysis', {
-        method: 'POST',
+      console.info(`[AUDIO] WAV preparado en el navegador: ${wavBlob.size} bytes.`);
+      const formData = new FormData();
+      formData.append("audio", wavBlob, "grabacion-voz-efectiva.wav");
+
+      const res = await fetch("/api/analysis", {
+        method: "POST",
         body: formData,
       });
 
@@ -229,11 +268,18 @@ export default function DiagnosticoGratuitoPage() {
       if (json.success && json.data) {
         setAnalysisResult(json.data);
       } else {
-        setErrorMessage(json.error || 'No se pudo procesar el análisis de voz.');
+        setErrorMessage(json.error || "No se pudo procesar el análisis de voz.");
       }
     } catch (err) {
-      console.error("Error enviando audio a /api/analysis:", err);
-      setErrorMessage("Error de conexión al servidor durante el análisis.");
+      console.error("Error preparando o enviando el audio a /api/analysis:", err);
+      if (err instanceof Error && (
+        err.message.startsWith("No se pudo preparar el audio") ||
+        err.message.startsWith("Este navegador no permite")
+      )) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage("No se pudo preparar o enviar la grabación. Comprueba la conexión y vuelve a intentarlo.");
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -254,7 +300,7 @@ export default function DiagnosticoGratuitoPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
           </span>
-          DIAGNÓSTICO VOCAL DE 15 SEGUNDOS
+          VOZ EFECTIVA · DIAGNÓSTICO DE 15 SEGUNDOS
         </div>
 
         {/* Headlines */}

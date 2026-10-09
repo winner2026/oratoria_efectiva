@@ -14,7 +14,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "echo \"No tests yet\"",
-    "test:audio-metrics": "tsx scripts/verifyAudioMetrics.ts"
+    "test:audio-metrics": "tsx scripts/verifyAudioMetrics.ts",
+    "test:browser-wav": "tsx scripts/verifyBrowserWav.ts"
   },
   "keywords": [],
   "author": "",

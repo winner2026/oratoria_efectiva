@@ -1,4 +1,4 @@
-name: VocalGym audio validation
+name: Voz Efectiva audio validation
 
 on:
   push:
@@ -11,6 +11,9 @@ on:
       - 'src/infrastructure/audio/**'
       - 'src/domain/voice/VoiceMetrics.ts'
       - 'src/application/analyzeVoice/analyzeVoiceUseCase.ts'
+      - 'src/lib/audio/**'
+      - 'app/voz_efectiva/page.tsx'
+      - 'scripts/verifyBrowserWav.ts'
       - 'scripts/verifyAudioMetrics.ts'
       - 'package.json'
       - 'package-lock.json'
@@ -36,5 +39,7 @@ jobs:
         run: npm ci
       - name: Run six synthetic audio tests
         run: npm run test:audio-metrics
+      - name: Verify browser WAV PCM encoder
+        run: npm run test:browser-wav
       - name: Check TypeScript
         run: npx tsc --noEmit
