@@ -205,7 +205,8 @@ export default function DiagnosticoGratuitoPage() {
 
     // Wait short moment for last data chunk
     setTimeout(async () => {
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      const recordedType = mediaRecorderRef.current?.mimeType || 'audio/webm';
+      const audioBlob = new Blob(audioChunksRef.current, { type: recordedType });
       await sendAudioToApi(audioBlob);
     }, 400);
   };
