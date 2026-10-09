@@ -71,12 +71,12 @@ export async function analyzeVoiceUseCase({
 
   // 4. Analizar Timbre Espectral y RMS 🌈
   console.log('[ANALYZE] Analyzing spectral characteristics and RMS...');
-  let spectralMetrics = { spectralBand1Score: 0, spectralBand2Score: 0, spectralBand3Score: 0 }; // Default
+  let spectralMetrics = { spectralBand1Score: null as number | null, spectralBand2Score: null as number | null, spectralBand3Score: null as number | null }; // Sin resultado no se inventa puntuación
   let rmsStability: number | null = null; // No fabricamos un valor por defecto (ni 0.5 ni 0)
 
   try {
     const { audio: float32Audio, sampleRate } = await decodeAudio(audioBuffer);
-    spectralMetrics = analyzeSpectralCharacteristics(float32Audio);
+    spectralMetrics = analyzeSpectralCharacteristics(float32Audio, sampleRate);
     
     // Pasamos los segmentos de Whisper para el cruce VAD híbrido
     rmsStability = calculateRMSStability(float32Audio, sampleRate, transcriptionResult.segments);
