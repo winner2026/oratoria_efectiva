@@ -47,38 +47,94 @@ function fft(input: Float32Array): Float32Array {
 
 // Enfoque robusto: Filtros Simples.
 type SpectralMetrics = {
-  nasalityScore: number; // 0-100 (500Hz dominante = Nasal/Opaco)
-  brightnessScore: number; // 0-100 (3000Hz dominante = Proyección/Claridad)
-  depthScore: number;    // 0-100 (150Hz fuerte = Cuerpo/Profundidad/Autoridad)
+  spectralBand1Score: number; // 0-100 (150Hz dominante - Banda baja)
+  spectralBand2Score: number; // 0-100 (500Hz dominante - Banda media)
+  spectralBand3Score: number; // 0-100 (3000Hz dominante - Banda alta)
 };
 
+export function calculateRMSStability(
+  float32Audio: Float32Array, 
+  sampleRate: number = 44100,
+  segments: { start: number, end: number }[] = []
+): number | null {
+  // Ventana dinámica de 100ms según sampleRate real
+  const windowSize = Math.floor(sampleRate * 0.1);
+  const rmsWindows: { startTime: number, endTime: number, rms: number }[] = [];
+  
+  let peakRms = 0.001; 
+  
+  for (let i = 0; i < float32Audio.length; i += windowSize) {
+    const currentWindowSize = Math.min(windowSize, float32Audio.length - i);
+    let sumSq = 0;
+    for (let j = 0; j < currentWindowSize; j++) {
+      sumSq += float32Audio[i + j] * float32Audio[i + j];
+    }
+    const rms = Math.sqrt(sumSq / currentWindowSize);
+    if (rms > peakRms) peakRms = rms;
+    
+    // Calcular tiempo exacto de la ventana, incluso la última parcial
+    const startTime = i / sampleRate;
+    const endTime = (i + currentWindowSize) / sampleRate;
+    
+    rmsWindows.push({ startTime, endTime, rms });
+  }
+
+  // Filtrar (VAD Híbrido)
+  const noiseThreshold = peakRms * 0.05; 
+  
+  const validSegments = segments.filter(seg => 
+    Number.isFinite(seg.start) && 
+    Number.isFinite(seg.end) && 
+    seg.start >= 0 &&
+    seg.end > seg.start
+  );
+  
+  // Sin evidencia temporal válida (Whisper no detectó habla o falló), no calcular la consistencia
+  if (validSegments.length === 0) {
+    return null;
+  }
+  
+  const voiceRms = rmsWindows.filter(w => {
+    if (w.rms <= noiseThreshold) return false;
+    
+    // Cruce real de intervalos (Ventana exacta vs Segmento ampliado por 100ms)
+    // Solapamiento: w.startTime <= seg.end && w.endTime >= seg.start
+    return validSegments.some(seg => 
+      w.startTime <= (seg.end + 0.1) && 
+      w.endTime >= (seg.start - 0.1)
+    );
+  });
+  
+  if (voiceRms.length < 3) return null; // Insuficiente evidencia de voz continua
+
+  const meanRms = voiceRms.reduce((sum, w) => sum + w.rms, 0) / voiceRms.length;
+  const variance = voiceRms.reduce((sum, w) => sum + Math.pow(w.rms - meanRms, 2), 0) / voiceRms.length;
+  
+  const stdDev = Math.sqrt(variance);
+  const cv = stdDev / meanRms;
+  
+  const stability = Math.max(0, 1 - (cv * 0.5)); 
+  
+  return Number(stability.toFixed(2));
+}
+
 export function analyzeSpectralCharacteristics(float32Audio: Float32Array, sampleRate: number = 44100): SpectralMetrics {
-  // Analizar ventanas representativas
   const windowSize = 2048;
-  const numWindows = 30; // Más muestras para mayor precisión
+  const numWindows = 30;
   const step = Math.floor(float32Audio.length / numWindows);
   
-  let totalChestEnergy = 0;   // ~150 Hz (Profundidad/Cuerpo)
-  let totalNasalEnergy = 0;   // ~500 Hz (Nasalidad/Boxiness)
-  let totalPresenceEnergy = 0; // ~3000 Hz (Brillo/Articulación)
+  let totalChestEnergy = 0;
+  let totalNasalEnergy = 0;
+  let totalPresenceEnergy = 0;
 
   let windowsProcessed = 0;
 
   for (let i = 0; i < Math.min(float32Audio.length - windowSize, numWindows * step); i += step) {
     const window = float32Audio.slice(i, i + windowSize);
-    
-    // Ventana Hanning
     const windowed = window.map((v, idx) => v * (0.5 * (1 - Math.cos(2 * Math.PI * idx / (windowSize - 1)))));
     
-    // Calcular Magnitud en bandas críticas
-    // 150Hz: Resonancia de pecho (Hombres ~100-150, Mujeres ~200. Usamos 180 como compromiso o detectamos pitch primero? 
-    // Usaremos 150Hz como ancla de sub-graves vocales)
     const chestMag = calculateMagnitudeAtFreq(windowed, 150, sampleRate);
-    
-    // 500Hz: La zona "muerta" o nasal
     const nasalMag = calculateMagnitudeAtFreq(windowed, 500, sampleRate);
-    
-    // 3000Hz: El "Singer's Formant" / Presencia
     const presenceMag = calculateMagnitudeAtFreq(windowed, 3000, sampleRate);
     
     totalChestEnergy += chestMag;
@@ -87,56 +143,39 @@ export function analyzeSpectralCharacteristics(float32Audio: Float32Array, sampl
     windowsProcessed++;
   }
 
-  if (windowsProcessed === 0) return { nasalityScore: 0, brightnessScore: 0, depthScore: 0 };
+  if (windowsProcessed === 0) return { spectralBand1Score: 0, spectralBand2Score: 0, spectralBand3Score: 0 };
 
-  // Promedios
   const avgChest = totalChestEnergy / windowsProcessed;
   const avgNasal = totalNasalEnergy / windowsProcessed;
   const avgPresence = totalPresenceEnergy / windowsProcessed;
 
-  // Ratios Relativos (Acústica Comparativa)
-  // Evitamos división por cero sumando epsilon
   const epsilon = 0.0001;
   const totalSpecEnergy = avgChest + avgNasal + avgPresence + epsilon;
 
-  // Qué porcentaje de la energía "color" está en cada banda
-  const chestRatio = avgChest / totalSpecEnergy;      // Ideal: > 0.4 para voz profunda
-  const nasalRatio = avgNasal / totalSpecEnergy;      // Ideal: < 0.3 para voz limpia
-  const presenceRatio = avgPresence / totalSpecEnergy; // Ideal: > 0.2 para voz clara
+  const chestRatio = avgChest / totalSpecEnergy;
+  const nasalRatio = avgNasal / totalSpecEnergy;
+  const presenceRatio = avgPresence / totalSpecEnergy;
 
-  // SCORING (Heurística calibrada)
-  
-  // PROFUNDIDAD (DEPTH): Premia energía en graves, penaliza si es muy débil
-  // Rango típico chestRatio: 0.1 (fina) a 0.6 (muy profunda)
   let depth = (chestRatio - 0.2) * 200; 
-  depth = Math.max(10, Math.min(95, depth)); // Clamp 10-95
+  depth = Math.max(10, Math.min(95, depth));
 
-  // NASALIDAD: Premia (negativamente) si los medios dominan
-  // Rango típico nasalRatio: 0.2 (limpia) a 0.7 (muy nasal)
   let nasality = (nasalRatio - 0.3) * 200;
   nasality = Math.max(5, Math.min(90, nasality));
 
-  // BRILLO/PRESENCIA: 
-  // Rango típico presenceRatio: 0.05 (oscura) a 0.3 (brillante)
   let brightness = (presenceRatio - 0.05) * 300;
   brightness = Math.max(10, Math.min(95, brightness));
 
-  // Ajuste fino: Si el volumen general es muy bajo (silencio), bajar scores
-  // (Omitido por simplicidad, asumimos audio normalizado o VAD previo)
-
   return {
-    nasalityScore: Math.round(nasality),
-    brightnessScore: Math.round(brightness),
-    depthScore: Math.round(depth)
+    spectralBand1Score: Math.round(depth),
+    spectralBand2Score: Math.round(nasality),
+    spectralBand3Score: Math.round(brightness)
   };
 }
 
-// Algoritmo Goertzel simplificado para magnitud en frecuencia específica
 function calculateMagnitudeAtFreq(buffer: Float32Array | number[], freq: number, sampleRate: number): number {
   const k = Math.round(0.5 + (buffer.length * freq) / sampleRate);
   const w = (2 * Math.PI * k) / buffer.length;
   const cosine = Math.cos(w);
-  const sine = Math.sin(w);
   const coeff = 2 * cosine;
   
   let q1 = 0;
@@ -148,6 +187,5 @@ function calculateMagnitudeAtFreq(buffer: Float32Array | number[], freq: number,
     q1 = q0;
   }
   
-  const magnitude = Math.sqrt(q1 * q1 + q2 * q2 - q1 * q2 * coeff);
-  return magnitude;
+  return Math.sqrt(q1 * q1 + q2 * q2 - q1 * q2 * coeff);
 }

@@ -1,56 +1,38 @@
 import { prisma } from "@/infrastructure/db/client";
 import HistoryView from "./HistoryView";
-import { headers } from "next/headers";
-import { 
-  getClientIP, 
-  normalizeUserAgent, 
-  generateFingerprint 
-} from "@/lib/fingerprint/generateFingerprint";
+import { getOrCreateVisitorIdServer } from "@/lib/auth/visitorIdentity";
+import { VoiceSessionStore } from "@/infrastructure/db/voiceSessionStore";
 
 export default async function HistoryPage() {
-  const headersList = await headers();
-  
-  // Generar fingerprint en el servidor para identificar al usuario de forma anónima
-  const ip = getClientIP(headersList);
-  const userAgent = normalizeUserAgent(headersList.get('user-agent'));
-  const fingerprint = generateFingerprint(null, ip, userAgent);
+  // Obtener la identidad del visitante garantizada por cookie firmada HttpOnly
+  const { visitorId } = await getOrCreateVisitorIdServer();
 
-  console.log(`[HISTORY] Fetching sessions for fingerprint: ${fingerprint}`);
+  console.log(`[HISTORY] Fetching sessions for visitorId: ${visitorId}`);
 
-  // Obtener sesiones reales de la base de datos
-  const sessions = await prisma.voiceSession.findMany({
-    where: {
-      userId: fingerprint
-    },
-    orderBy: {
-      createdAt: 'desc'
-    },
-    take: 15
-  });
+  let serializedSessions: any[] = [];
+  let videos: any[] = [];
+  let books: any[] = [];
 
-  // Convertir Decimal de Prisma a Number para evitar problemas de serialización
-  const serializedSessions = sessions.map(s => ({
-    ...s,
-    avgPauseDuration: Number(s.avgPauseDuration),
-    pitchVariation: Number(s.pitchVariation),
-    energyStability: Number(s.energyStability),
-    durationSeconds: Number(s.durationSeconds),
-    createdAt: s.createdAt.toISOString()
-  }));
+  try {
+    // Obtener sesiones reales de la base de datos aisladas estrictamente por visitorId
+    serializedSessions = await VoiceSessionStore.getSessionsByVisitor(visitorId);
 
-  const videos = await prisma.resource.findMany({
-    where: {
-      type: "VIDEO"
-    },
-    take: 6
-  });
+    try {
+      videos = await prisma.resource.findMany({
+        where: { type: "VIDEO" },
+        take: 6
+      });
 
-  const books = await prisma.resource.findMany({
-    where: {
-      type: "BOOK"
-    },
-    take: 6
-  });
+      books = await prisma.resource.findMany({
+        where: { type: "BOOK" },
+        take: 6
+      });
+    } catch (resourceErr) {
+      // Ignore if resources table is empty in dev
+    }
+  } catch (err) {
+    console.warn("[HISTORY] Database query error:", err);
+  }
 
-  return <HistoryView videos={videos} books={books} sessions={serializedSessions as any} />;
+  return <HistoryView videos={videos} books={books} sessions={serializedSessions} />;
 }

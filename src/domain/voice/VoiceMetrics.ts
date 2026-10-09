@@ -3,8 +3,8 @@ export type VoiceMetrics = {
   avgPauseDuration: number;
   pauseCount: number;
   fillerCount: number;
-  pitchVariation: number;
-  energyStability: number;
+  pitchVariation: number | null;
+  energyStability: number | null;
 
   // 🆕 Métricas mejoradas sin costo adicional
   repetitionCount: number; // palabras/frases repetidas innecesariamente
@@ -16,14 +16,14 @@ export type VoiceMetrics = {
   rhythmConsistency: number; // qué tan consistente es el ritmo (0-1)
   
   // 🎵 Métricas de Entonación (Pitch)
-  fallingIntonationScore?: number; // % de frases con tono descendente (Seguridad)
-  meanPitch?: number; // Hz
-  pitchRange?: number; // Hz
+  fallingIntonationScore?: number | null; 
+  meanPitch?: number | null; 
+  pitchRange?: number | null; 
 
   // 🌈 Métricas Espectrales (Timbre)
-  nasalityScore?: number; // 0-100 (Alto = Nasal/Opaco)
-  brightnessScore?: number; // 0-100 (Alto = Claro/Brillante)
-  depthScore?: number;    // 0-100 (Alto = Voz Profunda/Cuerpo)
+  spectralBand1Score?: number; 
+  spectralBand2Score?: number; 
+  spectralBand3Score?: number; 
 };
 
 type TranscriptionSegment = {
@@ -183,20 +183,9 @@ export function extractMetrics(
   // 🔥 MEJORA #2: Variabilidad del ritmo y consistencia
   const { paceVariability, rhythmConsistency } = calculatePaceVariability(segments);
 
-  // Variación de tono estimada (basada en variación de duración de segmentos)
-  const segmentDurations = segments.map(s => s.end - s.start);
-  const avgDuration = segmentDurations.reduce((a, b) => a + b, 0) / segmentDurations.length;
-  const variance = segmentDurations.reduce((sum, d) => sum + Math.pow(d - avgDuration, 2), 0) / segmentDurations.length;
-  const pitchVariation = Math.sqrt(variance) / avgDuration;
-
-  // Estabilidad de energía (estimada por consistencia en longitud de texto por segmento)
-  const wordsPerSegment = segments.map(s => s.text.split(/\s+/).length);
-  const avgWordsPerSegment = wordsPerSegment.reduce((a, b) => a + b, 0) / wordsPerSegment.length;
-  const energyVariance = wordsPerSegment.reduce(
-    (sum, w) => sum + Math.pow(w - avgWordsPerSegment, 2),
-    0
-  ) / wordsPerSegment.length;
-  const energyStability = 1 / (1 + Math.sqrt(energyVariance));
+  // Estas métricas serán provistas por el análisis de audio (RMS y Pitch real)
+  const pitchVariation: number | null = null; 
+  const energyStability: number | null = null;
 
   // 🔥 MEJORA #4: Análisis de longitud de frases
   const { avgSentenceLength, longSentences } = analyzeSentenceLength(transcription);

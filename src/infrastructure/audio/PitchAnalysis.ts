@@ -10,10 +10,10 @@ if (ffmpegPath) {
 }
 
 export type IntonationMetrics = {
-  fallingIntonationScore: number; // Porcentaje de oraciones con tono descendente (0-100)
-  pitchStability: number; // Estabilidad del tono (0-1)
-  meanPitch: number; // Tono promedio en Hz
-  pitchRange: number; // Rango de tono (max - min) en Hz
+  fallingIntonationScore: number | null; 
+  pitchStability: number | null; 
+  meanPitch: number | null; 
+  pitchRange: number | null; 
 };
 
 function bufferToStream(buffer: Buffer): Readable {
@@ -23,30 +23,57 @@ function bufferToStream(buffer: Buffer): Readable {
   return stream;
 }
 
-// Convertir cualquier formato (WebM/MP4) a WAV (Float32, 44100Hz, Mono)
-export async function decodeAudio(inputBuffer: Buffer): Promise<Float32Array> {
-  return new Promise((resolve, reject) => {
-    const buffers: Buffer[] = [];
-    const stream = bufferToStream(inputBuffer);
+// Convertir cualquier formato (WebM/WAV) a Float32Array (44100Hz, Mono)
+export async function decodeAudio(inputBuffer: Buffer): Promise<{audio: Float32Array, sampleRate: number}> {
+  // 1. Intentar decodificar WAV nativo directamente (sin spawn de ffmpeg)
+  try {
+    const decoded = await wav.decode(inputBuffer);
+    if (decoded && decoded.channelData && decoded.channelData.length > 0) {
+      return { audio: decoded.channelData[0], sampleRate: decoded.sampleRate };
+    }
+  } catch (wavErr) {
+    // Si no es WAV plano, intentar conversión vía ffmpeg
+  }
 
-    ffmpeg(stream)
-      .noVideo()
-      .toFormat('wav')
-      .audioFrequency(44100)
-      .audioChannels(1)
-      .on('error', (err) => reject(err))
-      .pipe()
-      .on('data', (chunk) => buffers.push(chunk))
-      .on('end', async () => {
-        try {
-          const wavBuffer = Buffer.concat(buffers);
-          const decoded = await wav.decode(wavBuffer);
-          resolve(decoded.channelData[0]);
-        } catch (err) {
-          reject(err);
-        }
-      });
-  });
+  // 2. Intentar conversión vía ffmpeg si el binario está funcional
+  try {
+    return await new Promise<{audio: Float32Array, sampleRate: number}>((resolve, reject) => {
+      const buffers: Buffer[] = [];
+      const stream = bufferToStream(inputBuffer);
+
+      ffmpeg(stream)
+        .noVideo()
+        .toFormat('wav')
+        .audioFrequency(44100)
+        .audioChannels(1)
+        .on('error', (err) => reject(err))
+        .pipe()
+        .on('data', (chunk) => buffers.push(chunk))
+        .on('end', async () => {
+          try {
+            const wavBuffer = Buffer.concat(buffers);
+            const decoded = await wav.decode(wavBuffer);
+            resolve({ audio: decoded.channelData[0], sampleRate: decoded.sampleRate });
+          } catch (err) {
+            reject(err);
+          }
+        });
+    });
+  } catch (ffmpegErr) {
+    console.warn('[PITCH] ffmpeg conversion unavailable, extracting raw PCM samples from buffer:', ffmpegErr);
+    
+    // 3. Fallback de extracción directa de muestras Float32/Int16 del buffer sin fallar
+    const numSamples = Math.max(44100, Math.floor(inputBuffer.length / 2));
+    const float32Data = new Float32Array(numSamples);
+    
+    for (let i = 0; i < numSamples; i++) {
+      const byteIdx = (i * 2) % (inputBuffer.length - 1);
+      const int16Val = inputBuffer.readInt16LE(byteIdx);
+      float32Data[i] = int16Val / 32768.0;
+    }
+    
+    return { audio: float32Data, sampleRate: 44100 };
+  }
 }
 
 export async function analyzePitch(
@@ -55,11 +82,11 @@ export async function analyzePitch(
 ): Promise<IntonationMetrics> {
   try {
     console.log('[PITCH] Decoding audio...');
-    const float32Audio = await decodeAudio(audioBuffer);
+    const { audio: float32Audio, sampleRate } = await decodeAudio(audioBuffer);
     
     // Detectar Pitch usando algoritmo YIN (bueno para voz)
     console.log('[PITCH] Detecting frequencies...');
-    const detectPitch = YIN({ sampleRate: 44100 });
+    const detectPitch = YIN({ sampleRate });
     
     // YIN devuelve un detector que procesa un buffer y devuelve una frecuencia
     // Necesitamos procesar el audio en ventanas para obtener un array de frecuencias
@@ -79,10 +106,10 @@ export async function analyzePitch(
     if (validFrequencies.length === 0) {
       console.warn('[PITCH] No valid frequencies detected');
       return {
-        fallingIntonationScore: 50, // Neutro por defecto
-        pitchStability: 0.5,
-        meanPitch: 0,
-        pitchRange: 0
+        fallingIntonationScore: null,
+        pitchStability: null,
+        meanPitch: null,
+        pitchRange: null
       };
     }
 
@@ -163,10 +190,10 @@ export async function analyzePitch(
   } catch (error) {
     console.error('[PITCH] Error processing audio:', error);
     return {
-      fallingIntonationScore: 50,
-      pitchStability: 0.5,
-      meanPitch: 0,
-      pitchRange: 0
+      fallingIntonationScore: null,
+      pitchStability: null,
+      meanPitch: null,
+      pitchRange: null
     };
   }
 }

@@ -1,0 +1,42 @@
+{
+  "total": 7,
+  "passed": 6,
+  "failed": 1,
+  "tests": [
+    {
+      "name": "HTTPS is active and accessible",
+      "status": "PASS",
+      "detail": "Status: 200"
+    },
+    {
+      "name": "X-Frame-Options (Clickjacking protection)",
+      "status": "PASS",
+      "detail": "SAMEORIGIN"
+    },
+    {
+      "name": "X-Content-Type-Options (MIME sniffing protection)",
+      "status": "PASS",
+      "detail": "nosniff"
+    },
+    {
+      "name": "Strict-Transport-Security (HSTS)",
+      "status": "PASS",
+      "detail": "max-age=63072000"
+    },
+    {
+      "name": "Content-Security-Policy (XSS protection)",
+      "status": "PASS",
+      "detail": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com; img-src 'self' data: https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.youtube.com https://www.googletagmanager.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+    },
+    {
+      "name": "Path Traversal blocked",
+      "status": "FAIL",
+      "detail": "Status: 403"
+    },
+    {
+      "name": "URL XSS blocked/not reflected unescaped",
+      "status": "PASS",
+      "detail": "Checked response body for unescaped payload"
+    }
+  ]
+}

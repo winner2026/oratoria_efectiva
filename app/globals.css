@@ -4,7 +4,7 @@
 
 @layer base {
   html, body {
-    @apply h-full overflow-x-hidden bg-[#090810] text-slate-200 font-sans;
+    @apply h-full overflow-x-hidden bg-[#05070A] text-slate-200 font-sans;
     height: 100dvh; 
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@
 
   html {
     font-size: 16px;
-    background-color: #090810;
+    background-color: #05070A;
   }
   @media (max-width: 360px) {
     html {
@@ -26,33 +26,33 @@
 }
 
 @layer components {
-  /* n8n-Inspired Premium Theme System */
+  /* Víctor Studio Inspired Premium Theme System */
 
   /* Card base */
   .card, .n8n-card {
-    @apply bg-[#12101D]/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300;
+    @apply bg-[#090C10]/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300;
   }
 
   .n8n-card-active {
-    @apply bg-[#1C1830] border-brand-orange/40 shadow-[0_10px_35px_rgba(255,85,0,0.15)];
+    @apply bg-[#151B26] border-amber-500/40 shadow-[0_10px_35px_rgba(245,158,11,0.15)];
   }
 
   .n8n-card-hover {
-    @apply hover:border-white/20 hover:bg-[#181528] hover:-translate-y-0.5 transition-all duration-300;
+    @apply hover:border-white/20 hover:bg-[#151B26] hover:-translate-y-0.5 transition-all duration-300;
   }
 
   /* Buttons */
   .btn-primary, .n8n-btn-primary {
-    @apply bg-btn-gradient text-white font-bold px-7 py-3.5 rounded-full hover:bg-btn-gradient-hover shadow-glow-orange transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] inline-flex items-center justify-center gap-2 tracking-wide text-sm md:text-base;
+    @apply bg-btn-gradient text-white font-bold px-7 py-3.5 rounded-full hover:bg-btn-gradient-hover shadow-glow-amber transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] inline-flex items-center justify-center gap-2 tracking-wide text-sm md:text-base;
   }
 
   .btn-secondary, .n8n-btn-secondary {
-    @apply bg-[#181528]/90 border border-white/15 text-slate-200 font-semibold px-7 py-3.5 rounded-full hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] inline-flex items-center justify-center gap-2 text-sm md:text-base backdrop-blur-md;
+    @apply bg-[#151B26]/90 border border-white/15 text-slate-200 font-semibold px-7 py-3.5 rounded-full hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] inline-flex items-center justify-center gap-2 text-sm md:text-base backdrop-blur-md;
   }
 
   /* Input fields */
   .input-field {
-    @apply bg-[#161325] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-orange/60 focus:ring-1 focus:ring-brand-orange/60 transition-all;
+    @apply bg-[#0F141C] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/60 transition-all;
   }
 
   /* Badges & Pills */
@@ -61,7 +61,7 @@
   }
 
   .n8n-badge-highlight {
-    @apply bg-brand-orange/15 border-brand-orange/30 text-brand-orange;
+    @apply bg-amber-500/15 border-amber-500/30 text-amber-400;
   }
 
   .audio-player {
@@ -106,7 +106,7 @@
   /* Mesh Grid Background Overlay */
   .n8n-grid-bg {
     background-image: 
-      radial-gradient(circle at 50% 0%, rgba(157, 82, 255, 0.15) 0%, rgba(255, 85, 0, 0.08) 35%, rgba(9, 8, 16, 0) 70%),
+      radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.2) 0%, rgba(245, 158, 11, 0.12) 35%, rgba(5, 7, 10, 0) 70%),
       linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;

@@ -46,7 +46,7 @@ function buildTranscriptionWithSilences(
 }
 
 import { analyzePitch, decodeAudio } from '../../infrastructure/audio/PitchAnalysis';
-import { analyzeSpectralCharacteristics } from '../../infrastructure/audio/SpectralAnalysis';
+import { analyzeSpectralCharacteristics, calculateRMSStability } from '../../infrastructure/audio/SpectralAnalysis';
 
 export async function analyzeVoiceUseCase({
   audioBuffer,
@@ -58,7 +58,7 @@ export async function analyzeVoiceUseCase({
 
   // 2. Extraer métricas de texto
   console.log('[ANALYZE] Extracting text metrics...');
-  const textMetrics = extractMetrics(
+  let textMetrics = extractMetrics(
     transcriptionResult.text,
     transcriptionResult.segments,
     transcriptionResult.duration
@@ -69,16 +69,26 @@ export async function analyzeVoiceUseCase({
   const pitchMetrics = await analyzePitch(audioBuffer, transcriptionResult.segments);
   console.log('[ANALYZE] Pitch Metrics:', pitchMetrics);
 
-  // 4. Analizar Timbre Espectral (Nasalidad/Brillo) 🌈
-  console.log('[ANALYZE] Analyzing spectral characteristics...');
-  let spectralMetrics = { nasalityScore: 0, brightnessScore: 50, depthScore: 50 }; // Default
+  // 4. Analizar Timbre Espectral y RMS 🌈
+  console.log('[ANALYZE] Analyzing spectral characteristics and RMS...');
+  let spectralMetrics = { spectralBand1Score: 0, spectralBand2Score: 0, spectralBand3Score: 0 }; // Default
+  let rmsStability: number | null = null; // No fabricamos un valor por defecto (ni 0.5 ni 0)
+
   try {
     const float32Audio = await decodeAudio(audioBuffer);
     spectralMetrics = analyzeSpectralCharacteristics(float32Audio);
+    
+    // Pasamos los segmentos de Whisper para el cruce VAD híbrido
+    rmsStability = calculateRMSStability(float32Audio, 44100, transcriptionResult.segments);
+    
     console.log('[ANALYZE] Spectral Metrics:', spectralMetrics);
+    console.log('[ANALYZE] Intensity Consistency (RMS):', rmsStability);
   } catch (err) {
     console.warn('[ANALYZE] Failed to analyze spectral characteristics:', err);
   }
+
+  textMetrics.energyStability = rmsStability; // Mantenido fielmente (puede ser null)
+  textMetrics.pitchVariation = pitchMetrics.pitchRange; // Sustituir por rango real F0
 
   // Combinar (Sobrescribimos las métricas)
   const metrics: VoiceMetrics = {
