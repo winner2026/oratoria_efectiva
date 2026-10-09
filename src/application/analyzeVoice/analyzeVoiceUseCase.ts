@@ -5,6 +5,7 @@ import { AuthorityScore, buildAuthorityScore } from '../../domain/authority/Auth
 
 export type AnalyzeVoiceInput = {
   audioBuffer: Buffer;
+  audioFileName?: string;
   userId?: string;
   exerciseContext?: {
     id: string;
@@ -50,11 +51,12 @@ import { analyzeSpectralCharacteristics, calculateRMSStability } from '../../inf
 
 export async function analyzeVoiceUseCase({
   audioBuffer,
+  audioFileName,
   exerciseContext
 }: AnalyzeVoiceInput): Promise<AnalyzeVoiceResult> {
   // 1. Transcribir con segmentos (incluye muletillas y pausas)
   console.log('[ANALYZE] Transcribing audio...');
-  const transcriptionResult = await transcribeAudio(audioBuffer);
+  const transcriptionResult = await transcribeAudio(audioBuffer, audioFileName);
 
   if (!transcriptionResult.text || transcriptionResult.text.trim().length === 0 || transcriptionResult.segments.length === 0) {
     throw new Error('No se detectó habla en la grabación. Asegúrate de hablar claramente y revisa tu micrófono.');
