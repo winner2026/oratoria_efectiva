@@ -111,7 +111,11 @@ export class VoiceSessionStore {
       });
       return { persisted: true, databaseSessionId: dbSession.id, engine: 'prisma' };
     } catch (prismaErr) {
-      console.warn('[VoiceSessionStore] Prisma PostgreSQL unavailable. Falling back to PGLite persistent store...');
+      console.error('[VoiceSessionStore] PostgreSQL session persistence failed.', prismaErr);
+      if (process.env.NODE_ENV === 'production') {
+        return { persisted: false, databaseSessionId: null, engine: 'none' };
+      }
+      console.warn('[VoiceSessionStore] Falling back to local PGLite for development...');
     }
 
     // 2. Fallback a PGLite en disco (.pglite_data)
@@ -162,34 +166,33 @@ export class VoiceSessionStore {
    * Obtiene el historial de sesiones aisladas por visitorId
    */
   static async getSessionsByVisitor(visitorId: string): Promise<any[]> {
-    // 1. Intentar consultar Prisma
+    // 1. Leer siempre desde PostgreSQL en el entorno desplegado.
     try {
       const sessions = await prisma.voiceSession.findMany({
         where: { userId: visitorId },
         orderBy: { createdAt: 'desc' },
         take: 15
       });
-      if (sessions.length > 0) {
-        return sessions.map(s => ({
-          ...s,
-          avgPauseDuration: Number(s.avgPauseDuration),
-          pitchVariation: s.pitchVariation == null ? null : Number(s.pitchVariation),
-          energyStability: s.energyStability == null ? null : Number(s.energyStability),
-          durationSeconds: Number(s.durationSeconds),
-          createdAt: s.createdAt.toISOString()
-        }));
-      }
+      return sessions.map(s => ({
+        ...s,
+        avgPauseDuration: Number(s.avgPauseDuration),
+        pitchVariation: s.pitchVariation == null ? null : Number(s.pitchVariation),
+        energyStability: s.energyStability == null ? null : Number(s.energyStability),
+        durationSeconds: Number(s.durationSeconds),
+        createdAt: s.createdAt.toISOString()
+      }));
     } catch (err) {
-      // Prisma error fallback to PGLite
+      console.error('[VoiceSessionStore] PostgreSQL history query failed.', err);
+      if (process.env.NODE_ENV === 'production') return [];
     }
 
-    // 2. Consultar PGLite
+    // 2. PGlite es solo un fallback local; nunca se presenta como almacenamiento durable en producción.
     try {
       const pglite = await getPglite();
       const res = await pglite.query<any>(`
-        SELECT * FROM voice_sessions 
-        WHERE user_id = $1 
-        ORDER BY created_at DESC 
+        SELECT * FROM voice_sessions
+        WHERE user_id = $1
+        ORDER BY created_at DESC
         LIMIT 15;
       `, [visitorId]);
 
@@ -218,16 +221,8 @@ export class VoiceSessionStore {
         feedbackPayoff: r.feedback_payoff
       }));
     } catch (err) {
-      console.error('[VoiceSessionStore] Error querying PGLite sessions:', err);
+      console.error('[VoiceSessionStore] Local PGlite query failed:', err);
       return [];
     }
-  }
-
-  /**
-   * Obtiene la sesión más reciente de un usuario
-   */
-  static async getLatestSession(visitorId: string): Promise<any | null> {
-    const sessions = await this.getSessionsByVisitor(visitorId);
-    return sessions.length > 0 ? sessions[0] : null;
   }
 }
