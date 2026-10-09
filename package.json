@@ -13,7 +13,8 @@
     "migrate": "node migrations/run.mjs",
     "start": "next start",
     "lint": "next lint",
-    "test": "echo \"No tests yet\""
+    "test": "echo \"No tests yet\"",
+    "test:audio-metrics": "tsx scripts/verifyAudioMetrics.ts"
   },
   "keywords": [],
   "author": "",
