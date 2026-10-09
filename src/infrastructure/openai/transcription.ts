@@ -19,7 +19,14 @@ export type TranscriptionResult = {
 // Límite: 60 segundos = ~$0.006 por análisis Free
 const MAX_AUDIO_DURATION_SECONDS = 60;
 
-export async function transcribeAudio(audio: Buffer): Promise<TranscriptionResult> {
+const SUPPORTED_AUDIO_EXTENSIONS = new Set(["mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"]);
+
+function getSafeAudioFilename(uploadName?: string): string {
+  const extension = uploadName?.split(".").pop()?.toLowerCase();
+  return `audio-input.${extension && SUPPORTED_AUDIO_EXTENSIONS.has(extension) ? extension : "webm"}`;
+}
+
+export async function transcribeAudio(audio: Buffer, uploadName?: string): Promise<TranscriptionResult> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
@@ -27,7 +34,7 @@ export async function transcribeAudio(audio: Buffer): Promise<TranscriptionResul
   console.log('[WHISPER] Audio buffer size:', audio.length, 'bytes');
 
   // Convertir Buffer a File usando el helper de OpenAI
-  const file = await toFile(audio, "audio-input.mp3");
+  const file = await toFile(audio, getSafeAudioFilename(uploadName));
 
   console.log('[WHISPER] Calling Whisper API...');
   const transcription = await openai.audio.transcriptions.create({
@@ -37,12 +44,9 @@ export async function transcribeAudio(audio: Buffer): Promise<TranscriptionResul
     language: "es",
   });
 
-  // ✅ LOG CRÍTICO: Ver respuesta cruda de Whisper
-  console.log('[WHISPER] Raw response:', JSON.stringify(transcription, null, 2));
-
   // ✅ VALIDACIÓN CRÍTICA: Verificar que text existe
   if (!transcription.text) {
-    console.error('[WHISPER] ❌ Whisper devolvió payload sin text:', transcription);
+    console.error('[WHISPER] Whisper returned a payload without text.');
     throw new Error('Whisper returned an unexpected payload without text. El audio podría estar vacío, corrupto, o ser demasiado corto.');
   }
 
@@ -60,7 +64,7 @@ export async function transcribeAudio(audio: Buffer): Promise<TranscriptionResul
     throw new Error(`El audio es demasiado largo (${Math.round(duration)}s). Máximo permitido: ${MAX_AUDIO_DURATION_SECONDS}s.`);
   }
 
-  console.log('[WHISPER] ✓ Transcription successful:', transcription.text.substring(0, 100) + '...');
+  console.log('[WHISPER] Transcription successful.');
   console.log('[WHISPER] ✓ Duration:', duration, 'seconds');
   console.log('[WHISPER] ✓ Segments count:', ((transcription as any).segments || []).length);
 
