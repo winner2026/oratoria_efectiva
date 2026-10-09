@@ -14,8 +14,8 @@ export type CoachingSession = {
     avgPauseDuration: number;
     pauseCount: number;
     fillerCount: number;
-    pitchVariation: number;
-    energyStability: number;
+    pitchVariation: number | null;
+    energyStability: number | null;
   };
 
   // Perfil multidimensional y diagnóstico
@@ -40,8 +40,8 @@ export function createCoachingSession(params: {
     avgPauseDuration: number;
     pauseCount: number;
     fillerCount: number;
-    pitchVariation: number;
-    energyStability: number;
+    pitchVariation: number | null;
+    energyStability: number | null;
   };
   communicationProfile: CommunicationProfile;
   diagnosticProfile: DiagnosticProfile;
