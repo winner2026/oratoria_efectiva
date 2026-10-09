@@ -40,7 +40,6 @@ model User {
   subscriptionStatus         String?   @map("subscription_status") // "active", "on_trial", "paused", "past_due", "unpaid", "cancelled", "expired"
   subscriptionRenewsAt       DateTime? @map("subscription_renews_at")
 
-  sessions      VoiceSession[]
   usage         Usage?
 
   @@map("users")
@@ -73,7 +72,6 @@ model Usage {
 model VoiceSession {
   id                        String   @id @default(uuid())
   userId                    String   @map("user_id") // Puede ser ID de User o Fingerprint
-  user                      User?    @relation(fields: [userId], references: [id]) // Opcional si es anónimo
   createdAt                 DateTime @default(now()) @map("created_at")
   
   // Transcripción
@@ -106,6 +104,24 @@ model VoiceSession {
   @@map("voice_sessions")
   @@index([userId])
   @@index([createdAt(sort: Desc)])
+}
+
+model VisitorCoachingState {
+  visitorId String   @id @map("visitor_id")
+  state     Json
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("visitor_coaching_states")
+}
+
+model CoachingRecord {
+  id        String   @id
+  visitorId String   @map("visitor_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  payload   Json
+
+  @@index([visitorId, createdAt(sort: Desc)])
+  @@map("coaching_records")
 }
 
 // --- SECURITY HARDENING MODELS ---
