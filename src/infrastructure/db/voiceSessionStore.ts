@@ -173,8 +173,8 @@ export class VoiceSessionStore {
         return sessions.map(s => ({
           ...s,
           avgPauseDuration: Number(s.avgPauseDuration),
-          pitchVariation: Number(s.pitchVariation),
-          energyStability: Number(s.energyStability),
+          pitchVariation: s.pitchVariation == null ? null : Number(s.pitchVariation),
+          energyStability: s.energyStability == null ? null : Number(s.energyStability),
           durationSeconds: Number(s.durationSeconds),
           createdAt: s.createdAt.toISOString()
         }));
@@ -203,8 +203,8 @@ export class VoiceSessionStore {
         avgPauseDuration: Number(r.avg_pause_duration),
         pauseCount: r.pause_count,
         fillerCount: r.filler_count,
-        pitchVariation: Number(r.pitch_variation),
-        energyStability: Number(r.energy_stability),
+        pitchVariation: r.pitch_variation == null ? null : Number(r.pitch_variation),
+        energyStability: r.energy_stability == null ? null : Number(r.energy_stability),
         durationSeconds: Number(r.duration_seconds),
         authorityLevel: r.authority_level,
         authorityScore: r.authority_score,
