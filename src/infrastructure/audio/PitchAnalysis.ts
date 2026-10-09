@@ -73,7 +73,26 @@ export async function analyzePitch(
     console.log('[PITCH] Decoding audio...');
     const { audio: float32Audio, sampleRate } = await decodeAudio(audioBuffer);
     
-    // Detectar Pitch usando algoritmo YIN (bueno para voz)
+    const validSegments = segments.filter(
+      (segment) =>
+        Number.isFinite(segment.start) &&
+        Number.isFinite(segment.end) &&
+        segment.start >= 0 &&
+        segment.end > segment.start &&
+        typeof segment.text === 'string'
+    );
+
+    // Sin marcas temporales de habla fiables, no atribuir tono a ruido o silencio.
+    if (validSegments.length === 0) {
+      return {
+        fallingIntonationScore: null,
+        pitchStability: null,
+        meanPitch: null,
+        pitchRange: null
+      };
+    }
+
+    // Detectar F0 con YIN (bueno para estimación de voz)
     console.log('[PITCH] Detecting frequencies...');
     const detectPitch = YIN({ sampleRate });
     
@@ -90,7 +109,13 @@ export async function analyzePitch(
     }
 
     // Filtrar frecuencias válidas (rango voz humana aprox 50Hz - 500Hz)
-    const validFrequencies = frequencies.filter((f): f is number => f !== null && f > 50 && f < 500);
+    const validFrequencies = frequencies.filter((f, index): f is number => {
+      if (f === null || !Number.isFinite(f) || f <= 50 || f >= 500) return false;
+      const frameTime = (index * hopSize) / sampleRate;
+      return validSegments.some(
+        (segment) => frameTime >= segment.start - 0.1 && frameTime <= segment.end + 0.1
+      );
+    });
 
     if (validFrequencies.length === 0) {
       console.warn('[PITCH] No valid frequencies detected');
@@ -119,7 +144,7 @@ export async function analyzePitch(
     // Usar sampleRate/hopSize evita distorsionar los tiempos en WAV con otra frecuencia.
     const itemsPerSecond = sampleRate / hopSize;
 
-    segments.forEach(segment => {
+    validSegments.forEach(segment => {
       // Analizar solo si parece una oración terminada (punto o tiempo suficiente)
       if (!segment.text.trim().match(/[.!?]$/) && segment.end - segment.start < 1.0) return;
 
