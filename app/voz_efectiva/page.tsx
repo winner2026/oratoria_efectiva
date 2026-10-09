@@ -492,11 +492,11 @@ export default function DiagnosticoGratuitoPage() {
               {/* NIVEL 1 — RESULTADO: ÍNDICE GLOBAL DE AUTORIDAD */}
               <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-center space-y-2 relative overflow-hidden">
                 <div className="absolute top-0 right-0 bg-amber-500/10 px-3 py-1 rounded-bl-2xl border-l border-b border-amber-500/30">
-                  <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{analysisResult.authorityScore.level}</span>
+                  <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{ {'LOW': 'Nivel bajo', 'MEDIUM': 'Nivel medio', 'HIGH': 'Nivel alto'}[analysisResult.authorityScore.level] }</span>
                 </div>
 
                 <span className="text-[10px] font-black tracking-[0.25em] text-amber-400 uppercase block">
-                  TU ÍNDICE DE AUTORIDAD
+                  Índice de autoridad vocal
                 </span>
                 <div className="flex items-baseline justify-center gap-2 my-1">
                   <span className="text-6xl font-black text-white tracking-tighter">
@@ -505,7 +505,7 @@ export default function DiagnosticoGratuitoPage() {
                   <span className="text-xl font-bold text-slate-400">/ 100</span>
                 </div>
                 <p className="text-xs text-slate-400 font-medium max-w-md mx-auto pt-1 leading-relaxed">
-                  Una referencia global para seguir tu evolución, no una medida absoluta de tu capacidad para comunicar.
+                  Indicador experimental para observar tu evolución, no una medida absoluta de tu capacidad comunicativa.
                 </p>
               </div>
 
@@ -513,7 +513,7 @@ export default function DiagnosticoGratuitoPage() {
               <div className="space-y-4 pt-1">
                 <h3 className="text-sm font-black uppercase tracking-wider text-slate-200 flex items-center gap-2">
                   <span className="material-symbols-outlined text-amber-400 text-base">graphic_eq</span>
-                  Tus habilidades al hablar
+                  Tus indicadores vocales
                 </h3>
 
                 <div className="space-y-3">
@@ -537,10 +537,10 @@ export default function DiagnosticoGratuitoPage() {
                     <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.fuerzaVocal.explanation}</p>
                   </div>
 
-                  {/* 3. Variación de entonación */}
+                  {/* 3. Variación tonal */}
                   <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold">
-                      <span className="text-white uppercase">Variación de entonación</span>
+                      <span className="text-white uppercase">Variación tonal</span>
                       <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.dinamicaEntonacion.valueFormatted}</span>
                     </div>
                     <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.dinamicaEntonacion.explanation}</p>
@@ -561,11 +561,11 @@ export default function DiagnosticoGratuitoPage() {
                     <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.estabilidadEspectral.explanation}</p>
                   </div>
 
-                  {/* 5. Ritmo al hablar (Estimación bioacústica) */}
+                  {/* 5. Palabras por minuto (Estimación bioacústica) */}
                   {analysisResult.metricExplanations.ritmoHabla && (
                     <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
                       <div className="flex justify-between items-center text-xs font-bold">
-                        <span className="text-white uppercase">Ritmo al hablar</span>
+                        <span className="text-white uppercase">Palabras por minuto</span>
                         <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.ritmoHabla.valueFormatted}</span>
                       </div>
                       <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.ritmoHabla.explanation}</p>
@@ -623,7 +623,7 @@ export default function DiagnosticoGratuitoPage() {
               <div className="bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 text-slate-950 p-6 md:p-7 rounded-3xl space-y-5 border border-amber-300/40 shadow-[0_0_50px_-10px_rgba(245,158,11,0.3)]">
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-950 block">
-                    🎯 TU FOCO DE MEJORA
+                    🎯 Tu foco de mejora
                   </span>
                   <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-950 leading-tight">
                     {analysisResult.coaching.prescription.primaryExercise.title}
@@ -635,7 +635,7 @@ export default function DiagnosticoGratuitoPage() {
 
                 <div className="bg-slate-950/25 p-4 rounded-2xl border border-slate-950/20 space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-950 block">
-                    Tu misión de hoy · 3 minutos
+                    TU MISIÓN DE HOY · 3 MINUTOS
                   </span>
                   <p className="text-xs font-semibold text-slate-950 leading-relaxed">
                     {analysisResult.coaching.prescription.primaryExercise.instruction}

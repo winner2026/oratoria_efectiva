@@ -28,10 +28,10 @@ const WEAKNESS_TO_EXERCISE_MAP: Record<WeaknessType, { exerciseId: string; title
     exerciseId: 'authority-pause',
     title: 'Misión: Pausa de Autoridad',
     route: '/practice/pause',
-    rationale: 'Practica la inserción de silencios de 2 segundos antes de ideas clave para estructurarlas.',
+    rationale: 'En esta grabación se detectaron pocas pausas. Practicar silencios breves puede ayudarte a separar tus ideas y dar más peso a los mensajes importantes.',
     instructions: [
       'Lee un párrafo en voz alta. Antes de la idea más importante, haz una pausa breve de 2 segundos y continúa con firmeza.',
-      'Habla durante un minuto sobre tu día. Cada vez que termines una frase, muerde tu labio inferior durante 2 segundos antes de seguir.',
+      'Habla durante un minuto sobre tu día. Al terminar cada frase, guarda silencio durante 2 segundos, relaja la mandíbula y continúa. Repite el ejercicio tres veces.',
       'Toma un texto y haz una marca cada 10 palabras. Oblígate a hacer un silencio total de 2 segundos en cada marca.'
     ],
   },
@@ -139,7 +139,7 @@ export function prescribeTraining(profile: DiagnosticProfile): TrainingPrescript
   return {
     targetExerciseId: mapping.exerciseId,
     exerciseTitle: mapping.title,
-    rationale: `${profile.primaryWeakness.description} ${mapping.rationale}`,
+    rationale: mapping.rationale, // <--- also removed the duplicate concatenation here based on feedback!
     instruction: randomInstruction,
     expectedBenefit: `Reducir la severidad de ${profile.primaryWeakness.label}.`,
     recommendedDurationMinutes: profile.primaryWeakness.severity > 0.7 ? 5 : 3,

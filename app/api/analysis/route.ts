@@ -23,6 +23,38 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No se recibió audio' }, { status: 400 });
     }
 
+    // RESERVA ATÓMICA DE USO
+    try {
+      await prisma.$transaction(async (tx) => {
+        const usage = await tx.usage.upsert({
+          where: { fingerprint: visitorId },
+          update: {},
+          create: {
+            fingerprint: visitorId,
+            planType: "FREE",
+            totalAnalyses: 0
+          }
+        });
+
+        if (usage.totalAnalyses >= 1 && usage.planType === "FREE") {
+          throw new Error("FREE_LIMIT_REACHED");
+        }
+
+        await tx.usage.update({
+          where: { fingerprint: visitorId },
+          data: { totalAnalyses: { increment: 1 } }
+        });
+      }, { isolationLevel: 'Serializable' });
+    } catch (error) {
+      if (error instanceof Error && error.message === "FREE_LIMIT_REACHED") {
+        return NextResponse.json({ 
+          error: 'Has alcanzado el límite de análisis gratuitos. Regístrate o suscríbete para continuar.',
+          code: 'FREE_LIMIT_REACHED'
+        }, { status: 403 });
+      }
+      throw error;
+    }
+
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
     
     // 1. Análisis Bioacústico Completo Unificado (Usa Whisper, Pitch y RMS validado)
