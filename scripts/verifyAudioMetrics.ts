@@ -89,7 +89,7 @@ async function main(): Promise<void> {
   });
 
   await runCase('2. Silencio absoluto: RMS, F0 y bandas no se puntúan', async () => {
-    const rms = calculateRMSStability(silence, SAMPLE_RATE, [{ start: 0, end: 3, text: ' ' }]);
+    const rms = calculateRMSStability(silence, SAMPLE_RATE, [{ start: 0, end: 3 }]);
     const pitch = await analyzePitch(makeWav(silence), [{ start: 0, end: 3, text: ' ' }]);
     const spectral = analyzeSpectralCharacteristics(silence, SAMPLE_RATE);
     assert.equal(rms, null);
