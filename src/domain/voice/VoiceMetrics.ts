@@ -151,8 +151,11 @@ export function extractMetrics(
   const words = transcription.split(/\s+/).filter(w => w.length > 0);
   const wordCount = words.length;
 
-  // Palabras por minuto
-  const wordsPerMinute = (wordCount / durationSeconds) * 60;
+  // Evitar Infinity/NaN en grabaciones vacías o duración inválida.
+  const safeDuration = Number.isFinite(durationSeconds) && durationSeconds > 0
+    ? durationSeconds
+    : 0;
+  const wordsPerMinute = safeDuration > 0 ? (wordCount / safeDuration) * 60 : 0;
 
   // 🔥 MEJORA #1: Detección mejorada de muletillas
   const fillerWords = ['eh', 'ehh', 'ehhh', 'um', 'umm', 'ah', 'ahh', 'este', 'pues', 'o sea', 'bueno', 'entonces', 'como', 'tipo'];
@@ -164,9 +167,18 @@ export function extractMetrics(
   const repetitionCount = detectRepetitions(words);
 
   // Calcular pausas entre segmentos
+  const validSegments = segments.filter(
+    (segment) =>
+      Number.isFinite(segment.start) &&
+      Number.isFinite(segment.end) &&
+      segment.start >= 0 &&
+      segment.end > segment.start &&
+      typeof segment.text === 'string'
+  ).sort((a, b) => a.start - b.start);
+
   const pauses: number[] = [];
-  for (let i = 0; i < segments.length - 1; i++) {
-    const gap = segments[i + 1].start - segments[i].end;
+  for (let i = 0; i < validSegments.length - 1; i++) {
+    const gap = validSegments[i + 1].start - validSegments[i].end;
     if (gap > 0.1) { // Solo pausas mayores a 100ms
       pauses.push(gap);
     }
@@ -181,10 +193,10 @@ export function extractMetrics(
   const { strategicPauses, awkwardSilences } = analyzePauseQuality(pauses);
 
   // 🔥 MEJORA #2: Variabilidad del ritmo y consistencia
-  const { paceVariability, rhythmConsistency } = calculatePaceVariability(segments);
+  const { paceVariability, rhythmConsistency } = calculatePaceVariability(validSegments);
 
   // Estas métricas serán provistas por el análisis de audio (RMS y Pitch real)
-  const pitchVariation: number | null = null; 
+  const pitchVariation: number | null = null;
   const energyStability: number | null = null;
 
   // 🔥 MEJORA #4: Análisis de longitud de frases
@@ -196,8 +208,8 @@ export function extractMetrics(
     avgPauseDuration: Number(avgPauseDuration.toFixed(2)),
     pauseCount,
     fillerCount,
-    pitchVariation: Number(pitchVariation.toFixed(2)),
-    energyStability: Number(energyStability.toFixed(2)),
+    pitchVariation,
+    energyStability,
 
     // 🆕 Métricas mejoradas
     repetitionCount,
