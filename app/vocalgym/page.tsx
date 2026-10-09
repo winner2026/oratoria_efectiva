@@ -8,7 +8,7 @@ export default function ExperimentalConversionLanding() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const handleStartDiagnostic = () => {
-    router.push("/diagnostico");
+    router.push("/voz_efectiva");
   };
 
   const toggleFaq = (idx: number) => {

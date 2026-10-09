@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('[ANALYSIS] Error:', error);
-    return NextResponse.json({ error: 'Error procesando el audio.' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Error procesando el audio.';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

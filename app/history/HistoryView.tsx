@@ -92,7 +92,7 @@ export default function HistoryView({ videos, books, sessions }: HistoryViewProp
                             <span className="material-symbols-outlined text-4xl text-slate-600 mb-2">history</span>
                             <p className="text-sm text-slate-400">Aún no tienes sesiones grabadas.</p>
                             <button 
-                                onClick={() => router.push("/diagnostico")}
+                                onClick={() => router.push("/voz_efectiva")}
                                 className="mt-4 text-xs font-bold text-amber-400 hover:underline uppercase tracking-wider"
                             >
                                 ¡Empieza tu primera práctica!

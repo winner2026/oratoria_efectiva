@@ -56,6 +56,10 @@ export async function analyzeVoiceUseCase({
   console.log('[ANALYZE] Transcribing audio...');
   const transcriptionResult = await transcribeAudio(audioBuffer);
 
+  if (!transcriptionResult.text || transcriptionResult.text.trim().length === 0 || transcriptionResult.segments.length === 0) {
+    throw new Error('No se detectó habla en la grabación. Asegúrate de hablar claramente y revisa tu micrófono.');
+  }
+
   // 2. Extraer métricas de texto
   console.log('[ANALYZE] Extracting text metrics...');
   let textMetrics = extractMetrics(
