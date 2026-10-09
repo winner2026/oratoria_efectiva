@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
     // 1. Análisis Bioacústico Completo Unificado (Usa Whisper, Pitch y RMS validado)
     const result = await analyzeVoiceUseCase({
       audioBuffer,
+      audioFileName: audioFile.name,
       exerciseContext: {
         id: 'diagnostico',
         title: 'Diagnóstico Inicial',
