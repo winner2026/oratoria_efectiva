@@ -39,8 +39,8 @@ export function buildCommunicationProfile(metrics: {
   avgPauseDuration: number;
   pauseCount: number;
   fillerCount: number;
-  pitchVariation: number;
-  energyStability: number;
+  pitchVariation: number | null;
+  energyStability: number | null;
 }): CommunicationProfile {
   const weaknesses = evaluateWeaknesses(metrics);
 
@@ -55,13 +55,17 @@ export function buildCommunicationProfile(metrics: {
     ? Math.min(1.0, (0.45 - metrics.avgPauseDuration) / 0.3)
     : 0.15;
 
-  const pitchSeverity = metrics.pitchVariation < 0.28
-    ? Math.min(1.0, (0.28 - metrics.pitchVariation) / 0.22)
-    : 0.15;
+  const pitchSeverity = metrics.pitchVariation === null 
+    ? 0.5 // Neutral si no se pudo medir
+    : metrics.pitchVariation < 30
+      ? Math.min(1.0, (30 - metrics.pitchVariation) / 25)
+      : 0.15;
 
-  const energySeverity = metrics.energyStability < 0.65
-    ? Math.min(1.0, (0.65 - metrics.energyStability) / 0.4)
-    : 0.15;
+  const energySeverity = metrics.energyStability === null 
+    ? 0.5 // Neutral si no se pudo medir
+    : metrics.energyStability < 0.65
+      ? Math.min(1.0, (0.65 - metrics.energyStability) / 0.4)
+      : 0.15;
 
   const rhythmScore = calculateDimensionScore(rhythmSeverity);
   const pauseScore = calculateDimensionScore(pauseSeverity);

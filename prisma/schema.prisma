@@ -85,8 +85,8 @@ model VoiceSession {
   avgPauseDuration          Decimal  @map("avg_pause_duration") @db.Decimal(5, 2)
   pauseCount                Int      @map("pause_count")
   fillerCount               Int      @map("filler_count")
-  pitchVariation            Decimal  @map("pitch_variation") @db.Decimal(5, 2)
-  energyStability           Decimal  @map("energy_stability") @db.Decimal(5, 2)
+  pitchVariation            Decimal? @map("pitch_variation") @db.Decimal(5, 2)
+  energyStability           Decimal? @map("energy_stability") @db.Decimal(5, 2)
   durationSeconds           Decimal  @map("duration_seconds") @db.Decimal(6, 2)
   
   // Score de autoridad

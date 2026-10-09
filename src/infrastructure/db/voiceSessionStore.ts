@@ -25,8 +25,8 @@ async function getPglite(): Promise<PGlite> {
         avg_pause_duration NUMERIC(5, 2) NOT NULL,
         pause_count INT NOT NULL,
         filler_count INT NOT NULL,
-        pitch_variation NUMERIC(5, 2) NOT NULL,
-        energy_stability NUMERIC(5, 2) NOT NULL,
+        pitch_variation NUMERIC(5, 2),
+        energy_stability NUMERIC(5, 2),
         duration_seconds NUMERIC(6, 2) NOT NULL,
         authority_level TEXT NOT NULL,
         authority_score INT NOT NULL,
@@ -52,8 +52,8 @@ export interface CreateVoiceSessionInput {
   avgPauseDuration: number;
   pauseCount: number;
   fillerCount: number;
-  pitchVariation: number;
-  energyStability: number;
+  pitchVariation: number | null;
+  energyStability: number | null;
   durationSeconds: number;
   authorityLevel: string;
   authorityScore: number;

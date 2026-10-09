@@ -114,17 +114,21 @@ export function calculateAuthorityLevel(metrics: VoiceMetrics): {
   }
 
   // Variación de tono
-  if (metrics.pitchVariation >= 0.15 && metrics.pitchVariation <= 0.35) {
-    score += 2;
-  } else if (metrics.pitchVariation >= 0.1) {
-    score += 1;
+  if (metrics.pitchVariation !== null) {
+    if (metrics.pitchVariation >= 30 && metrics.pitchVariation <= 120) {
+      score += 2;
+    } else if (metrics.pitchVariation >= 15) {
+      score += 1;
+    }
   }
 
   // Estabilidad de energía
-  if (metrics.energyStability >= 0.7) {
-    score += 2;
-  } else if (metrics.energyStability >= 0.5) {
-    score += 1;
+  if (metrics.energyStability !== null) {
+    if (metrics.energyStability >= 0.7) {
+      score += 2;
+    } else if (metrics.energyStability >= 0.5) {
+      score += 1;
+    }
   }
 
   // 🔥 NUEVAS MÉTRICAS
@@ -193,10 +197,12 @@ export function calculateAuthorityDetails(metrics: VoiceMetrics): {
   }
 
   // Energía
-  if (metrics.energyStability >= 0.7) {
-    strengths.push("energía estable");
-  } else {
-    weaknesses.push("energía");
+  if (metrics.energyStability !== null) {
+    if (metrics.energyStability >= 0.7) {
+      strengths.push("energía estable");
+    } else {
+      weaknesses.push("energía");
+    }
   }
 
   // 🔥 NUEVO: Estructura de frases
@@ -229,9 +235,9 @@ export function calculateAuthorityDetails(metrics: VoiceMetrics): {
     priorityAdjustment = "PAUSE_MORE";
   } else if (metrics.rhythmConsistency < 0.4) {
     priorityAdjustment = "VARY_PACE";
-  } else if (metrics.energyStability < 0.5) {
+  } else if (metrics.energyStability !== null && metrics.energyStability < 0.5) {
     priorityAdjustment = "INCREASE_ENERGY";
-  } else if (metrics.pitchVariation < 0.12) {
+  } else if (metrics.pitchVariation !== null && metrics.pitchVariation < 30) {
     priorityAdjustment = "STABILIZE_PITCH";
   }
 

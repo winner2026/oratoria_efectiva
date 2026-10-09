@@ -24,8 +24,8 @@ export function evaluateWeaknesses(metrics: {
   avgPauseDuration: number;
   pauseCount: number;
   fillerCount: number;
-  pitchVariation: number;
-  energyStability: number;
+  pitchVariation: number | null;
+  energyStability: number | null;
 }): WeaknessAssessment[] {
   const assessments: WeaknessAssessment[] = [];
 
@@ -85,8 +85,8 @@ export function evaluateWeaknesses(metrics: {
   }
 
   // 4. PITCH_VARIATION (Variación tonal / Monotonía)
-  if (metrics.pitchVariation < 0.28) {
-    const severity = Math.min(1.0, (0.28 - metrics.pitchVariation) / 0.22);
+  if (metrics.pitchVariation !== null && metrics.pitchVariation < 30) {
+    const severity = Math.min(1.0, (30 - metrics.pitchVariation) / 25);
     assessments.push({
       type: 'PITCH_VARIATION',
       category: 'VOICE',
@@ -98,7 +98,7 @@ export function evaluateWeaknesses(metrics: {
   }
 
   // 5. ENERGY_STABILITY (Soporte físico y energía)
-  if (metrics.energyStability < 0.65) {
+  if (metrics.energyStability !== null && metrics.energyStability < 0.65) {
     const severity = Math.min(1.0, (0.65 - metrics.energyStability) / 0.4);
     assessments.push({
       type: 'ENERGY_STABILITY',
