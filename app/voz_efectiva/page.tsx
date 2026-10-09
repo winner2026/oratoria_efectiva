@@ -212,7 +212,11 @@ export default function DiagnosticoGratuitoPage() {
   const sendAudioToApi = async (audioBlob: Blob) => {
     try {
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'grabacion-oratoria.webm');
+      const audioExtension = audioBlob.type.includes('wav') ? 'wav'
+        : audioBlob.type.includes('mp4') ? 'mp4'
+        : audioBlob.type.includes('mp3') ? 'mp3'
+        : 'webm';
+      formData.append('audio', audioBlob, `grabacion-oratoria.${audioExtension}`);
 
       const res = await fetch('/api/analysis', {
         method: 'POST',
