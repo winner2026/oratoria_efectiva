@@ -163,6 +163,14 @@ export class VoiceSessionStore {
   }
 
   /**
+   * Obtiene la sesión más reciente del visitante desde el almacén persistente.
+   */
+  static async getLatestSession(visitorId: string): Promise<any | null> {
+    const sessions = await this.getSessionsByVisitor(visitorId);
+    return sessions.length > 0 ? sessions[0] : null;
+  }
+
+  /**
    * Obtiene el historial de sesiones aisladas por visitorId
    */
   static async getSessionsByVisitor(visitorId: string): Promise<any[]> {
