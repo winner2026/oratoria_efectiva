@@ -60,19 +60,8 @@ export async function decodeAudio(inputBuffer: Buffer): Promise<{audio: Float32A
         });
     });
   } catch (ffmpegErr) {
-    console.warn('[PITCH] ffmpeg conversion unavailable, extracting raw PCM samples from buffer:', ffmpegErr);
-    
-    // 3. Fallback de extracción directa de muestras Float32/Int16 del buffer sin fallar
-    const numSamples = Math.max(44100, Math.floor(inputBuffer.length / 2));
-    const float32Data = new Float32Array(numSamples);
-    
-    for (let i = 0; i < numSamples; i++) {
-      const byteIdx = (i * 2) % (inputBuffer.length - 1);
-      const int16Val = inputBuffer.readInt16LE(byteIdx);
-      float32Data[i] = int16Val / 32768.0;
-    }
-    
-    return { audio: float32Data, sampleRate: 44100 };
+    console.error('[PITCH] Audio decoding failed; refusing to interpret encoded bytes as PCM:', ffmpegErr);
+    throw new Error('Audio decoding failed: input is not a supported WAV or ffmpeg-decodable audio format.');
   }
 }
 
@@ -120,31 +109,31 @@ export async function analyzePitch(
     
     // Calcular "Intonational Drop" al final de las frases
     let fallingCount = 0;
-    let totalSentences = 0;
+    let analyzedSentences = 0;
 
     // Mapear tiempo a índice de array
     // frequencies.length corresponde a la duración total en "ventanas"
     // pitchfinder por defecto usa ventanas, hay que ver el stride.
     // Asumiremos mapeo lineal simple por ahora: index = (time / totalTime) * totalIndices
-    const totalDuration = float32Audio.length / 44100;
-    const itemsPerSecond = frequencies.length / totalDuration;
+    // Cada estimación de F0 corresponde al inicio de una ventana separada por hopSize.
+    // Usar sampleRate/hopSize evita distorsionar los tiempos en WAV con otra frecuencia.
+    const itemsPerSecond = sampleRate / hopSize;
 
     segments.forEach(segment => {
       // Analizar solo si parece una oración terminada (punto o tiempo suficiente)
       if (!segment.text.trim().match(/[.!?]$/) && segment.end - segment.start < 1.0) return;
 
-      totalSentences++;
-
       // Mirar los últimos 500ms del segmento
       const endTime = segment.end;
       const startTime = Math.max(segment.start, endTime - 0.5);
       
-      const startIndex = Math.floor(startTime * itemsPerSecond);
-      const endIndex = Math.floor(endTime * itemsPerSecond);
+      const startIndex = Math.max(0, Math.floor(startTime * itemsPerSecond));
+      const endIndex = Math.min(frequencies.length, Math.ceil(endTime * itemsPerSecond));
 
       const segmentPitches = frequencies.slice(startIndex, endIndex).filter((f): f is number => f !== null && f > 50 && f < 500);
 
       if (segmentPitches.length > 5) {
+        analyzedSentences++;
         // Regresión lineal simple para ver la pendiente (slope)
         // y = mx + b
         let sys = 0, sys2 = 0, sxs = 0, sxy = 0;
@@ -167,9 +156,9 @@ export async function analyzePitch(
       }
     });
 
-    const fallingIntonationScore = totalSentences > 0 
-      ? Math.round((fallingCount / totalSentences) * 100) 
-      : 50; // Si no hay oraciones claras, neutro
+    const fallingIntonationScore = analyzedSentences > 0
+      ? Math.round((fallingCount / analyzedSentences) * 100)
+      : null; // Sin frases analizables no inventamos una puntuación
 
     // Calcular Estabilidad (inverso de la desviación estándar relativa)
     const variance = validFrequencies.reduce((sum, f) => sum + Math.pow(f - meanPitch, 2), 0) / validFrequencies.length;
