@@ -5,6 +5,7 @@ import {
   calculateRMSStability,
 } from '../src/infrastructure/audio/SpectralAnalysis';
 import { extractMetrics } from '../src/domain/voice/VoiceMetrics';
+import { buildDiagnosticProfile } from '../src/domain/coaching/DiagnosticProfile';
 
 const SAMPLE_RATE = 44_100;
 
@@ -137,9 +138,23 @@ async function main(): Promise<void> {
     assert.equal(emptyMetrics.energyStability, null);
     assert.equal(emptyMetrics.pitchVariation, null);
     assert.ok(Number.isFinite(emptyMetrics.wordsPerMinute));
+
+    const unknownSignalDiagnostic = buildDiagnosticProfile(
+      {
+        wordsPerMinute: 120,
+        avgPauseDuration: 0.6,
+        pauseCount: 3,
+        fillerCount: 0,
+        pitchVariation: null,
+        energyStability: null,
+      },
+      { score: 50, strengths: [], weaknesses: [] },
+    );
+    assert.match(unknownSignalDiagnostic.behavioralSummary, /No puede confirmarse una evaluación vocal completa/);
+    assert.doesNotMatch(unknownSignalDiagnostic.behavioralSummary, /excelente estabilidad energética/i);
   });
 
-  console.log('6/6 pruebas sintéticas superadas. Estas pruebas unitarias no sustituyen la validación con grabaciones humanas reales.');
+  console.log('6/6 casos sintéticos superados. Las pruebas unitarias no sustituyen la validación con grabaciones humanas reales.');
 }
 
 main().catch((error) => {
