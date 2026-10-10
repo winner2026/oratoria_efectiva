@@ -109,46 +109,52 @@ export default function DiagnosticoGratuitoPage() {
         const audioCtx = new AudioCtxClass();
         audioCtxRef.current = audioCtx;
         const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        const source = audioCtx.createMediaStreamSource(stream);
-        source.connect(analyser);
-
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        const updateMeter = () => {
-          analyser.getByteFrequencyData(dataArray);
-          
-          let sum = 0;
-          let bassSum = 0;
-          let midsSum = 0;
-          let highsSum = 0;
-
-          // Band 1: Graves (0 to 3 bins ~ 60 - 250 Hz)
-          for (let i = 0; i < 4 && i < dataArray.length; i++) {
-            bassSum += dataArray[i];
-            sum += dataArray[i];
-          }
-          // Band 2: Medios (4 to 10 bins ~ 250 - 2000 Hz)
-          for (let i = 4; i < 11 && i < dataArray.length; i++) {
-            midsSum += dataArray[i];
-            sum += dataArray[i];
-          }
-          // Band 3: Agudos (11 to 20 bins ~ 2000 - 8000 Hz)
-          for (let i = 11; i < 20 && i < dataArray.length; i++) {
-            highsSum += dataArray[i];
-            sum += dataArray[i];
-          }
-
-          const avg = sum / (dataArray.length || 1);
-          const normVol = Math.min(1, Math.max(0.05, avg / 128));
-          setVolumeLevel(normVol);
-
-          setBassLevel(Math.min(100, Math.round(((bassSum / 4) / 255) * 100)));
-          setMidsLevel(Math.min(100, Math.round(((midsSum / 7) / 255) * 100)));
-          setHighsLevel(Math.min(100, Math.round(((highsSum / 9) / 255) * 100)));
-
-          const bars = Array.from(dataArray.slice(0, 16)).map(val => Math.round((val / 255) * 100));
-          setFrequencyBars(bars);
+        analyser.fftSize = 2048;
+          const source = audioCtx.createMediaStreamSource(stream);
+          source.connect(analyser);
+  
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+  
+          const updateMeter = () => {
+            analyser.getByteFrequencyData(dataArray);
+            
+            let sum = 0;
+            let bassSum = 0;
+            let midsSum = 0;
+            let highsSum = 0;
+  
+            // Band 1: Graves (60 - 250 Hz ~ bins 2 to 10)
+            for (let i = 2; i <= 10 && i < dataArray.length; i++) {
+              bassSum += dataArray[i];
+            }
+            // Band 2: Medios (250 - 2000 Hz ~ bins 11 to 85)
+            for (let i = 11; i <= 85 && i < dataArray.length; i++) {
+              midsSum += dataArray[i];
+            }
+            // Band 3: Agudos (2000 - 8000 Hz ~ bins 86 to 341)
+            for (let i = 86; i <= 341 && i < dataArray.length; i++) {
+              highsSum += dataArray[i];
+            }
+  
+            sum = bassSum + midsSum + highsSum;
+            const avg = sum / (9 + 75 + 256);
+            const normVol = Math.min(1, Math.max(0.05, (avg / 255) * 1.5)); // Boost display volume
+            setVolumeLevel(normVol);
+  
+            setBassLevel(Math.min(100, Math.round(((bassSum / 9) / 255) * 100)));
+            setMidsLevel(Math.min(100, Math.round(((midsSum / 75) / 255) * 100)));
+            setHighsLevel(Math.min(100, Math.round(((highsSum / 256) / 255) * 100)));
+  
+            const bars = [];
+            const step = Math.floor(341 / 16);
+            for (let j = 0; j < 16; j++) {
+              let s = 0;
+              for (let k = Math.max(1, j * step); k < (j + 1) * step && k < dataArray.length; k++) {
+                s += dataArray[k];
+              }
+              bars.push(Math.round(((s / step) / 255) * 100));
+            }
+            setFrequencyBars(bars);
 
           animFrameRef.current = requestAnimationFrame(updateMeter);
         };
@@ -291,7 +297,7 @@ export default function DiagnosticoGratuitoPage() {
             <button
               onClick={startFreeDiagnostic}
               disabled={!consentAccepted}
-              className="px-10 py-6 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-amber-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="px-10 py-6 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-green-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <span className="material-symbols-outlined text-3xl">mic</span>
               Iniciar Escáner Gratuito
@@ -414,7 +420,7 @@ export default function DiagnosticoGratuitoPage() {
               {/* Action Button */}
               <button
                 onClick={stopRecordingAndAnalyze}
-                className="px-8 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 rounded-2xl text-xs font-black uppercase tracking-widest shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-amber-300/40 cursor-pointer"
+                className="px-8 py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-600 text-slate-950 rounded-2xl text-xs font-black uppercase tracking-widest shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-green-300/40 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-lg">square</span>
                 Finalizar Grabación y Ver Auditoría
