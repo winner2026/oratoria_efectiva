@@ -64,7 +64,7 @@ interface AnalysisResultData {
 
 export default function DiagnosticoGratuitoPage() {
   const { data: session, status } = useSession();
-  const isAuthenticated = status === "authenticated" && session?.user?.id !== "guest-1";
+  const isAuthenticated = status === "authenticated" && (session?.user as any)?.id !== "guest-1";
 
   const handleStartClick = () => {
     if (!isAuthenticated) {
