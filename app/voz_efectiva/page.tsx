@@ -89,6 +89,41 @@ export default function DiagnosticoGratuitoPage() {
   const [midsLevel, setMidsLevel] = useState<number>(75);
   const [highsLevel, setHighsLevel] = useState<number>(60);
   const [frequencyBars, setFrequencyBars] = useState<number[]>([30, 45, 60, 80, 65, 50, 70, 90, 85, 60, 40, 55, 75, 50, 35, 20]);
+  const [originalAudioUrl, setOriginalAudioUrl] = useState<string | null>(null);
+  const [practiceAudioUrl, setPracticeAudioUrl] = useState<string | null>(null);
+  const [isAhaMode, setIsAhaMode] = useState(false);
+  const [ahaState, setAhaState] = useState<'idle' | 'recording' | 'done'>('idle');
+  const ahaChunksRef = useRef<Blob[]>([]);
+  const ahaMediaRecorderRef = useRef<MediaRecorder | null>(null);
+  
+  const handleStartAha = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      ahaMediaRecorderRef.current = mediaRecorder;
+      ahaChunksRef.current = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) ahaChunksRef.current.push(e.data);
+      };
+      mediaRecorder.onstop = () => {
+        const type = mediaRecorder.mimeType || 'audio/webm';
+        const blob = new Blob(ahaChunksRef.current, { type });
+        setPracticeAudioUrl(URL.createObjectURL(blob));
+        setAhaState('done');
+      };
+      mediaRecorder.start(200);
+      setAhaState('recording');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleStopAha = () => {
+    if (ahaMediaRecorderRef.current && ahaMediaRecorderRef.current.state !== 'inactive') {
+      ahaMediaRecorderRef.current.stop();
+      ahaMediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
+    }
+  };
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -225,6 +260,7 @@ export default function DiagnosticoGratuitoPage() {
     setTimeout(async () => {
       const recordedType = mediaRecorderRef.current?.mimeType || 'audio/webm';
       const audioBlob = new Blob(audioChunksRef.current, { type: recordedType });
+        setOriginalAudioUrl(URL.createObjectURL(audioBlob));
       await sendAudioToApi(audioBlob);
     }, 400);
   };
@@ -304,7 +340,62 @@ export default function DiagnosticoGratuitoPage() {
 
         {/* Record Trigger & Status */}
         <div className="pt-2 space-y-4 w-full">
-          {!isRecording && !isAnalyzing && !analysisResult && (
+          {isAhaMode && analysisResult ? (
+          <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-3xl p-5 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl w-full max-w-2xl mx-auto">
+            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white">TU PRIMER ENTRENAMIENTO</h2>
+            <p className="text-slate-400 text-sm">Tu reto de hoy: <strong className="text-amber-400">{analysisResult.coaching.prescription.primaryExercise.title}</strong></p>
+            <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-xs text-slate-300">
+              {analysisResult.coaching.prescription.primaryExercise.instruction}
+            </div>
+
+            {ahaState === 'idle' && (
+              <button onClick={handleStartAha} className="w-full py-4 bg-amber-500 text-slate-950 rounded-xl font-black uppercase tracking-widest hover:bg-amber-400 transition-colors">
+                Grabar Práctica (2 Minutos)
+              </button>
+            )}
+
+            {ahaState === 'recording' && (
+              <div className="space-y-4">
+                <div className="flex justify-center p-8 bg-slate-900 rounded-xl border border-amber-500/50 relative overflow-hidden">
+                   <div className="absolute inset-0 border-4 border-amber-500 rounded-xl animate-pulse" />
+                   <span className="material-symbols-outlined text-amber-500 text-5xl animate-bounce">mic</span>
+                </div>
+                <button onClick={handleStopAha} className="w-full py-4 bg-red-500 text-white rounded-xl font-black uppercase tracking-widest hover:bg-red-400 transition-colors">
+                  Terminar Práctica
+                </button>
+              </div>
+            )}
+
+            {ahaState === 'done' && (
+              <div className="space-y-6 pt-4 border-t border-white/10">
+                <h3 className="text-lg font-black text-white uppercase text-center">Tu progreso observable</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-slate-900 rounded-xl border border-white/10 text-center">
+                    <div className="text-xs font-bold text-slate-500 uppercase mb-2">Primera Grabación</div>
+                    <audio src={originalAudioUrl || ''} controls className="w-full" />
+                  </div>
+                  <div className="p-4 bg-slate-900 rounded-xl border border-emerald-500/30 text-center relative">
+                     <div className="absolute -top-3 -right-3 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-1 rounded-full uppercase">Ahora</div>
+                    <div className="text-xs font-bold text-emerald-400 uppercase mb-2">Segunda Grabación</div>
+                    <audio src={practiceAudioUrl || ''} controls className="w-full" />
+                  </div>
+                </div>
+
+                <div className="text-center space-y-4 pt-4">
+                  <p className="text-sm font-bold text-white uppercase">¿Notas alguna diferencia entre cómo hablaste al principio y cómo hablas ahora?</p>
+                  <div className="flex gap-3 justify-center">
+                    <button onClick={() => router.push('/my-sessions')} className="px-6 py-3 bg-emerald-500 text-slate-950 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-400 transition-colors">
+                      Sí, noto la diferencia
+                    </button>
+                    <button onClick={() => setAhaState('idle')} className="px-6 py-3 bg-slate-800 text-slate-300 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-colors">
+                      Todavía no (Reintentar)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : !isRecording && !isAnalyzing && !analysisResult && (
             <button
               onClick={handleStartClick}
               disabled={!consentAccepted}
@@ -454,7 +545,7 @@ export default function DiagnosticoGratuitoPage() {
           )}
 
           {/* --- AUDITORÍA DE TU DIAGNÓSTICO (ESTRUCTURA DE 3 NIVELES - ENTRENADOR PERSONAL) --- */}
-          {analysisResult && (
+          {analysisResult && !isAhaMode && (
             <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-3xl md:rounded-[36px] p-5 sm:p-6 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden w-full">
               
               {/* Encabezado y Estado de Persistencia */}
@@ -661,7 +752,7 @@ export default function DiagnosticoGratuitoPage() {
 
                 <div className="flex flex-col md:flex-row gap-3 pt-1">
                   <button
-                    onClick={() => router.push(analysisResult.coaching.prescription.primaryExercise.customRoute || '/listen')}
+                    onClick={() => setIsAhaMode(true)}
                     className="flex-1 py-4 bg-slate-950 text-amber-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition-colors flex items-center justify-center gap-2 shadow-xl border border-amber-400/30 cursor-pointer"
                   >
                     <span>Entrenar esta habilidad</span>
