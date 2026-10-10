@@ -19,7 +19,7 @@ export default function Home() {
           </span>
         </div>
         <nav className="hidden md:flex gap-6 items-center text-sm font-semibold uppercase tracking-wider text-slate-400">
-          <Link href="/voz_efectiva" className="hover:text-white transition-colors">Diagnóstico Gratuito</Link>
+          <Link href="/onboarding" className="hover:text-white transition-colors">Diagnóstico Gratuito</Link>
           <a href="#planes" className="hover:text-white transition-colors">Planes</a>
           <a href="https://www.youtube.com/@oratoria_efectiva" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-red-500 transition-colors">
             <span className="material-symbols-outlined text-xl">play_circle</span>
@@ -48,7 +48,7 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
           <Link 
-            href="/voz_efectiva" 
+            href="/onboarding" 
             className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-400 hover:to-green-400 text-slate-950 border border-green-400/50 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-[0_0_40px_rgba(16,185,129,0.5)] animate-[pulse_2s_ease-in-out_infinite]"
           >
             <span className="material-symbols-outlined text-2xl animate-bounce">mic</span>
@@ -131,7 +131,7 @@ export default function Home() {
             <p className="text-[10px] text-slate-500 mb-6 font-mono leading-relaxed">
               Límite: 2 análisis completos de IA por cuenta. Repetir un ejercicio guiado no consume otro análisis.
             </p>
-            <Link href="/voz_efectiva" className="w-full py-4 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-center text-sm font-bold uppercase tracking-wider text-white">
+            <Link href="/onboarding" className="w-full py-4 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-center text-sm font-bold uppercase tracking-wider text-white">
               Empezar Gratis
             </Link>
           </div>

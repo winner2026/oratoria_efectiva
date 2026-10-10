@@ -65,7 +65,7 @@ export function evaluateWeaknesses(metrics: {
       type: 'PAUSE_CONTROL',
       category: 'VOICE',
       label: 'Escasez de Pausas Tácticas',
-      description: 'Muestra con pausas muy breves o poco frecuentes. El silencio sopesado otorga peso a las palabras.',
+      description: 'Haces pausas muy breves o casi no haces pausas. El silencio es clave para que te entiendan.',
       severity,
       confidence: 0.90,
     });
@@ -91,7 +91,7 @@ export function evaluateWeaknesses(metrics: {
       type: 'PITCH_VARIATION',
       category: 'VOICE',
       label: 'Rango de Variación Tonal Reducido',
-      description: 'El espectro de frecuencia muestra poca modulación, lo que puede percibirse como tono plano.',
+      description: 'Hablas casi en el mismo tono todo el tiempo, lo que puede percibirse como monótono.',
       severity: Math.max(0.35, severity),
       confidence: 0.85,
     });
@@ -104,7 +104,7 @@ export function evaluateWeaknesses(metrics: {
       type: 'ENERGY_STABILITY',
       category: 'PRESENCE',
       label: 'Oscilación en la Estabilidad del Flujo de Aire',
-      description: 'Se observan fluctuaciones de amplitud en la emisión, especialmente hacia los cierres.',
+      description: 'Tu volumen baja mucho al final de las frases, por lo que algunas palabras se pierden.',
       severity,
       confidence: 0.82,
     });

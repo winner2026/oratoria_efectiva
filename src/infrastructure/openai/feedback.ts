@@ -120,15 +120,15 @@ export async function generateDynamicFeedback(
     const parsed = JSON.parse(content) as DynamicFeedbackOutput;
 
     return {
-      diagnostico: parsed.diagnostico || "Brecha de autoridad detectada.",
+      diagnostico: parsed.diagnostico || "Notamos algunos detalles que puedes mejorar fácilmente con práctica.",
       score_seguridad: parsed.score_seguridad || 40,
       score_claridad: parsed.score_claridad || 40,
       score_estructura: parsed.score_estructura || 40,
-      rephrase_optimized: parsed.rephrase_optimized || "Señal de audio no recuperable.",
-      lo_que_suma: parsed.lo_que_suma || ["Potencial latente detectado"],
-      lo_que_resta: parsed.lo_que_resta || ["Inestabilidad glótica", "Fuga de tono"],
-      decision: parsed.decision || "Protocolo de Compresión Subglótica Controlada.",
-      payoff: parsed.payoff || "Análisis Forense completado. Datos insuficientes para garantizar autoridad en entornos de alta presión. Se recomienda activación de Protocolo ELITE para monitoreo de reuniones reales."
+      rephrase_optimized: parsed.rephrase_optimized || "Intenta hablar con oraciones más cortas.",
+      lo_que_suma: parsed.lo_que_suma || ["Tienes un buen volumen de voz"],
+      lo_que_resta: parsed.lo_que_resta || ["Faltan pausas entre ideas"],
+      decision: parsed.decision || "Practica hacer una pausa después de cada punto.",
+      payoff: parsed.payoff || "Este es tu punto de partida. La práctica hace la diferencia."
     };
 
   } catch (error) {

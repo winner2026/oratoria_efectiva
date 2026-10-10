@@ -113,28 +113,28 @@ export async function POST(req: NextRequest) {
         },
         metricExplanations: {
           fuerzaVocal: {
-            title: "Consistencia de Intensidad",
+            title: "Volumen y Energía",
             valueFormatted: result.metrics.energyStability !== null ? `${Math.round(result.metrics.energyStability * 100)}%` : "N/A",
-            explanation: "Indicador de consistencia RMS en intervalos de habla válidos.",
-            limitations: "No distingue intención expresiva; valores altos no siempre implican monotonía ni valores bajos mala técnica."
+            explanation: "Mide si mantienes un buen volumen al hablar o si tu voz se apaga al final de las frases.",
+            limitations: "Ocasionalmente, bajar la voz a propósito puede ser un recurso, pero por defecto buscamos que te escuchen bien."
           },
           dinamicaEntonacion: {
-            title: "Rango Fundamental",
+            title: "Expresividad y Tono",
             valueFormatted: result.metrics.pitchVariation !== null ? `${Math.round(result.metrics.pitchVariation)} Hz` : "N/A",
-            explanation: "Rango de variación de la frecuencia fundamental (F0).",
-            limitations: "Requiere detección de pitch fiable. Valores ausentes indican imposibilidad técnica de medición."
+            explanation: "Mide si tu voz tiene melodía y cambios de tono para mantener la atención, o si suenas muy monótono.",
+            limitations: "Si hay mucho ruido de fondo, a veces el escáner no logra medir bien tu tono exacto."
           },
           estabilidadEspectral: {
-            title: "Índice espectral experimental",
+            title: "Claridad de la Voz",
             valueFormatted: result.metrics.spectralBand3Score != null ? `${result.metrics.spectralBand3Score}/100` : "N/A",
-            explanation: "Índice heurístico de energía alrededor de 3 kHz en relación con otras bandas analizadas.",
-            limitations: "No es una medida validada de claridad vocal; depende del micrófono, el entorno y la calidad de grabación."
+            explanation: "Mide si tu voz suena clara y nítida o si se percibe oscura o ahogada.",
+            limitations: "Esta medición puede verse afectada por la calidad de tu micrófono o si estabas muy lejos de él."
           },
           ritmoHabla: {
-            title: "Ritmo (WPM)",
+            title: "Velocidad al Hablar",
             valueFormatted: `${result.metrics.wordsPerMinute} WPM`,
-            explanation: "Velocidad de habla basada en la transcripción temporal.",
-            limitations: "Se ve afectado por la calidad de la transcripción y el idioma."
+            explanation: "Calcula qué tan rápido hablas. Si vas muy rápido, la gente se pierde; si vas muy lento, se aburren.",
+            limitations: "Depende de lo bien que el sistema de IA entienda todas tus palabras."
           }
         },
         coaching: {
