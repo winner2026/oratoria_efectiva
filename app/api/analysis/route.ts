@@ -12,11 +12,11 @@ import { diagnoseAndPrescribeUseCase } from '@/application/coaching/diagnoseAndP
 import { VoiceSessionStore } from '@/infrastructure/db/voiceSessionStore';
 import { analyzeVoiceUseCase } from '@/application/analyzeVoice/analyzeVoiceUseCase';
 import { getOrCreateVisitorIdServer } from '@/lib/auth/visitorIdentity';
+import { checkUsage } from '@/lib/usage/checkUsage';
 
 export async function POST(req: NextRequest) {
-  let usageReserved = false;
-  let limitIdentifier = '';
-  let ipIdentifier = '';
+  let incrementedIdentifiers: string[] = [];
+  let isAnonymous = true;
 
   try {
     const formData = await req.formData();
@@ -29,63 +29,66 @@ export async function POST(req: NextRequest) {
     }
 
     const session = await getServerSession(authOptions);
-    const userId = session?.user?.id;
-    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    let userId = session?.user?.id;
     
-    limitIdentifier = userId ? `user_${userId}` : `anon_${visitorId}`;
-    ipIdentifier = `ip_${ip}`;
-    
-    let isPaidUser = false;
-    if (userId) {
-      const user = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } });
-      if (user && user.plan !== "FREE") {
-        isPaidUser = true;
-      }
+    // Fix 3: Handle guest-1 as anonymous
+    if (userId === 'guest-1') {
+      userId = undefined;
     }
 
-    // RESERVA ATÓMICA DE USO (Solo para FREE o Anónimos)
-    if (!isPaidUser) {
+    isAnonymous = !userId;
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    
+    const limitIdentifier = `anon_${visitorId}`;
+    const ipIdentifier = `ip_${ip}`;
+    
+    if (!isAnonymous && userId) {
+      // Fix 2: Check usage properly for authenticated users (supports STARTER, PREMIUM limits)
+      const usageResult = await checkUsage(userId);
+      if (!usageResult.allowed) {
+        return NextResponse.json({ 
+          error: usageResult.reason === 'FREE_LIMIT_REACHED' 
+            ? 'Has alcanzado el límite de análisis gratuitos. Suscríbete para continuar.'
+            : 'Has alcanzado el límite mensual de tu plan.',
+          code: usageResult.reason
+        }, { status: 403 });
+      }
+    } else {
+      // RESERVA ATÓMICA DE USO PARA ANÓNIMOS (Evita bypass por borrado de cookies y checkea IP)
       try {
         await prisma.$transaction(async (tx) => {
-          const usage = await tx.usage.upsert({
+          // Check/Create Cookie Fingerprint
+          const usageVisitor = await tx.usage.upsert({
             where: { fingerprint: limitIdentifier },
             update: {},
-            create: {
-              fingerprint: limitIdentifier,
-              planType: "FREE",
-              totalAnalyses: 0,
-              userId: userId || null
-            }
+            create: { fingerprint: limitIdentifier, planType: "FREE", totalAnalyses: 0 }
           });
 
-          // Extra capa: si es anónimo, también limitamos por IP
-          if (!userId) {
-             const ipUsage = await tx.usage.findUnique({
-                where: { fingerprint: ipIdentifier }
-             });
-             if (ipUsage && ipUsage.totalAnalyses >= 1) {
-                throw new Error("FREE_LIMIT_REACHED");
-             }
-          }
+          // Check/Create IP Fingerprint
+          const usageIp = await tx.usage.upsert({
+            where: { fingerprint: ipIdentifier },
+            update: {},
+            create: { fingerprint: ipIdentifier, planType: "FREE", totalAnalyses: 0 }
+          });
 
-          if (usage.totalAnalyses >= 1) {
+          if (usageVisitor.totalAnalyses >= 1 || usageIp.totalAnalyses >= 1) {
             throw new Error("FREE_LIMIT_REACHED");
           }
 
+          // Increment only if both are clear
           await tx.usage.update({
             where: { fingerprint: limitIdentifier },
             data: { totalAnalyses: { increment: 1 } }
           });
+          incrementedIdentifiers.push(limitIdentifier);
+
+          await tx.usage.update({
+            where: { fingerprint: ipIdentifier },
+            data: { totalAnalyses: { increment: 1 } }
+          });
+          incrementedIdentifiers.push(ipIdentifier);
           
-          if (!userId) {
-             await tx.usage.upsert({
-                where: { fingerprint: ipIdentifier },
-                update: { totalAnalyses: { increment: 1 } },
-                create: { fingerprint: ipIdentifier, planType: "FREE", totalAnalyses: 1 }
-             });
-          }
         }, { isolationLevel: 'Serializable' });
-        usageReserved = true;
       } catch (error) {
         if (error instanceof Error && error.message === "FREE_LIMIT_REACHED") {
           return NextResponse.json({ 
@@ -110,8 +113,8 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    const userState = await CoachingRepository.getUserCoachingState(limitIdentifier);
-    const sessionHistory = await CoachingRepository.getUserSessionHistory(limitIdentifier);
+    const userState = await CoachingRepository.getUserCoachingState(userId || limitIdentifier);
+    const sessionHistory = await CoachingRepository.getUserSessionHistory(userId || limitIdentifier);
 
     const coachingOutput = diagnoseAndPrescribeUseCase({
       userState,
@@ -214,14 +217,11 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     console.error('[ANALYSIS] Error:', error);
     
-    // ROLLBACK USAGE ON ERROR
-    if (usageReserved) {
+    // Fix 1: ROLLBACK USAGE ON ERROR - Only rollback precisely what we incremented
+    if (isAnonymous && incrementedIdentifiers.length > 0) {
       try {
-        const identifiers = [limitIdentifier];
-        if (ipIdentifier) identifiers.push(ipIdentifier);
-        
         await prisma.usage.updateMany({
-          where: { fingerprint: { in: identifiers } },
+          where: { fingerprint: { in: incrementedIdentifiers } },
           data: { totalAnalyses: { decrement: 1 } }
         });
       } catch (rollbackError) {
