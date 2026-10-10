@@ -278,7 +278,7 @@ export default function DiagnosticoGratuitoPage() {
         {/* Headlines */}
         {!analysisResult && (
           <>
-            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight">
               ¿Quieres saber cuál es el principal problema <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500">
                 que limita tu forma de hablar?
@@ -308,7 +308,7 @@ export default function DiagnosticoGratuitoPage() {
             <button
               onClick={handleStartClick}
               disabled={!consentAccepted}
-              className="px-10 py-6 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-green-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full sm:w-auto px-6 py-4 md:px-10 md:py-6 bg-gradient-to-r from-emerald-500 text-sm md:text-lg via-green-400 to-emerald-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-green-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <span className="material-symbols-outlined text-3xl">mic</span>
               {isAuthenticated ? "Iniciar Escáner Gratuito" : "Conectar con Google para Grabar"}
@@ -317,7 +317,7 @@ export default function DiagnosticoGratuitoPage() {
 
           {/* 🌟 MEDIDOR MODERNO TIPO AUREAL MULTICOLOR (GRAVES, MEDIOS Y AGUDOS) 🌟 */}
           {isRecording && (
-            <div className="p-8 bg-[#090C10]/95 border border-amber-500/40 rounded-[36px] space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col items-center">
+            <div className="p-5 sm:p-8 bg-[#090C10]/95 border border-amber-500/40 rounded-3xl md:rounded-[36px] space-y-5 md:space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col items-center w-full">
               
               {/* Outer Aureal Multicolor Glow Rings */}
               <div className="relative size-48 md:size-56 flex items-center justify-center my-2">
@@ -354,7 +354,7 @@ export default function DiagnosticoGratuitoPage() {
               </div>
 
               {/* 🎚️ 3-BAND FREQUENCY MONITOR: GRAVES, MEDIOS & AGUDOS 🎚️ */}
-              <div className="w-full max-w-md grid grid-cols-3 gap-3 p-4 bg-white/[0.03] border border-white/10 rounded-2xl">
+              <div className="w-full max-w-md grid grid-cols-3 gap-1.5 sm:gap-3 p-2 sm:p-4 bg-white/[0.03] border border-white/10 rounded-2xl">
                 
                 {/* 1. GRAVES (BASS: 60 - 250 Hz) */}
                 <div className="flex flex-col items-center space-y-1.5 text-center">
@@ -455,7 +455,7 @@ export default function DiagnosticoGratuitoPage() {
 
           {/* --- AUDITORÍA DE TU DIAGNÓSTICO (ESTRUCTURA DE 3 NIVELES - ENTRENADOR PERSONAL) --- */}
           {analysisResult && (
-            <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-[36px] p-6 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-3xl md:rounded-[36px] p-5 sm:p-6 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden w-full">
               
               {/* Encabezado y Estado de Persistencia */}
               <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
@@ -685,7 +685,7 @@ export default function DiagnosticoGratuitoPage() {
         {/* Value Proposition */}
         {!analysisResult && (
           <div className="grid grid-cols-3 gap-4 pt-8 text-center text-slate-500 text-[10px] font-mono uppercase tracking-widest border-t border-white/5">
-            <div>⚡ Sin Registro</div>
+            <div>⚡ Seguro con Google</div>
             <div>🎯 Diagnóstico Inmediato</div>
             <div>🏋️ Misión Adaptativa</div>
           </div>

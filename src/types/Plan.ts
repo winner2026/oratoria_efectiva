@@ -24,7 +24,7 @@ export type PlanFeatures = {
 
 export const PLAN_CONFIGS: Record<PlanType, PlanFeatures> = {
   FREE: {
-    maxAnalysesTotal: 1,
+    maxAnalysesTotal: 2,
     maxAnalysesPerMonth: -1,
     protocolDays: 30,
     hasVideoAnalysis: false,
