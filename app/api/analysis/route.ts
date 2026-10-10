@@ -159,18 +159,6 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     console.error('[ANALYSIS] Error:', error);
     
-    // Fix 1: ROLLBACK USAGE ON ERROR - Only rollback precisely what we incremented
-    if (isAnonymous && incrementedIdentifiers.length > 0) {
-      try {
-        await prisma.usage.updateMany({
-          where: { fingerprint: { in: incrementedIdentifiers } },
-          data: { totalAnalyses: { decrement: 1 } }
-        });
-      } catch (rollbackError) {
-        console.error("[ANALYSIS] Failed to rollback usage:", rollbackError);
-      }
-    }
-
     const message = error instanceof Error ? error.message : '';
     const noSpeechDetected = message.includes('No se detectó habla en la grabación')
       || message.includes('Whisper no detectó ningún contenido de audio');
