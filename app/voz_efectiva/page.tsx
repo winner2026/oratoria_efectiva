@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -74,6 +74,20 @@ export default function DiagnosticoGratuitoPage() {
     startFreeDiagnostic();
   };
   const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch('/api/onboarding')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.profile?.isCompleted) {
+            router.push('/onboarding');
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  }, [isAuthenticated, router]);
+
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);

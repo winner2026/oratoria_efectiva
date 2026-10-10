@@ -20,53 +20,37 @@ export const authOptions = {
     signIn: "/auth/login",
   },
   callbacks: {
+    async jwt({ token, user, account }: any) {
+      if (account?.provider === "google" && user?.email) {
+        try {
+          const { prisma } = await import("@/infrastructure/db/client");
+          let dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+          if (!dbUser) {
+            dbUser = await prisma.user.create({
+              data: {
+                email: user.email,
+                name: user.name || "",
+                image: user.image || "",
+              }
+            });
+          }
+          token.sub = dbUser.id; // Override Google ID with Prisma ID!
+        } catch (e) {
+          console.error("JWT Error syncing user:", e);
+        }
+      }
+      return token;
+    },
     async session({ session, token }: any) {
       if (session.user) {
-        (session.user as any).id = token.sub;
+        (session.user as any).id = token.sub; // This is now the Prisma UUID
       }
       return session;
     },
     async signIn({ user, account, profile }: any) {
-      if (account?.provider === "google") {
-        try {
-          // Dynamic import to avoid circular dep issues if any
-          // Note: using relative import or alias to client
-          const { prisma } = await import("@/infrastructure/db/client");
-          
-          const userEmail = user.email || "";
-          const userName = user.name || "";
-          const userImage = user.image || "";
-
-          if (userEmail) {
-            await prisma.user.upsert({
-              where: { email: userEmail },
-              update: {
-                name: userName,
-                image: userImage,
-              },
-              create: {
-                email: userEmail,
-                name: userName,
-                image: userImage,
-              }
-            });
-          }
-        } catch (error) {
-          console.error("Error in signIn callback:", error);
-        }
-      }
+      // The DB creation is now handled in the JWT callback to ensure we get the ID.
+      // But we can keep signIn returning true.
       return true;
-    },
-  },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-  },
+    }
+  }
 };

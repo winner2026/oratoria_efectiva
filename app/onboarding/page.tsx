@@ -102,8 +102,9 @@ export default function OnboardingPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // Check if already completed
-    if (status === "authenticated") {
+    if (status === "unauthenticated") {
+      router.push('/auth/login?callbackUrl=/onboarding');
+    } else if (status === "authenticated") {
       fetch('/api/onboarding')
         .then(res => res.json())
         .then(data => {
@@ -119,10 +120,8 @@ export default function OnboardingPage() {
   };
 
   const handleNext = () => {
-    if (step < QUESTIONS.length - 1) {
+    if (step < QUESTIONS.length) {
       setStep(step + 1);
-    } else {
-      handleFinish();
     }
   };
 
@@ -150,21 +149,48 @@ export default function OnboardingPage() {
   const progress = Math.round((step / QUESTIONS.length) * 100);
 
   // Calculate radar chart values based on answers
-  const chartData = {
-    claridad: answers.objective === 'claridad' ? 100 : answers.difficulty === 'orden' ? 80 : 40,
-    seguridad: answers.objective === 'seguridad' ? 100 : answers.difficulty === 'nervios' ? 80 : 40,
-    energia: answers.objective === 'liderazgo' ? 100 : answers.interest === 'confianza' ? 90 : 50,
-    ritmo: answers.difficulty === 'rapido' ? 100 : answers.interest === 'ritmo' ? 90 : 40,
-    expresividad: answers.difficulty === 'monotono' ? 100 : answers.interest === 'persuasion' ? 90 : 50,
+  
+  const getCoord = (value, angleDeg) => {
+    const angleRad = (angleDeg - 90) * (Math.PI / 180);
+    const r = (value / 100) * 40; 
+    return `${50 + r * Math.cos(angleRad)},${50 + r * Math.sin(angleRad)}`;
   };
 
-  const points = `
-    50,${100 - chartData.claridad * 0.4} 
-    ${50 + chartData.seguridad * 0.4},${50 - chartData.seguridad * 0.15} 
-    ${50 + chartData.energia * 0.25},${50 + chartData.energia * 0.35} 
-    ${50 - chartData.ritmo * 0.25},${50 + chartData.ritmo * 0.35} 
-    ${50 - chartData.expresividad * 0.4},${50 - chartData.expresividad * 0.15}
+  const getPoints = (data) => `
+    ${getCoord(data.claridad, 0)} 
+    ${getCoord(data.seguridad, 72)} 
+    ${getCoord(data.energia, 144)} 
+    ${getCoord(data.ritmo, 216)} 
+    ${getCoord(data.expresividad, 288)}
   `;
+
+  // Capa 1: Objetivo (Color: Amber)
+  const layer1 = {
+    claridad: answers.objective === 'claridad' ? 100 : 20,
+    seguridad: answers.objective === 'seguridad' ? 100 : 20,
+    energia: answers.objective === 'liderazgo' ? 100 : 20,
+    ritmo: 20,
+    expresividad: answers.objective === 'persuasion' ? 100 : 20,
+  };
+
+  // Capa 2: Dificultad (Color: Emerald)
+  const layer2 = {
+    claridad: answers.difficulty === 'orden' ? 90 : 20,
+    seguridad: answers.difficulty === 'nervios' ? 90 : 20,
+    energia: 20,
+    ritmo: answers.difficulty === 'rapido' ? 90 : 20,
+    expresividad: answers.difficulty === 'monotono' ? 90 : 20,
+  };
+
+  // Capa 3: Interés/Contexto (Color: Blue)
+  const layer3 = {
+    claridad: answers.interest === 'improvisacion' ? 80 : 20,
+    seguridad: answers.interest === 'confianza' ? 80 : 20,
+    energia: answers.profession === 'direccion' ? 80 : 20,
+    ritmo: answers.interest === 'ritmo' ? 80 : 20,
+    expresividad: answers.interest === 'persuasion' ? 80 : 20,
+  };
+
 
   if (step === QUESTIONS.length) {
     return (
@@ -317,7 +343,7 @@ export default function OnboardingPage() {
         <div className="w-full lg:w-96 shrink-0 flex-col gap-6 flex">
           <div className="bg-[#090C10] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden flex flex-col items-center">
             <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-6 w-full text-left">
-              Tu perfil en tiempo real
+              Mapa de tus prioridades de entrenamiento
             </h3>
             
             {/* Gráfico Radar Animado */}
@@ -333,18 +359,6 @@ export default function OnboardingPage() {
                 <line x1="50" y1="50" x2="75" y2="85" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
                 <line x1="50" y1="50" x2="25" y2="85" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
                 <line x1="50" y1="50" x2="10" y2="35" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
-
-                {/* Dynamic Data Polygon */}
-                {completedCount > 0 && (
-                  <motion.polygon 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, points }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                    fill="rgba(245, 158, 11, 0.2)" 
-                    stroke="rgba(245, 158, 11, 0.8)" 
-                    strokeWidth="2"
-                  />
-                )}
                 
                 {/* Labels */}
                 <text x="50" y="5" fontSize="4" fill="#64748b" textAnchor="middle">Claridad</text>
