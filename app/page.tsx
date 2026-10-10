@@ -60,7 +60,7 @@ export default function Home() {
           </a>
           <Link 
             href="/voz_efectiva" 
-            className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-400 hover:to-green-400 text-white border border-green-400/50 rounded-xl font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-[0_0_40px_rgba(16,185,129,0.5)] animate-[pulse_2s_ease-in-out_infinite]"
           >
             <span className="material-symbols-outlined text-xl">mic</span>
             Prueba tu Voz
