@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -62,6 +63,16 @@ interface AnalysisResultData {
 }
 
 export default function DiagnosticoGratuitoPage() {
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated" && session?.user?.id !== "guest-1";
+
+  const handleStartClick = () => {
+    if (!isAuthenticated) {
+      signIn("google", { callbackUrl: "/voz_efectiva" });
+      return;
+    }
+    startFreeDiagnostic();
+  };
   const router = useRouter();
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
@@ -295,12 +306,12 @@ export default function DiagnosticoGratuitoPage() {
         <div className="pt-2 space-y-4 w-full">
           {!isRecording && !isAnalyzing && !analysisResult && (
             <button
-              onClick={startFreeDiagnostic}
+              onClick={handleStartClick}
               disabled={!consentAccepted}
               className="px-10 py-6 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-green-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <span className="material-symbols-outlined text-3xl">mic</span>
-              Iniciar Escáner Gratuito
+              {isAuthenticated ? "Iniciar Escáner Gratuito" : "Conectar con Google para Grabar"}
             </button>
           )}
 
@@ -658,7 +669,7 @@ export default function DiagnosticoGratuitoPage() {
                   </button>
 
                   <button
-                    onClick={startFreeDiagnostic}
+                    onClick={handleStartClick}
                     className="py-4 px-6 bg-slate-900/20 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-900/30 transition-colors border border-slate-950/20 cursor-pointer"
                   >
                     Volver a Grabar

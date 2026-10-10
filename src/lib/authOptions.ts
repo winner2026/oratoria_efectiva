@@ -1,4 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET || "complex_secret_fallback_123",
@@ -10,10 +11,10 @@ export const authOptions = {
         return { id: "guest-1", name: "Guest User", email: "guest@example.com", image: "" };
       }
     }),
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    // }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
   ],
   pages: {
     signIn: "/auth/login",
