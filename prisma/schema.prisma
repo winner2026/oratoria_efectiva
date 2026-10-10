@@ -41,6 +41,7 @@ model User {
   subscriptionRenewsAt       DateTime? @map("subscription_renews_at")
 
   usage         Usage?
+  onboardingProfile OnboardingProfile?
 
   @@map("users")
 }
@@ -166,4 +167,26 @@ model SuspiciousActivity {
   createdAt DateTime @default(now())
   
   @@map("suspicious_activity")
+}
+
+
+
+model OnboardingProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  objective       String?  // Ej: expresar_claridad, seguridad, persuadir, liderazgo
+  difficulty      String?  // Ej: rapido, nervios, ordenar, monotona
+  profession      String?  // Ej: ventas, direccion, educacion, otro
+  situation       String?  // Ej: presentar_producto, reuniones, discursos, entrevistas
+  interest        String?  // Ej: pausas, confianza, persuadir, improvisar
+  ageRange        String?  // Ej: menos_18, 18_24, 25_39, 40_mas
+  gender          String?  // Ej: mujer, hombre, no_binario, prefiero_no
+  
+  isCompleted     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("onboarding_profiles")
 }
