@@ -1,5 +1,5 @@
 /**
- * Sistema de Streaks - Oratoria Efectiva
+ * Sistema de Streaks - Víctor Martínez Pro
  * 
  * Rastrea días consecutivos de práctica usando localStorage.
  * Costo: $0 (todo client-side)

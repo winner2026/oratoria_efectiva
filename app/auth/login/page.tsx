@@ -2,26 +2,25 @@
 
 import React, { Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") || "/listen";
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGuestLogin = async () => {
+  const handleGoogleLogin = async () => {
+    setIsSigningIn(true);
+    setError(null);
     try {
-      await signIn("credentials", {
-         redirect: false,
-         callbackUrl: callbackUrl,
-         name: "Invitado",
-         email: "invitado@oratoria.com"
-      });
-      router.push(callbackUrl);
+      await signIn("google", { callbackUrl });
     } catch (error) {
-       console.error("Login failed", error);
+      console.error("Google sign-in failed", error);
+      setError("No se pudo iniciar sesión. Inténtalo de nuevo.");
+      setIsSigningIn(false);
     }
   };
 
@@ -37,18 +36,12 @@ function LoginForm() {
       <div className="absolute top-[-20%] right-[-20%] w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-indigo-900/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* 🛡️ SECURITY HEADER */}
-      <div className="absolute top-8 left-0 w-full flex justify-between px-8 opacity-30 pointer-events-none">
-          <span className="text-[10px] font-mono tracking-widest text-white">SECURE CONNECTION // TLS 1.3</span>
-          <span className="text-[10px] font-mono tracking-widest text-white animate-pulse">SYSTEM ONLINE</span>
-      </div>
-
       <div className="relative z-10 w-full max-w-sm">
         
         {/* LOGO & IDENTITY */}
         <div className="text-center mb-12 space-y-4">
             <h1 className="text-3xl font-black text-white tracking-widest uppercase mb-1">
-                ORATORIA EFECTIVA
+                VÍCTOR MARTÍNEZ PRO
             </h1>
             <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] bg-blue-900/10 inline-block px-3 py-1 rounded-full border border-blue-500/20">
                 Sistema de Control Vocal
@@ -68,28 +61,30 @@ function LoginForm() {
                 <div>
                      <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-2">Bienvenido</h2>
                      <p className="text-xs text-slate-500 leading-relaxed">
-                         Acceso inmediato a todas las herramientas.
+                         Continúa con Google para crear o usar tu cuenta y guardar el progreso. El diagnóstico es gratuito y no requiere tarjeta.
                      </p>
                 </div>
 
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
                 <button
-                    onClick={handleGuestLogin}
-                    className="w-full relative group/btn overflow-hidden rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black py-4 transition-all shadow-[0_0_30px_-5px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.6)]"
+                    onClick={handleGoogleLogin}
+                    disabled={isSigningIn}
+                    className="w-full relative group/btn overflow-hidden rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black py-4 transition-all shadow-[0_0_30px_-5px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.6)] disabled:cursor-wait disabled:opacity-60"
                 >
                     <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1s_infinite]"></div>
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                        <span className="material-symbols-outlined text-lg">login</span>
-                        <span className="uppercase tracking-widest text-xs">Entrar a la App</span>
+                        <span className="material-symbols-outlined text-lg" aria-hidden="true">login</span>
+                        <span className="uppercase tracking-widest text-xs">{isSigningIn ? "Conectando..." : "Continuar con Google"}</span>
                     </div>
                 </button>
+                {error && <p role="alert" className="text-sm text-rose-300">{error}</p>}
             </div>
         </div>
 
         {/* FOOTER */}
         <p className="mt-8 text-center text-[10px] text-slate-600 uppercase tracking-widest font-medium">
-             &copy; 2026 Oratoria Efectiva Labs
+             &copy; {new Date().getFullYear()} Víctor Martínez Pro
         </p>
 
       </div>

@@ -14,6 +14,14 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  body {
+    word-spacing: 0.025em;
+  }
+
+  p {
+    line-height: 1.65;
+  }
+
   html {
     font-size: 16px;
     background-color: #05070A;

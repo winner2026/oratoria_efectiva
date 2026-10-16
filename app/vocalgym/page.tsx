@@ -242,14 +242,14 @@ export default function ExperimentalConversionLanding() {
                 V
               </div>
               <div className="text-left">
-                <h4 className="font-bold text-base text-white">Víctor — Oratoria Efectiva</h4>
+                <h4 className="font-bold text-base text-white">Víctor Martínez Pro</h4>
                 <p className="text-xs text-amber-400 font-medium">Contenido y entrenamiento sobre comunicación y oratoria</p>
               </div>
             </div>
 
             <div className="pt-2 border-t border-white/10 text-center space-y-1">
               <span className="text-3xl font-black text-white tracking-tight">+9.000 personas</span>
-              <p className="text-xs text-slate-400">siguen la comunidad y metodología de Oratoria Efectiva.</p>
+              <p className="text-xs text-slate-400">siguen la comunidad y metodología de Víctor Martínez Pro.</p>
             </div>
           </div>
 

@@ -71,7 +71,7 @@ export default function WaitlistPage() {
                 
                 <p className="text-slate-400 text-lg">
                   Únete a la lista de espera y sé de los primeros en probar
-                  <strong className="text-white"> Oratoria Efectiva</strong>.
+                  <strong className="text-white"> Víctor Martínez Pro</strong>.
                 </p>
               </div>
 
@@ -186,7 +186,7 @@ export default function WaitlistPage() {
 
       {/* Footer */}
       <footer className="p-6 text-center text-slate-600 text-sm">
-        © 2024 Oratoria Efectiva
+        © 2024 Víctor Martínez Pro
       </footer>
     </div>
   );

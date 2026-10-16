@@ -299,7 +299,7 @@ export default function HomePage() {
               <p className="text-brand-orange font-semibold text-sm">Especialista en Oratoria & Comunicación de Alto Impacto</p>
 
               <p className="text-slate-300 text-sm leading-relaxed">
-                Fundador de <strong className="text-white">Oratoria Efectiva</strong>. He dedicado años a entrenar a profesionales, emprendedores y ejecutivos para dominar el arte de hablar en público, liberar la fuerza de su voz y comunicarse con máxima convicción.
+                Fundador de <strong className="text-white">Víctor Martínez Pro</strong>. He dedicado años a entrenar a profesionales, emprendedores y ejecutivos para dominar el arte de hablar en público, liberar la fuerza de su voz y comunicarse con máxima convicción.
               </p>
             </div>
           </div>
@@ -406,7 +406,7 @@ export default function HomePage() {
             },
             {
               q: "¿Obtengo certificado de conclusión?",
-              a: "Sí. Al completar el 100% del programa, la plataforma genera automáticamente un certificado digital validando tu entrenamiento en Oratoria Efectiva."
+              a: "Sí. Al completar el 100% del programa, la plataforma genera automáticamente un certificado digital validando tu entrenamiento con Víctor Martínez Pro."
             },
             {
               q: "¿Cuándo y cómo recibo mi acceso?",
@@ -432,7 +432,7 @@ export default function HomePage() {
       <footer className="py-12 bg-[#07060D] border-t border-white/10 text-center relative z-10 text-slate-500 text-xs">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white text-sm">ORATORIA EFECTIVA</span>
+            <span className="font-bold text-white text-sm">VÍCTOR MARTÍNEZ PRO</span>
             <span>© {new Date().getFullYear()} Todos los derechos reservados.</span>
           </div>
         </div>

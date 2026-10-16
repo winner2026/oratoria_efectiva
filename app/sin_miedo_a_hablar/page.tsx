@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata = {
-  title: 'Sin Miedo a Hablar - Oratoria Efectiva',
+  title: 'Sin Miedo a Hablar - Víctor Martínez Pro',
   description: 'Recupera tu voz y hazla sonar con claridad.',
 };
 
@@ -69,7 +70,7 @@ export default function SinMiedoSalesPage() {
 
           <div className="mt-16 text-center">
             <p className="text-orange-500 font-bold tracking-widest uppercase mb-4 text-sm animate-pulse">
-              ESTA OFERTA PUEDE TERMINAR EN BREVE
+              Consulta el precio y las condiciones vigentes al continuar a Hotmart.
             </p>
             <a 
               href={checkoutUrl}
@@ -90,29 +91,25 @@ export default function SinMiedoSalesPage() {
           
           <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 md:p-12">
             <div className="flex items-center gap-6 mb-8">
-              <img 
-                src="/profile.png" 
-                alt="Víctor Martínez" 
-                className="w-24 h-24 rounded-full object-cover border-2 border-orange-600 shrink-0 shadow-[0_0_15px_rgba(234,88,12,0.3)]"
+              <Image
+                src="/victor-martinez.png"
+                alt="El profesor Víctor Martínez"
+                width={1672}
+                height={942}
+                className="w-24 h-24 rounded-full object-cover object-[center_25%] border-2 border-orange-600 shrink-0 shadow-[0_0_15px_rgba(234,88,12,0.3)]"
               />
               <div>
                 <h3 className="text-2xl font-bold text-white mb-1">Víctor Martínez</h3>
-                <p className="text-orange-500 font-medium">Oratoria_Efectiva</p>
+                <p className="text-orange-500 font-medium">@victormartinezpro</p>
               </div>
             </div>
             
             <div className="space-y-4 text-neutral-400">
               <p>
-                ¡Bienvenido a Oratoria Efectiva con Víctor Martínez! Un viaje de transformación profunda a través del poder de tu voz.
+                Víctor Martínez es docente uruguayo de Educación Secundaria y Educación Técnico Profesional, con más de 20 años de experiencia en Lengua y Comunicación.
               </p>
               <p>
-                Aprende a comunicar con autenticidad y dominar el arte de hablar en público para impactar vidas, abrir puertas y alcanzar tu máximo potencial.
-              </p>
-              <p>
-                Descubre la fuerza que ya vive en ti y libérala con confianza y propósito. Entrena para superar bloqueos internos, estructurar ideas que dejen huella y construir una presencia auténtica frente a cualquier audiencia.
-              </p>
-              <p className="text-white font-medium italic pt-4">
-                Este es tu momento. Esta es tu oportunidad. Y nosotros estamos aquí para acompañarte.
+                Su experiencia en el aula guía un enfoque práctico para trabajar la claridad, la confianza y la expresión oral.
               </p>
             </div>
           </div>
@@ -127,9 +124,9 @@ export default function SinMiedoSalesPage() {
           </h2>
           
           <div className="text-7xl mb-6">🛡️</div>
-          <h3 className="text-4xl font-bold mb-4">Garantía incondicional de 7 días</h3>
+          <h3 className="text-4xl font-bold mb-4">Garantía de 7 días</h3>
           <p className="text-xl opacity-90 max-w-xl mx-auto">
-            Tendrás tu dinero de vuelta sin preguntas hasta 7 días después de la compra.
+            Consulta en Hotmart las condiciones y el procedimiento para solicitar un reembolso dentro de los 7 días.
           </p>
         </div>
       </section>
@@ -142,19 +139,24 @@ export default function SinMiedoSalesPage() {
           </p>
           
           <div className="mb-10">
-            <p className="text-orange-500 font-bold tracking-widest uppercase text-sm mb-2">POR APENAS</p>
-            <p className="text-7xl font-black text-white">US$ 170.00</p>
+            <div className="inline-block px-4 py-1.5 rounded-full bg-orange-600/10 border border-orange-500/30 text-orange-400 font-black tracking-widest uppercase text-xs mb-4">
+              PAGO ÚNICO AL CONTADO
+            </div>
+            <p className="text-7xl font-black text-white">29 USD</p>
+            <p className="text-sm text-neutral-400 mt-3 font-semibold">
+              Pago al contado &bull; Sin cuotas &bull; Acceso inmediato según las condiciones de Hotmart
+            </p>
           </div>
           
           <a 
             href={checkoutUrl}
             className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-12 rounded-full text-xl transition-transform hover:scale-105 shadow-[0_10px_40px_rgba(234,88,12,0.4)] mb-6"
           >
-            COMPRAR AHORA
+            COMPRAR AHORA (29 USD)
           </a>
           
           <p className="text-sm text-neutral-500 font-bold flex items-center justify-center gap-2">
-            <span>🔒</span> PAGO 100% SEGURO CON ACCESO INMEDIATO
+            <span>🔒</span> Checkout gestionado por Hotmart
           </p>
         </div>
       </section>
@@ -194,7 +196,7 @@ export default function SinMiedoSalesPage() {
                 <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-6 pb-6 text-neutral-400">
-                Al completar todas las lecciones del curso, la plataforma generará automáticamente un certificado a tu nombre que valida tu participación y aprendizaje en Oratoria Efectiva.
+                Al completar todas las lecciones del curso, la plataforma generará automáticamente un certificado a tu nombre que valida tu participación y aprendizaje con Víctor Martínez Pro.
               </div>
             </details>
 
@@ -216,7 +218,7 @@ export default function SinMiedoSalesPage() {
                 <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-6 pb-6 text-neutral-400">
-                Solo debes hacer clic en cualquiera de los botones "COMPRAR AHORA" de esta página. Serás redirigido al formulario de pago seguro de Hotmart donde podrás elegir tu método de pago local y completar la transacción de manera encriptada.
+                Al hacer clic en "COMPRAR AHORA" irás al checkout de Hotmart. Allí podrás revisar el precio final, los medios de pago, las condiciones de acceso y la garantía antes de confirmar la compra.
               </div>
             </details>
           </div>

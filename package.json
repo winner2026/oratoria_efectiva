@@ -8,7 +8,7 @@
   },
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --use-system-ca ./node_modules/next/dist/bin/next dev",
     "build": "prisma generate && next build",
     "migrate": "node migrations/run.mjs",
     "start": "next start",

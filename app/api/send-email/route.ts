@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         <p>Te recordamos que tu tarjeta vence el día <strong>${dueDay}</strong>.</p>
         <p>Pagar el total hoy te evita pensar en esto después.</p>
         <p style="margin-top:24px;color:#666;font-size:12px">
-          Oratoria Efectiva · Simple · Directo · Paz mental
+          Víctor Martínez Pro · Simple · Directo · Paz mental
         </p>
       `,
     });

@@ -28,7 +28,7 @@ export async function GET() {
         <p>Te avisamos con tiempo: tu tarjeta vence el día <strong>${r.due_day}</strong>.</p>
         <p>Así no tenés que pensar en esto después.</p>
         <p style="margin-top:24px;color:#666;font-size:12px">
-          Oratoria Efectiva · Simple · Directo · Paz mental
+          Víctor Martínez Pro · Simple · Directo · Paz mental
         </p>
       `,
     });

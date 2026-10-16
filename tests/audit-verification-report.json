@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-10-16T19:29:45-03:00",
+  "project": "oratoria-efectiva",
+  "status": "HEALTHY",
+  "build_status": "SUCCESS",
+  "routes_verified": {
+    "root_landing_page": {
+      "path": "app/page.tsx",
+      "route": "/",
+      "type": "Static",
+      "verified_features": [
+        "Enlace directo a /sin_miedo_a_hablar",
+        "Sección dedicada al curso Sin Miedo a Hablar (29 USD Pago al contado)",
+        "Botón de diagnóstico vocal a /onboarding",
+        "Enlace a YouTube @victormartinezpro",
+        "Footer con copyright y enlaces legales"
+      ]
+    },
+    "sales_page": {
+      "path": "app/sin_miedo_a_hablar/page.tsx",
+      "route": "/sin_miedo_a_hablar",
+      "type": "Static",
+      "verified_features": [
+        "Precio 29 USD al contado (sin cuotas)",
+        "Enlace a checkout Hotmart https://pay.hotmart.com/F99862019P?off=dlcepqmr&hotfeature=51",
+        "Video Sales Letter (VSL) de YouTube embebido",
+        "Sección sobre el contenido y beneficios",
+        "Sección de autor Víctor Martínez con foto",
+        "Garantía incondicional de 7 días",
+        "Preguntas frecuentes con acordeones interactivos"
+      ]
+    },
+    "vocalgym_app": {
+      "path": "app/vocalgym/page.tsx",
+      "route": "/vocalgym",
+      "type": "Static",
+      "verified_features": [
+        "Punto de entrada aislado para el entrenamiento vocal",
+        "Configuración de rewrites en next.config.mjs para aislar la aplicación del dominio público"
+      ]
+    },
+    "tracking_and_analytics": {
+      "path": "app/layout.tsx",
+      "verified_features": [
+        "Google Tag Manager (GTM-5RJT8LRJ) en <head> y noscript tras <body>",
+        "Google Analytics 4 (G-K54S39NNTD)",
+        "Google Ads tag (AW-18488283276)"
+      ]
+    }
+  },
+  "test_suite_results": {
+    "suite": "tests/verify-sin-miedo-changes.mjs",
+    "total": 8,
+    "passed": 8,
+    "failed": 0
+  },
+  "next_build_summary": {
+    "total_routes": 69,
+    "typescript_errors": 0,
+    "compilation_time_seconds": 15.9,
+    "static_generation_time_ms": 1312.4
+  }
+}

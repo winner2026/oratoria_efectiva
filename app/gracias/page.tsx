@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import ConversionTracker from "@/components/ConversionTracker";
 
 export const metadata = {
-  title: "¡Gracias por tu compra! - Oratoria Efectiva",
+  title: "¡Gracias por tu compra! - Víctor Martínez Pro",
   description: "Tu acceso a Sin Miedo a Hablar está confirmado.",
 };
 
