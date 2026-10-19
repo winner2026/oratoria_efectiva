@@ -17,7 +17,7 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col gap-4 items-center">
-          <Link href="/practice?mode=video" className="w-full max-w-md">
+          <Link href="/voz_efectiva" className="w-full max-w-md">
             <button
               type="button"
               className="n8n-btn-primary w-full py-5 text-xl font-black tracking-wide"

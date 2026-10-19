@@ -169,3 +169,128 @@
 .material-symbols-outlined {
   user-select: none;
 }
+
+/* === EFECTO DE LLAMA DE FUEGO / PLASMA (VOZ EFECTIVA) === */
+.bg-space {
+  background: radial-gradient(circle at 50% 15%, #16182d 0%, #090d16 60%, #020408 100%);
+}
+
+.glow-button {
+  box-shadow: 0 0 35px rgba(234, 179, 8, 0.45);
+}
+
+/* === EFECTO DE LLAMA DE FUEGO / PLASMA === */
+.fire-orb-container {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Capa 1: Fuego principal (Naranja, Dorado y toques de Plasma Azul) */
+.fire-ring-1 {
+  position: absolute;
+  inset: 4px;
+  background: conic-gradient(
+    from 0deg,
+    #ff4500,
+    #ffa500,
+    #38bdf8,
+    #ff6b00,
+    #ffd700,
+    #0284c7,
+    #ff4500
+  );
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  filter: blur(10px);
+  opacity: 0.9;
+  animation: flame-spin 4s linear infinite, flame-morph 3s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+/* Capa 2: Contrarrotación para crear el efecto de "lenguas de fuego" */
+.fire-ring-2 {
+  position: absolute;
+  inset: 8px;
+  background: conic-gradient(
+    from 180deg,
+    #ffae00,
+    transparent,
+    #ff3300,
+    #fde047,
+    transparent,
+    #38bdf8,
+    #ffae00
+  );
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  filter: blur(6px);
+  opacity: 0.95;
+  animation: flame-spin-reverse 3s linear infinite, flame-morph 2.2s ease-in-out infinite alternate-reverse;
+  mix-blend-mode: screen;
+}
+
+/* Capa 3: Anillo incandescente nítido pegado al borde */
+.fire-ring-core {
+  position: absolute;
+  inset: 15px;
+  background: conic-gradient(
+    from 90deg,
+    #fbbf24,
+    #38bdf8,
+    #f97316,
+    #fef08a,
+    #fbbf24
+  );
+  border-radius: 53% 47% 52% 48% / 48% 52% 47% 53%;
+  filter: blur(2px);
+  animation: flame-spin 6s linear infinite, core-wobble 2s ease-in-out infinite alternate;
+}
+
+/* Resplandor ambiental de fondo */
+.fire-ambient {
+  position: absolute;
+  inset: -15px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.35) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 70%);
+  filter: blur(20px);
+  animation: pulse-ambient 3s ease-in-out infinite;
+}
+
+/* Animaciones de rotación */
+@keyframes flame-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes flame-spin-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Animaciones de deformación líquida (simula la turbulencia del fuego) */
+@keyframes flame-morph {
+  0% {
+    border-radius: 62% 38% 42% 58% / 58% 42% 58% 42%;
+    transform: scale(0.97) rotate(0deg);
+  }
+  50% {
+    border-radius: 45% 55% 62% 38% / 43% 60% 40% 57%;
+    transform: scale(1.04) rotate(180deg);
+  }
+  100% {
+    border-radius: 55% 45% 37% 63% / 63% 37% 63% 37%;
+    transform: scale(0.99) rotate(360deg);
+  }
+}
+
+@keyframes core-wobble {
+  0% { border-radius: 52% 48% 51% 49% / 49% 51% 48% 52%; transform: scale(0.99); }
+  100% { border-radius: 48% 52% 49% 51% / 52% 48% 51% 49%; transform: scale(1.02); }
+}
+
+@keyframes pulse-ambient {
+  0%, 100% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+

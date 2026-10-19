@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendLeadToGoogleSheets } from "@/services/googleSheetsLeadService";
 
 export const runtime = "nodejs";
 export const maxDuration = 15;
@@ -6,16 +7,6 @@ export const maxDuration = 15;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
-  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  const webhookSecret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET;
-
-  if (!webhookUrl || !webhookSecret) {
-    return NextResponse.json(
-      { success: false, error: "El formulario todavía no está conectado. Inténtalo más tarde." },
-      { status: 503 }
-    );
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -28,6 +19,8 @@ export async function POST(request: NextRequest) {
   }
 
   const { name, email, consent, website } = body as Record<string, unknown>;
+  
+  // Honeypot anti-spam
   if (typeof website === "string" && website.trim()) {
     return NextResponse.json({ success: true });
   }
@@ -45,40 +38,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: "Necesitas aceptar el aviso para continuar." }, { status: 400 });
   }
 
-  try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        secret: webhookSecret,
-        name: normalizedName,
-        email: normalizedEmail,
-        source: "regalos",
-      }),
-      cache: "no-store",
-      signal: AbortSignal.timeout(12000),
-    });
+  const result = await sendLeadToGoogleSheets({
+    name: normalizedName,
+    email: normalizedEmail,
+    source: "regalos",
+  });
 
-    const result = await response.json().catch(() => null);
-    if (!response.ok || result?.success !== true) {
-      console.error(
-        "Google Sheets lead registration failed",
-        response.status,
-        result?.error || "invalid response",
-        result?.detail || ""
-      );
-      return NextResponse.json(
-        { success: false, error: "No pudimos registrar tu solicitud. Inténtalo de nuevo más tarde." },
-        { status: 502 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Google Sheets webhook unavailable", error);
+  if (!result.success) {
+    console.error("[API /api/regalos] Failed to save lead to Google Sheets:", result.error, result.detail);
     return NextResponse.json(
-      { success: false, error: "No pudimos conectar con el registro. Inténtalo de nuevo más tarde." },
+      { success: false, error: "No pudimos registrar tu solicitud. Inténtalo de nuevo más tarde." },
       { status: 502 }
     );
   }
+
+  return NextResponse.json({ success: true });
 }

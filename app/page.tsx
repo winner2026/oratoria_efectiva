@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -36,8 +35,11 @@ export default function Home() {
         <nav className="hidden md:flex gap-8 items-center text-xs font-bold uppercase tracking-widest text-slate-400" aria-label="Navegación principal">
           <a href="#dolores" className="hover:text-white transition-colors">El Problema</a>
           <a href="#metodo" className="hover:text-white transition-colors">El Método</a>
-          <Link href="/sin_miedo_a_hablar" className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold">
-            <span className="material-symbols-outlined text-[16px]">school</span>
+          <a href="#productos" className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold">
+            <span className="material-symbols-outlined text-[16px]">menu_book</span>
+            Productos
+          </a>
+          <Link href="/sin_miedo_a_hablar" className="hover:text-white transition-colors">
             Curso Sin Miedo
           </Link>
           <Link href="/regalos" className="hover:text-amber-300 transition-colors">Regalos</Link>
@@ -57,7 +59,12 @@ export default function Home() {
             <div className="flex flex-col gap-1 text-sm font-semibold text-slate-300">
               <a href="#dolores" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">El problema</a>
               <a href="#metodo" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">Cómo funciona</a>
-              <Link href="/sin_miedo_a_hablar" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-amber-400 hover:bg-white/5">Curso Sin Miedo a Hablar · 29 USD</Link>
+              <a href="#productos" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-amber-400 hover:bg-white/5 font-bold">Catálogo de Productos</a>
+              <Link href="/protocolo-de-respuestas-inteligentes" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-amber-300 hover:bg-white/5 flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">auto_stories</span>
+                Nuevo Libro: Protocolo de Respuestas
+              </Link>
+              <Link href="/sin_miedo_a_hablar" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-slate-300 hover:bg-white/5">Curso Sin Miedo a Hablar · 29 USD</Link>
               <Link href="/regalos" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">Regalos · guía gratuita</Link>
               <a href="#youtube" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">Comunidad</a>
               <Link href="/onboarding" onClick={() => setMobileMenuOpen(false)} className="mt-2 rounded-xl bg-amber-500 px-4 py-3 text-center font-black text-slate-950">Comenzar diagnóstico gratuito</Link>
@@ -266,12 +273,11 @@ export default function Home() {
       <section className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 md:py-20" aria-labelledby="profesor-title">
         <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] items-center gap-8 md:gap-14 rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-10">
           <div className="relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl border border-white/10">
-            <Image
+            <img
               src="/victor-martinez.png"
               alt="El profesor Víctor Martínez"
-              fill
-              sizes="(max-width: 768px) 100vw, 40vw"
-              className="object-cover object-[center_25%]"
+              className="w-full h-full object-cover object-[center_25%]"
+              loading="lazy"
             />
           </div>
           <div>
@@ -287,83 +293,176 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Course Feature Section: Sin Miedo a Hablar */}
-      <section id="curso-sin-miedo" className="relative z-10 w-full max-w-6xl mx-auto px-6 py-24">
-        <div className="p-10 md:p-16 rounded-[2.5rem] bg-gradient-to-br from-amber-950/30 via-slate-900/90 to-neutral-950 border border-amber-500/20 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* Products Section */}
+      <section id="productos" className="relative z-10 w-full max-w-6xl mx-auto px-6 py-24 border-t border-white/5">
+        <div className="text-center mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-widest">
+            <span className="material-symbols-outlined text-[16px]">menu_book</span>
+            Catálogo de Productos y Formación
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight">
+            Herramientas Tácticas para <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-500 to-orange-500">
+              Hablar con Verdadera Autoridad
+            </span>
+          </h2>
+          <p className="text-slate-400 max-w-2xl mx-auto text-base">
+            No vendemos teoría abstracta. Diseñamos manuales y cursos de aplicación inmediata para defender tus ideas bajo presión.
+          </p>
+        </div>
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* PRODUCT 1: NUEVO LIBRO PROTOCOLO DE RESPUESTAS INTELIGENTES (FEATURED) */}
+        <div className="mb-12 p-8 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-amber-950/40 via-slate-900/95 to-neutral-950 border-2 border-amber-500/40 shadow-[0_0_60px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            {/* Left Column: Book Mockup */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <div className="relative w-full max-w-xs aspect-[4/5] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_40px_rgba(245,158,11,0.3)] border border-amber-500/30 group-hover:scale-105 transition-transform duration-500">
+                <img
+                  src="/libro-protocolo-respuestas-inteligentes.jpg"
+                  alt="Libro Protocolo de Respuestas Inteligentes - Víctor Martínez"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute top-3 right-3 bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+                  Nuevo Libro
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-slate-400 text-center font-medium">
+                Por Víctor Martínez &bull; Manual Táctico de Intervención Inmediata
+              </p>
+            </div>
+
+            {/* Right Column: Copy targeting Avatar's pain points */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-widest">
-                <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
-                Curso Online de Alto Impacto
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-wider">
+                <span className="material-symbols-outlined text-[16px]">psychology_alt</span>
+                Tu Escudo Definitivo Contra la Improvisación
               </div>
 
-              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight">
+              <h3 className="text-3xl md:text-4xl font-black uppercase text-white leading-tight">
+                Protocolo de Respuestas Inteligentes
+              </h3>
+
+              <p className="text-slate-300 text-base leading-relaxed font-light">
+                ¿Alguna vez te quedaste en blanco en una reunión crucial? Sueltas muletillas (<em className="text-amber-400">«ehhh...», «bueno...»</em>) que fulminan tu autoridad en segundos. No importa cuánto sepas: si titubeas ante una pregunta difícil, tu entorno percibe incompetencia.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
+                <div className="flex items-center gap-2.5">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span><strong>Protocolo 3 Segundos:</strong> Pausa de estatus.</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span><strong>3 Estructuras Mentales:</strong> Sin rodeos.</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span><strong>Recetario 25 Casos:</strong> Neutraliza ataques.</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span><strong>Biohackeo del Estrés:</strong> Cero bloqueo mental.</span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+                <Link
+                  href="/protocolo-de-respuestas-inteligentes"
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest text-center transition-all shadow-[0_0_25px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <span>Ver Landing del Libro y Adquirir</span>
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
+                </Link>
+                <Link
+                  href="/productos"
+                  className="text-xs text-slate-400 hover:text-white transition-colors text-center sm:text-left font-bold uppercase tracking-wider"
+                >
+                  Ver en catálogo general →
+                </Link>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* PRODUCT 2: CURSO SIN MIEDO A HABLAR */}
+        <div className="p-10 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-neutral-950 border border-white/10 shadow-xl relative overflow-hidden">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <div className="lg:col-span-7 space-y-5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-widest">
+                <span className="material-symbols-outlined text-[16px]">school</span>
+                Curso Grabado de 21 Días
+              </div>
+
+              <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-white leading-tight">
                 Sin Miedo a Hablar: <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-500 to-orange-500">
                   Recupera tu voz y hazla sonar
                 </span>
-              </h2>
+              </h3>
 
-              <p className="text-slate-300 text-lg leading-relaxed font-light">
-                Explora herramientas de respiración para manejar los nervios al hablar y practica cómo proyectar una voz firme y natural.
+              <p className="text-slate-300 text-base leading-relaxed font-light">
+                Explora herramientas de respiración para desactivar los nervios desde el origen y practica cómo proyectar una voz firme y natural ante cualquier público.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/5">
-                  <span className="material-symbols-outlined text-amber-400 text-xl shrink-0">check_circle</span>
-                  <span className="text-sm text-slate-300">Comprende y trabaja el miedo escénico</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs text-slate-300">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span>Trabaja el miedo escénico desde su raíz</span>
                 </div>
-                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/5">
-                  <span className="material-symbols-outlined text-amber-400 text-xl shrink-0">check_circle</span>
-                  <span className="text-sm text-slate-300">Técnicas de respiración diafragmática</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span>Técnicas de respiración diafragmática</span>
                 </div>
-                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/5">
-                  <span className="material-symbols-outlined text-amber-400 text-xl shrink-0">check_circle</span>
-                  <span className="text-sm text-slate-300">Proyección y presencia auténtica</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span>Proyección y presencia auténtica</span>
                 </div>
-                <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/5">
-                  <span className="material-symbols-outlined text-amber-400 text-xl shrink-0">check_circle</span>
-                  <span className="text-sm text-slate-300">Acceso de por vida desde cualquier dispositivo</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
+                  <span>Acceso de por vida desde cualquier dispositivo</span>
                 </div>
               </div>
             </div>
 
             <div className="lg:col-span-5 flex flex-col items-center lg:items-end justify-center">
-              <div className="w-full max-w-sm bg-neutral-950/90 border border-amber-500/30 rounded-3xl p-8 text-center shadow-2xl backdrop-blur-xl relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-[10px] uppercase tracking-widest shadow-lg">
-                  Curso grabado
-                </div>
-
-                <p className="text-xs uppercase font-bold tracking-widest text-slate-400 mt-2 mb-1">
+              <div className="w-full max-w-sm bg-neutral-950/90 border border-amber-500/30 rounded-3xl p-7 text-center shadow-2xl backdrop-blur-xl relative">
+                <p className="text-xs uppercase font-bold tracking-widest text-slate-400 mb-1">
                   Modalidad Única
                 </p>
                 <div className="text-amber-400 font-black text-xs uppercase tracking-widest mb-3">
                   PAGO AL CONTADO
                 </div>
 
-                <div className="mb-6">
-                  <span className="text-5xl md:text-6xl font-black text-white">29 USD</span>
+                <div className="mb-5">
+                  <span className="text-4xl sm:text-5xl font-black text-white">29 USD</span>
                   <p className="text-xs text-slate-400 mt-1 font-medium">Pago único al contado &bull; Sin cuotas</p>
                 </div>
 
                 <Link
                   href="/sin_miedo_a_hablar"
-                  className="w-full py-4 px-6 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 mb-4"
+                  className="w-full py-3.5 px-6 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_25px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 mb-3"
                 >
-                  Ver Detalles y Acceder
-                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                  <span>Ver Curso Sin Miedo</span>
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </Link>
 
                 <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
                   <span className="material-symbols-outlined text-[14px] text-emerald-400">verified_user</span>
-                  Garantía de 7 días · consulta condiciones en Hotmart
+                  Garantía de 7 días · Hotmart
                 </p>
               </div>
             </div>
+
           </div>
         </div>
+
       </section>
 
       {/* YouTube Section */}
@@ -425,8 +524,14 @@ export default function Home() {
             <span className="font-black text-white text-sm tracking-tight">VÍCTOR MARTÍNEZ PRO</span>
             <span>&copy; {new Date().getFullYear()} Todos los derechos reservados.</span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link href="/sin_miedo_a_hablar" className="text-amber-400/90 hover:text-amber-300 font-bold transition-colors">
+          <div className="flex flex-wrap items-center gap-6">
+            <Link href="/productos" className="hover:text-white transition-colors">
+              Productos
+            </Link>
+            <Link href="/protocolo-de-respuestas-inteligentes" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">
+              Libro Protocolo de Respuestas
+            </Link>
+            <Link href="/sin_miedo_a_hablar" className="hover:text-white transition-colors">
               Curso Sin Miedo a Hablar (29 USD)
             </Link>
             <Link href="/onboarding" className="hover:text-white transition-colors">

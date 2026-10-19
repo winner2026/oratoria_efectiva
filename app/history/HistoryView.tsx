@@ -14,6 +14,37 @@ interface HistoryViewProps {
 export default function HistoryView({ videos, books, sessions }: HistoryViewProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterError, setNewsletterError] = useState("");
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) {
+      setNewsletterError("Por favor ingresa un correo válido.");
+      return;
+    }
+    setNewsletterLoading(true);
+    setNewsletterError("");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNewsletterSuccess(true);
+        setEmail("");
+      } else {
+        setNewsletterError(data.error || "No se pudo registrar la suscripción.");
+      }
+    } catch {
+      setNewsletterError("Error de conexión. Inténtalo más tarde.");
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-[100dvh] bg-[#05070A] font-display antialiased text-white flex justify-center selection:bg-amber-500/30">
@@ -23,7 +54,7 @@ export default function HistoryView({ videos, books, sessions }: HistoryViewProp
             <header className="sticky top-0 z-50 flex items-center justify-between p-4 bg-[#05070A]/95 backdrop-blur-md border-b border-white/10">
                 <div className="flex items-center gap-3">
                     <button 
-                        onClick={() => router.push("/practice?mode=video")}
+                        onClick={() => router.push("/voz_efectiva")}
                         className="flex size-10 items-center justify-center rounded-full hover:bg-white/10 transition-colors text-white"
                     >
                          <span className="material-symbols-outlined">arrow_back</span>
@@ -253,18 +284,33 @@ export default function HistoryView({ videos, books, sessions }: HistoryViewProp
                                 <p className="text-slate-900/80 text-sm font-semibold mt-1">Recibe tips semanales, ejercicios y secretos de oratoria en tu correo.</p>
                             </div>
                             
-                            <div className="flex flex-col gap-2 mt-2">
-                                <input 
-                                    type="email" 
-                                    placeholder="tu@email.com" 
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full rounded-xl px-4 py-2.5 text-white bg-slate-950 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300/50 border border-white/10"
-                                />
-                                <button className="w-full bg-slate-950 text-amber-400 font-black py-3 rounded-xl text-sm hover:bg-slate-900 transition-colors shadow-md uppercase tracking-wider border border-amber-400/30">
-                                    Suscribirme GRATIS
-                                </button>
-                            </div>
+                            {newsletterSuccess ? (
+                                <div className="rounded-xl bg-slate-950/90 border border-emerald-400/30 p-4 text-emerald-400 font-bold text-sm">
+                                    ✓ ¡Gracias por suscribirte! Te hemos añadido a la lista.
+                                </div>
+                            ) : (
+                                <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-2 mt-2">
+                                    <input 
+                                        type="email" 
+                                        required
+                                        placeholder="tu@email.com" 
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        disabled={newsletterLoading}
+                                        className="w-full rounded-xl px-4 py-2.5 text-white bg-slate-950 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300/50 border border-white/10"
+                                    />
+                                    {newsletterError && (
+                                        <p className="text-xs text-red-950 bg-red-400/20 rounded-md p-1 font-semibold">{newsletterError}</p>
+                                    )}
+                                    <button 
+                                        type="submit" 
+                                        disabled={newsletterLoading}
+                                        className="w-full bg-slate-950 text-amber-400 font-black py-3 rounded-xl text-sm hover:bg-slate-900 transition-colors shadow-md uppercase tracking-wider border border-amber-400/30 disabled:opacity-50"
+                                    >
+                                        {newsletterLoading ? "Suscribiendo..." : "Suscribirme GRATIS"}
+                                    </button>
+                                </form>
+                            )}
                             <p className="text-[10px] text-slate-900/70 font-medium mt-1">Sin spam. Desuscríbete cuando quieras.</p>
                         </div>
                     </div>

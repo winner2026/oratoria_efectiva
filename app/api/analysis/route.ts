@@ -13,6 +13,7 @@ import { VoiceSessionStore } from '@/infrastructure/db/voiceSessionStore';
 import { analyzeVoiceUseCase } from '@/application/analyzeVoice/analyzeVoiceUseCase';
 import { getOrCreateVisitorIdServer } from '@/lib/auth/visitorIdentity';
 import { checkUsage } from '@/lib/usage/checkUsage';
+import { VOICE_ARCHETYPES, calculateAcousticDistance } from '@/domain/archetype/ArchetypeEngine';
 
 export async function POST(req: NextRequest) {
   try {
@@ -97,6 +98,16 @@ export async function POST(req: NextRequest) {
       simulateDbFailure,
     });
 
+    // 7. Evaluar distancia bioacústica con respecto al arquetipo personalizado del usuario
+    const onboardingProfile = await prisma.onboardingProfile.findUnique({
+      where: { userId },
+    }).catch(() => null);
+
+    const targetArchetypeId = onboardingProfile?.interest || 'LIDER_MAGNETICO';
+    const targetArchetype = VOICE_ARCHETYPES[targetArchetypeId] || VOICE_ARCHETYPES.LIDER_MAGNETICO;
+
+    const acousticComparison = calculateAcousticDistance(targetArchetype, result.metrics);
+
     return NextResponse.json({
       success: true,
       data: {
@@ -105,6 +116,24 @@ export async function POST(req: NextRequest) {
           ...result.authorityScore,
           score: finalScore,
           level: finalLevel,
+        },
+        archetypeComparison: {
+          targetArchetype: {
+            id: targetArchetype.id,
+            name: targetArchetype.name,
+            code: targetArchetype.code,
+            tagline: targetArchetype.tagline,
+            themeColor: targetArchetype.themeColor,
+            recommendedTrainingFocus: targetArchetype.recommendedTrainingFocus,
+            actionablePrescription: targetArchetype.actionablePrescription,
+          },
+          distancePercent: acousticComparison.distancePercent,
+          matchScore: acousticComparison.matchScore,
+          bottleneckDimension: acousticComparison.bottleneckDimension,
+          wpmDelta: acousticComparison.wpmDelta,
+          pauseDelta: acousticComparison.pauseDelta,
+          pitchDelta: acousticComparison.pitchDelta,
+          energyDelta: acousticComparison.energyDelta,
         },
         persistence: {
           persisted: saveResult.persisted,

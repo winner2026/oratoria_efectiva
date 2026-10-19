@@ -147,7 +147,7 @@ export default function CoachHomePage() {
               </div>
 
               <button
-                onClick={() => router.push(dashboard?.todayMission.customRoute || "/practice")}
+                onClick={() => router.push(dashboard?.todayMission.customRoute || "/voz_efectiva")}
                 className="w-full py-4 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl group-hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 border border-white/10"
               >
                 <span className="material-symbols-outlined text-xl text-amber-400">play_arrow</span>

@@ -9,7 +9,7 @@ export default function SignInPage() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    await signIn("google", { callbackUrl: "/practice?mode=video" });
+    await signIn("google", { callbackUrl: "/voz_efectiva" });
   };
 
   return (

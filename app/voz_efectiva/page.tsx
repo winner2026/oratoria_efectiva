@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import AudioVisualizer from "@/components/AudioVisualizer";
+
 
 interface MetricExplanation {
   title: string;
@@ -60,221 +61,139 @@ interface AnalysisResultData {
       recommendedRoute: string;
     };
   };
+  archetypeComparison?: {
+    targetArchetype: {
+      id: string;
+      name: string;
+      code: string;
+      tagline: string;
+      themeColor: string;
+      recommendedTrainingFocus: string;
+      actionablePrescription: string;
+    };
+    distancePercent: number;
+    matchScore: number;
+    bottleneckDimension: string;
+    wpmDelta: number;
+    pauseDelta: number;
+    pitchDelta: number;
+    energyDelta: number;
+  };
 }
 
-export default function DiagnosticoGratuitoPage() {
+export default function VozEfectivaPage() {
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated" && (session?.user as any)?.id !== "guest-1";
-
-  const handleStartClick = () => {
-    if (!isAuthenticated) {
-      signIn("google", { callbackUrl: "/voz_efectiva" });
-      return;
-    }
-    startFreeDiagnostic();
-  };
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetch('/api/onboarding')
-        .then(res => res.json())
-        .then(data => {
-          if (!data.profile?.isCompleted) {
-            router.push('/onboarding');
-          }
-        })
-        .catch(err => console.error(err));
-    }
-  }, [isAuthenticated, router]);
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResultData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [consentAccepted, setConsentAccepted] = useState(false);
-  const [isRetryingSave, setIsRetryingSave] = useState(false);
-  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
+  const [recordingStream, setRecordingStream] = useState<MediaStream | null>(null);
 
-  // WebAudio Aureal Meter States
-  const [volumeLevel, setVolumeLevel] = useState<number>(0.15);
-  const [bassLevel, setBassLevel] = useState<number>(45);
-  const [midsLevel, setMidsLevel] = useState<number>(75);
-  const [highsLevel, setHighsLevel] = useState<number>(60);
-  const [frequencyBars, setFrequencyBars] = useState<number[]>([30, 45, 60, 80, 65, 50, 70, 90, 85, 60, 40, 55, 75, 50, 35, 20]);
-  const [originalAudioUrl, setOriginalAudioUrl] = useState<string | null>(null);
-  const [practiceAudioUrl, setPracticeAudioUrl] = useState<string | null>(null);
-  const [isAhaMode, setIsAhaMode] = useState(false);
-  const [ahaState, setAhaState] = useState<'idle' | 'recording' | 'done'>('idle');
-  const ahaChunksRef = useRef<Blob[]>([]);
-  const ahaMediaRecorderRef = useRef<MediaRecorder | null>(null);
-  
-  const handleStartAha = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      ahaMediaRecorderRef.current = mediaRecorder;
-      ahaChunksRef.current = [];
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) ahaChunksRef.current.push(e.data);
-      };
-      mediaRecorder.onstop = () => {
-        const type = mediaRecorder.mimeType || 'audio/webm';
-        const blob = new Blob(ahaChunksRef.current, { type });
-        setPracticeAudioUrl(URL.createObjectURL(blob));
-        setAhaState('done');
-      };
-      mediaRecorder.start(200);
-      setAhaState('recording');
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleStopAha = () => {
-    if (ahaMediaRecorderRef.current && ahaMediaRecorderRef.current.state !== 'inactive') {
-      ahaMediaRecorderRef.current.stop();
-      ahaMediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
-    }
-  };
+  // Countdown State
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [countdownVal, setCountdownVal] = useState(3);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const animFrameRef = useRef<number | null>(null);
 
-  const startFreeDiagnostic = async () => {
+  // Iniciar diagnóstico vocal de 15 segundos
+  const handleStartDiagnostic = async () => {
+    if (!isAuthenticated) {
+      signIn("google", { callbackUrl: "/voz_efectiva" });
+      return;
+    }
+
     setErrorMessage(null);
     setAnalysisResult(null);
-    audioChunksRef.current = [];
 
-    // Tracking event
-    fetch('/api/events', {
-      method: 'POST',
-      body: JSON.stringify({ eventType: 'diagnostic_started', source: 'youtube_cta' }),
-    }).catch(() => {});
-
-    let microphoneStream: MediaStream | null = null;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      microphoneStream = stream;
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+      setRecordingStream(stream);
 
-      // WebAudio Analyser for Aureal Meter & 3 Frequency Bands
-      try {
-        const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
-        const audioCtx = new AudioCtxClass();
-        audioCtxRef.current = audioCtx;
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 2048;
-          const source = audioCtx.createMediaStreamSource(stream);
-          source.connect(analyser);
-  
-          const dataArray = new Uint8Array(analyser.frequencyBinCount);
-  
-          const updateMeter = () => {
-            analyser.getByteFrequencyData(dataArray);
-            
-            let sum = 0;
-            let bassSum = 0;
-            let midsSum = 0;
-            let highsSum = 0;
-  
-            // Band 1: Graves (60 - 250 Hz ~ bins 2 to 10)
-            for (let i = 2; i <= 10 && i < dataArray.length; i++) {
-              bassSum += dataArray[i];
-            }
-            // Band 2: Medios (250 - 2000 Hz ~ bins 11 to 85)
-            for (let i = 11; i <= 85 && i < dataArray.length; i++) {
-              midsSum += dataArray[i];
-            }
-            // Band 3: Agudos (2000 - 8000 Hz ~ bins 86 to 341)
-            for (let i = 86; i <= 341 && i < dataArray.length; i++) {
-              highsSum += dataArray[i];
-            }
-  
-            sum = bassSum + midsSum + highsSum;
-            const avg = sum / (9 + 75 + 256);
-            const normVol = Math.min(1, Math.max(0.05, (avg / 255) * 1.5)); // Boost display volume
-            setVolumeLevel(normVol);
-  
-            setBassLevel(Math.min(100, Math.round(((bassSum / 9) / 255) * 100)));
-            setMidsLevel(Math.min(100, Math.round(((midsSum / 75) / 255) * 100)));
-            setHighsLevel(Math.min(100, Math.round(((highsSum / 256) / 255) * 100)));
-  
-            const bars = [];
-            const step = Math.floor(341 / 16);
-            for (let j = 0; j < 16; j++) {
-              let s = 0;
-              for (let k = Math.max(1, j * step); k < (j + 1) * step && k < dataArray.length; k++) {
-                s += dataArray[k];
-              }
-              bars.push(Math.round(((s / step) / 255) * 100));
-            }
-            setFrequencyBars(bars);
+      // Iniciar cuenta regresiva 3, 2, 1
+      setIsCountingDown(true);
+      setCountdownVal(3);
 
-          animFrameRef.current = requestAnimationFrame(updateMeter);
-        };
-        updateMeter();
-      } catch (audioErr) {
-        console.warn("WebAudio Analyser error:", audioErr);
-      }
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
+      let count = 3;
+      const countInterval = setInterval(() => {
+        count--;
+        setCountdownVal(count);
+        if (count <= 0) {
+          clearInterval(countInterval);
+          setIsCountingDown(false);
+          startActualRecording(stream);
         }
-      };
-
-      mediaRecorder.start(250);
-      setIsRecording(true);
-      setRecordingSeconds(0);
-
-      timerRef.current = setInterval(() => {
-        setRecordingSeconds((prev) => {
-          if (prev >= 15) {
-            stopRecordingAndAnalyze();
-            return 15;
-          }
-          return prev + 1;
-        });
       }, 1000);
-    } catch (err) {
-      console.warn("Microphone access unavailable or blocked.", err);
-      microphoneStream?.getTracks().forEach((track) => track.stop());
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
-      setIsRecording(false);
-      setIsAnalyzing(false);
-      setErrorMessage("No se pudo acceder al micrófono. Habilita el permiso del navegador y vuelve a intentarlo.");
+    } catch (err: any) {
+      console.error("Microphone access error:", err);
+      setErrorMessage("No se pudo acceder al micrófono. Por favor permite el acceso en el navegador.");
     }
   };
 
+  const startActualRecording = (stream: MediaStream) => {
+    audioChunksRef.current = [];
+    setRecordingSeconds(0);
+
+    const mediaRecorder = new MediaRecorder(stream, {
+      mimeType: MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "audio/webm",
+    });
+
+    mediaRecorderRef.current = mediaRecorder;
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        audioChunksRef.current.push(event.data);
+      }
+    };
+
+    mediaRecorder.start(250);
+    setIsRecording(true);
+
+    timerRef.current = setInterval(() => {
+      setRecordingSeconds((prev) => {
+        if (prev >= 15) {
+          stopRecordingAndAnalyze();
+          return 15;
+        }
+        return prev + 1;
+      });
+    }, 1000);
+  };
+
   const stopRecordingAndAnalyze = async () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    if (audioCtxRef.current) {
-      audioCtxRef.current.close().catch(() => {});
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
 
     setIsRecording(false);
 
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
-      // Stop all tracks
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+
+    if (recordingStream) {
+      recordingStream.getTracks().forEach((track) => track.stop());
+      setRecordingStream(null);
     }
 
     setIsAnalyzing(true);
 
-    // Wait short moment for last data chunk
     setTimeout(async () => {
-      const recordedType = mediaRecorderRef.current?.mimeType || 'audio/webm';
+      const recordedType = mediaRecorderRef.current?.mimeType || "audio/webm";
       const audioBlob = new Blob(audioChunksRef.current, { type: recordedType });
-        setOriginalAudioUrl(URL.createObjectURL(audioBlob));
       await sendAudioToApi(audioBlob);
     }, 400);
   };
@@ -282,521 +201,428 @@ export default function DiagnosticoGratuitoPage() {
   const sendAudioToApi = async (audioBlob: Blob) => {
     try {
       const formData = new FormData();
-      const audioExtension = audioBlob.type.includes('wav') ? 'wav'
-        : audioBlob.type.includes('mp4') ? 'mp4'
-        : audioBlob.type.includes('mp3') ? 'mp3'
-        : 'webm';
-      formData.append('audio', audioBlob, `grabacion-oratoria.${audioExtension}`);
+      const audioExtension = audioBlob.type.includes("wav") ? "wav" : "webm";
+      formData.append("audio", audioBlob, `diagnostico-15s.${audioExtension}`);
 
-      const res = await fetch('/api/analysis', {
-        method: 'POST',
+      const res = await fetch("/api/analysis", {
+        method: "POST",
         body: formData,
       });
 
       const json = await res.json();
-      if (json.success && json.data) {
+      if (res.ok && json.success && json.data) {
         setAnalysisResult(json.data);
       } else {
-        setErrorMessage(json.error || 'No se pudo procesar el análisis de voz.');
+        setErrorMessage(json.error || "No se pudo procesar el análisis de voz.");
       }
     } catch (err) {
       console.error("Error enviando audio a /api/analysis:", err);
-      setErrorMessage("Error de conexión al servidor durante el análisis.");
+      setErrorMessage("Error de conexión al servidor durante el análisis bioacústico.");
     } finally {
       setIsAnalyzing(false);
     }
   };
 
+  const handleReset = () => {
+    setAnalysisResult(null);
+    setErrorMessage(null);
+    setRecordingSeconds(0);
+    setIsRecording(false);
+    setIsAnalyzing(false);
+  };
+
   return (
-    <main className="min-h-screen bg-[#05070A] text-white font-display flex flex-col items-center justify-center px-6 py-12 selection:bg-amber-500/30 relative overflow-hidden">
-      
-      {/* Studio Background Glows */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 w-96 h-96 bg-blue-900/20 rounded-full blur-[160px] pointer-events-none" />
-
-      <div className="max-w-2xl mx-auto text-center space-y-8 relative z-10 w-full">
-        
-        {/* Header Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-[10px] font-black uppercase tracking-[0.3em] text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-          </span>
-          DIAGNÓSTICO VOCAL DE 15 SEGUNDOS
+    <main className="bg-space text-white min-h-screen flex flex-col justify-between p-4 font-sans selection:bg-amber-500/30 overflow-x-hidden" suppressHydrationWarning>
+      {/* COUNTDOWN OVERLAY */}
+      {isCountingDown && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[1000] flex items-center justify-center animate-bounce-in pointer-events-none">
+          <div className="text-[35vw] md:text-[20rem] font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-400 to-orange-500 drop-shadow-[0_0_80px_rgba(245,158,11,0.6)]">
+            {countdownVal}
+          </div>
         </div>
+      )}
 
-        {/* Headlines */}
-        {!analysisResult && (
+      {/* Top Header */}
+      <header className="relative z-20 flex items-center justify-between p-4 max-w-2xl w-full mx-auto">
+        <Link href="/" className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white transition">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4" suppressHydrationWarning>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          <span>Inicio</span>
+        </Link>
+
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+          <div className={`size-2 rounded-full ${isRecording ? "bg-red-500 animate-pulse" : "bg-emerald-400"}`} />
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 font-mono">
+            {isRecording ? `0:${recordingSeconds.toString().padStart(2, "0")} / 0:15` : "DIAGNÓSTICO 15S"}
+          </span>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <div className="max-w-md w-full mx-auto flex flex-col items-center text-center space-y-7 py-4 flex-1 justify-center">
+        {/* VISTA 1: ANTES DE GRABAR */}
+        {!isRecording && !isAnalyzing && !analysisResult && (
           <>
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight">
-              ¿Quieres saber cuál es el principal problema <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500">
-                que limita tu forma de hablar?
-              </span>
-            </h1>
+            {/* === SECCIÓN DE MICRÓFONO CON LLAMA ANIMADA === */}
+            <div className="fire-orb-container my-1">
+              <div className="fire-ambient"></div>
+              <div className="fire-ring-1"></div>
+              <div className="fire-ring-2"></div>
+              <div className="fire-ring-core"></div>
 
-            <p className="text-slate-400 text-sm md:text-base font-medium max-w-lg mx-auto leading-relaxed">
-              Habla durante 15 segundos y la IA analizará tus pausas, ritmo y algunas características vocales.
-            </p>
-            <label className="flex items-start gap-3 max-w-lg mx-auto text-left text-xs leading-relaxed text-slate-400 bg-white/[0.03] border border-white/10 rounded-xl p-4">
-              <input
-                type="checkbox"
-                checked={consentAccepted}
-                onChange={(event) => setConsentAccepted(event.target.checked)}
-                className="mt-0.5 accent-amber-500"
-              />
-              <span>
-                Autorizo que mi grabación sea procesada por servicios externos de IA y que se guarden la transcripción y las métricas de esta sesión para mostrar el análisis. Entiendo que es un piloto experimental y no incluiré información sensible ni datos de otras personas.
+              <button
+                onClick={handleStartDiagnostic}
+                aria-label="Iniciar grabación de diagnóstico de voz"
+                className="relative z-10 w-44 h-44 rounded-full bg-gradient-to-b from-[#131b2e] to-[#1a131c] border border-amber-300/30 shadow-[inset_0_0_25px_rgba(0,0,0,0.85)] flex items-center justify-center group focus:outline-none transition-transform duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer"
+              >
+                <div className="absolute inset-2.5 rounded-full border border-amber-400/20 pointer-events-none"></div>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.6"
+                  stroke="currentColor"
+                  className="w-14 h-14 text-amber-300 drop-shadow-[0_0_12px_rgba(251,191,36,0.7)] group-hover:scale-110 transition-transform duration-300"
+                  suppressHydrationWarning
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 0 3-3V4.5a3 3 0 1 0-6 0v8.25a3 3 0 0 0 3 3Z"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Título y Descripción */}
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide uppercase">
+                <span className="text-white">HABLA </span>
+                <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400 bg-clip-text text-transparent">
+                  15 SEGUNDOS
+                </span>
+              </h1>
+              <p className="text-sm md:text-base text-slate-300/90 font-light max-w-sm px-2">
+                Nuestra Inteligencia Artificial medirá tus pausas, ritmo y consistencia en tiempo real.
+              </p>
+            </div>
+
+            {/* Tarjeta del Tema a Responder (Glassmorphism) */}
+            <div className="w-full bg-slate-800/35 backdrop-blur-xl border border-white/15 rounded-2xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-left relative overflow-hidden">
+              <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+
+              <span className="text-[11px] font-bold tracking-wider text-amber-400 uppercase block mb-1.5">
+                Tema para responder:
               </span>
-            </label>
+              <p className="text-sm md:text-base text-slate-100 italic leading-relaxed">
+                “¿A qué te dedicas y cuál es tu mayor reto al hablar en reuniones o presentaciones?”
+              </p>
+            </div>
+
+            {/* Indicadores / Métricas */}
+            <div className="grid grid-cols-3 gap-4 w-full max-w-xs pt-1">
+              {/* Ritmo WPM */}
+              <button
+                type="button"
+                className="group flex flex-col items-center space-y-2 transition-transform duration-300 hover:scale-110 active:scale-95 cursor-pointer focus:outline-none"
+                aria-label="Indicador Ritmo WPM"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-slate-900/90 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.25)] transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] group-hover:border-cyan-400">
+                  <svg className="w-6 h-6 text-cyan-400 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" suppressHydrationWarning>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                  </svg>
+                </div>
+                <span className="text-[10px] font-bold tracking-wider text-slate-300 group-hover:text-cyan-300 uppercase transition-colors duration-300">
+                  Ritmo WPM
+                </span>
+              </button>
+
+              {/* Pausas */}
+              <button
+                type="button"
+                className="group flex flex-col items-center space-y-2 transition-transform duration-300 hover:scale-110 active:scale-95 cursor-pointer focus:outline-none"
+                aria-label="Indicador Pausas"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-slate-900/90 border border-amber-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.25)] transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(245,158,11,0.6)] group-hover:border-amber-400">
+                  <svg className="w-6 h-6 text-amber-400 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" suppressHydrationWarning>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <span className="text-[10px] font-bold tracking-wider text-slate-300 group-hover:text-amber-300 uppercase transition-colors duration-300">
+                  Pausas
+                </span>
+              </button>
+
+              {/* Autoridad */}
+              <button
+                type="button"
+                className="group flex flex-col items-center space-y-2 transition-transform duration-300 hover:scale-110 active:scale-95 cursor-pointer focus:outline-none"
+                aria-label="Indicador Autoridad"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-slate-900/90 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.25)] transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] group-hover:border-emerald-400">
+                  <svg className="w-6 h-6 text-emerald-400 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" suppressHydrationWarning>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <span className="text-[10px] font-bold tracking-wider text-slate-300 group-hover:text-emerald-300 uppercase transition-colors duration-300">
+                  Autoridad
+                </span>
+              </button>
+            </div>
+
+            {/* Botón de texto alternativo */}
+            <div className="pt-2 w-full max-w-xs">
+              <button
+                onClick={handleStartDiagnostic}
+                className="w-full py-4 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider glow-button hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+              >
+                {isAuthenticated ? "Tocar para Iniciar (15s)" : "Conectar y Probar Gratis"}
+              </button>
+            </div>
           </>
         )}
 
-        {/* Record Trigger & Status */}
-        <div className="pt-2 space-y-4 w-full">
-          {isAhaMode && analysisResult ? (
-          <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-3xl p-5 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl w-full max-w-2xl mx-auto">
-            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white">TU PRIMER ENTRENAMIENTO</h2>
-            <p className="text-slate-400 text-sm">Tu reto de hoy: <strong className="text-amber-400">{analysisResult.coaching.prescription.primaryExercise.title}</strong></p>
-            <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-xs text-slate-300">
-              {analysisResult.coaching.prescription.primaryExercise.instruction}
+        {/* VISTA 2: GRABANDO (ORBE EN VIVO CON AUDIOVISUALIZER) */}
+        {isRecording && (
+          <div className="space-y-7 animate-fade-in w-full max-w-sm">
+            <div className="fire-orb-container my-2">
+              <div className="fire-ambient"></div>
+              <div className="fire-ring-1"></div>
+              <div className="fire-ring-2"></div>
+              <div className="fire-ring-core"></div>
+
+              {/* Centro de la llama con el visualizador en tiempo real */}
+              <div className="relative z-10 w-44 h-44 rounded-full bg-[#05070a] border border-amber-300/40 shadow-[inset_0_0_25px_rgba(0,0,0,0.85)] flex items-center justify-center overflow-hidden">
+                <AudioVisualizer stream={recordingStream} isActive={true} />
+              </div>
             </div>
 
-            {ahaState === 'idle' && (
-              <button onClick={handleStartAha} className="w-full py-4 bg-amber-500 text-slate-950 rounded-xl font-black uppercase tracking-widest hover:bg-amber-400 transition-colors">
-                Grabar Práctica (2 Minutos)
-              </button>
-            )}
-
-            {ahaState === 'recording' && (
-              <div className="space-y-4">
-                <div className="flex justify-center p-8 bg-slate-900 rounded-xl border border-amber-500/50 relative overflow-hidden">
-                   <div className="absolute inset-0 border-4 border-amber-500 rounded-xl animate-pulse" />
-                   <span className="material-symbols-outlined text-amber-500 text-5xl animate-bounce">mic</span>
-                </div>
-                <button onClick={handleStopAha} className="w-full py-4 bg-red-500 text-white rounded-xl font-black uppercase tracking-widest hover:bg-red-400 transition-colors">
-                  Terminar Práctica
-                </button>
+            <div className="space-y-3">
+              <span className="text-xl md:text-2xl font-mono font-black text-amber-400 tracking-wider block">
+                🔴 GRABANDO: {recordingSeconds}s / 15s
+              </span>
+              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden border border-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 transition-all duration-1000 ease-linear"
+                  style={{ width: `${(recordingSeconds / 15) * 100}%` }}
+                />
               </div>
-            )}
+              <p className="text-xs text-slate-300">
+                Responde con naturalidad. Se detendrá automáticamente a los 15s.
+              </p>
+            </div>
 
-            {ahaState === 'done' && (
-              <div className="space-y-6 pt-4 border-t border-white/10">
-                <h3 className="text-lg font-black text-white uppercase text-center">Tu progreso observable</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-900 rounded-xl border border-white/10 text-center">
-                    <div className="text-xs font-bold text-slate-500 uppercase mb-2">Primera Grabación</div>
-                    <audio src={originalAudioUrl || ''} controls className="w-full" />
-                  </div>
-                  <div className="p-4 bg-slate-900 rounded-xl border border-emerald-500/30 text-center relative">
-                     <div className="absolute -top-3 -right-3 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-1 rounded-full uppercase">Ahora</div>
-                    <div className="text-xs font-bold text-emerald-400 uppercase mb-2">Segunda Grabación</div>
-                    <audio src={practiceAudioUrl || ''} controls className="w-full" />
-                  </div>
-                </div>
-
-                <div className="text-center space-y-4 pt-4">
-                  <p className="text-sm font-bold text-white uppercase">¿Notas alguna diferencia entre cómo hablaste al principio y cómo hablas ahora?</p>
-                  <div className="flex gap-3 justify-center">
-                    <button onClick={() => router.push('/my-sessions')} className="px-6 py-3 bg-emerald-500 text-slate-950 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-400 transition-colors">
-                      Sí, noto la diferencia
-                    </button>
-                    <button onClick={() => setAhaState('idle')} className="px-6 py-3 bg-slate-800 text-slate-300 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-colors">
-                      Todavía no (Reintentar)
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : !isRecording && !isAnalyzing && !analysisResult && (
             <button
-              onClick={handleStartClick}
-              disabled={!consentAccepted}
-              className="w-full sm:w-auto px-6 py-4 md:px-10 md:py-6 bg-gradient-to-r from-emerald-500 text-sm md:text-lg via-green-400 to-emerald-600 rounded-2xl font-black text-lg text-slate-950 uppercase tracking-widest shadow-[0_0_50px_-10px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto border border-green-300/40 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              onClick={stopRecordingAndAnalyze}
+              className="px-8 py-3.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 transition hover:scale-105 active:scale-95 inline-flex items-center gap-2 cursor-pointer"
             >
-              <span className="material-symbols-outlined text-3xl">mic</span>
-              {isAuthenticated ? "Iniciar Escáner Gratuito" : "Conectar con Google para Grabar"}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" suppressHydrationWarning>
+                <path fillRule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clipRule="evenodd" />
+              </svg>
+              Finalizar y Ver Auditoría
             </button>
-          )}
-
-          {/* 🌟 MEDIDOR MODERNO TIPO AUREAL MULTICOLOR (GRAVES, MEDIOS Y AGUDOS) 🌟 */}
-          {isRecording && (
-            <div className="p-5 sm:p-8 bg-[#090C10]/95 border border-amber-500/40 rounded-3xl md:rounded-[36px] space-y-5 md:space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden flex flex-col items-center w-full">
-              
-              {/* Outer Aureal Multicolor Glow Rings */}
-              <div className="relative size-48 md:size-56 flex items-center justify-center my-2">
-                
-                {/* 1. Dynamic Conic Rainbow Halo Ring (Pulsing with sound volume) */}
-                <div 
-                  className="absolute inset-0 rounded-full opacity-70 blur-xl transition-transform duration-75 pointer-events-none"
-                  style={{
-                    background: 'conic-gradient(from 0deg, #F59E0B, #EC4899, #8B5CF6, #3B82F6, #10B981, #F59E0B)',
-                    transform: `scale(${1 + volumeLevel * 0.45}) rotate(${recordingSeconds * 20}deg)`,
-                  }}
-                />
-
-                {/* 2. Concentric Neon Ring */}
-                <div 
-                  className="absolute inset-2 rounded-full border-2 border-amber-400/50 shadow-[0_0_30px_rgba(245,158,11,0.6)] animate-pulse"
-                  style={{
-                    transform: `scale(${1 + volumeLevel * 0.25})`,
-                  }}
-                />
-
-                {/* 3. Center Obsidian Microphone Orb */}
-                <div className="relative size-32 md:size-36 rounded-full bg-[#05070A] border border-amber-400/40 flex flex-col items-center justify-center shadow-2xl z-10 space-y-1">
-                  <span 
-                    className="material-symbols-outlined text-4xl md:text-5xl text-amber-400 transition-transform duration-75"
-                    style={{ transform: `scale(${1 + volumeLevel * 0.3})` }}
-                  >
-                    mic
-                  </span>
-                  <span className="text-[10px] font-mono font-black text-amber-300 tracking-widest uppercase">
-                    {Math.round(volumeLevel * 100)}% SEÑAL
-                  </span>
-                </div>
-              </div>
-
-              {/* 🎚️ 3-BAND FREQUENCY MONITOR: GRAVES, MEDIOS & AGUDOS 🎚️ */}
-              <div className="w-full max-w-md grid grid-cols-3 gap-1.5 sm:gap-3 p-2 sm:p-4 bg-white/[0.03] border border-white/10 rounded-2xl">
-                
-                {/* 1. GRAVES (BASS: 60 - 250 Hz) */}
-                <div className="flex flex-col items-center space-y-1.5 text-center">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 flex items-center gap-1">
-                    <span>🎸</span> GRAVES
-                  </span>
-                  <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-amber-500/30">
-                    <div 
-                      className="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-75"
-                      style={{ width: `${bassLevel}%` }}
-                    />
-                  </div>
-                  <span className="text-[11px] font-mono font-bold text-amber-300">{bassLevel}%</span>
-                  <span className="text-[9px] text-slate-400 font-medium">60-250 Hz</span>
-                </div>
-
-                {/* 2. MEDIOS (MIDS: 250 - 2000 Hz) */}
-                <div className="flex flex-col items-center space-y-1.5 text-center border-x border-white/10 px-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-rose-400 flex items-center gap-1">
-                    <span>🎙️</span> MEDIOS
-                  </span>
-                  <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-rose-500/30">
-                    <div 
-                      className="h-full bg-gradient-to-r from-rose-600 via-rose-500 to-pink-400 transition-all duration-75"
-                      style={{ width: `${midsLevel}%` }}
-                    />
-                  </div>
-                  <span className="text-[11px] font-mono font-bold text-rose-300">{midsLevel}%</span>
-                  <span className="text-[9px] text-slate-400 font-medium">250-2k Hz</span>
-                </div>
-
-                {/* 3. AGUDOS (HIGHS: 2000 - 8000 Hz) */}
-                <div className="flex flex-col items-center space-y-1.5 text-center">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 flex items-center gap-1">
-                    <span>⚡</span> AGUDOS
-                  </span>
-                  <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-blue-500/30">
-                    <div 
-                      className="h-full bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 transition-all duration-75"
-                      style={{ width: `${highsLevel}%` }}
-                    />
-                  </div>
-                  <span className="text-[11px] font-mono font-bold text-blue-300">{highsLevel}%</span>
-                  <span className="text-[9px] text-slate-400 font-medium">2k-8k Hz</span>
-                </div>
-
-              </div>
-
-              {/* 16-Bar Iridescent Radial Equalizer Waveform */}
-              <div className="w-full max-w-sm flex items-end justify-center gap-1.5 h-14 pt-1">
-                {frequencyBars.map((height, idx) => (
-                  <div 
-                    key={idx}
-                    className="w-2.5 rounded-full transition-all duration-75 bg-gradient-to-t from-amber-500 via-rose-500 to-cyan-400 shadow-[0_0_10px_rgba(245,158,11,0.3)]"
-                    style={{ 
-                      height: `${Math.max(15, height)}%`,
-                      opacity: 0.4 + (height / 100) * 0.6
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Audio Signal Status & Clock */}
-              <div className="space-y-1 text-center">
-                <span className="text-amber-400 font-mono text-lg md:text-xl font-black uppercase tracking-widest block">
-                  🔴 GRABANDO SEÑAL BIOACÚSTICA: {recordingSeconds}s / 15s
-                </span>
-                <p className="text-slate-300 text-xs font-medium max-w-md mx-auto leading-relaxed">
-                  Habla normalmente respondiendo: <br />
-                  <span className="text-amber-200 italic font-semibold">"¿A qué te dedicas y cuál es tu mayor reto al hablar?"</span>
-                </p>
-              </div>
-
-              {/* Action Button */}
-              <button
-                onClick={stopRecordingAndAnalyze}
-                className="px-8 py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-600 text-slate-950 rounded-2xl text-xs font-black uppercase tracking-widest shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-green-300/40 cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-lg">square</span>
-                Finalizar Grabación y Ver Auditoría
-              </button>
-            </div>
-          )}
-
-          {isAnalyzing && (
-            <div className="p-8 bg-[#090C10] border border-amber-500/20 rounded-3xl space-y-3">
-              <span className="material-symbols-outlined text-4xl text-amber-400 animate-spin">sync</span>
-              <h3 className="text-lg font-bold uppercase tracking-wider">Procesando Bioacústica y Cuello de Botella...</h3>
-              <p className="text-slate-400 text-xs font-mono">Decodificando PCM Float32, analizando varianza espectral y consultando motor adaptativo...</p>
-            </div>
-          )}
-
-          {errorMessage && (
-            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-xs font-mono">
-              ⚠️ {errorMessage}
-            </div>
-          )}
-
-          {/* --- AUDITORÍA DE TU DIAGNÓSTICO (ESTRUCTURA DE 3 NIVELES - ENTRENADOR PERSONAL) --- */}
-          {analysisResult && !isAhaMode && (
-            <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-3xl md:rounded-[36px] p-5 sm:p-6 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl relative overflow-hidden w-full">
-              
-              {/* Encabezado y Estado de Persistencia */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4 gap-3">
-                <div>
-                  <h2 className="text-xl font-black uppercase tracking-tight text-white">Tu Diagnóstico Vocal</h2>
-                  <p className="text-xs text-slate-400 font-medium">Análisis de tu grabación de 15 segundos</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {analysisResult.persistence.persisted ? (
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                      <span>✓</span> Sesión guardada
-                    </span>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                        <span>⚠️</span> Sesión pendiente de guardar
-                      </span>
-                      <button
-                        onClick={async () => {
-                          setIsRetryingSave(true);
-                          try {
-                            const res = await fetch('/api/coaching/retry-save', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ analysisData: analysisResult }),
-                            });
-                            const json = await res.json();
-                            if (json.success && json.persisted) {
-                              setAnalysisResult(prev => prev ? {
-                                ...prev,
-                                persistence: { ...prev.persistence, persisted: true }
-                              } : null);
-                            }
-                          } catch (err) {
-                            console.error("Error reintentando guardado:", err);
-                          } finally {
-                            setIsRetryingSave(false);
-                          }
-                        }}
-                        disabled={isRetryingSave}
-                        className="px-3 py-1.5 bg-amber-500 text-slate-950 rounded-full text-[10px] font-black uppercase tracking-wider hover:bg-amber-400 transition-colors shadow-md cursor-pointer"
-                      >
-                        {isRetryingSave ? 'Guardando...' : 'Reintentar Guardar'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* NIVEL 1 — RESULTADO: ÍNDICE GLOBAL DE AUTORIDAD */}
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-center space-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-amber-500/10 px-3 py-1 rounded-bl-2xl border-l border-b border-amber-500/30">
-                  <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{ {'LOW': 'Nivel bajo', 'MEDIUM': 'Nivel medio', 'HIGH': 'Nivel alto'}[analysisResult.authorityScore.level] }</span>
-                </div>
-
-                <span className="text-[10px] font-black tracking-[0.25em] text-amber-400 uppercase block">
-                  Índice de autoridad vocal
-                </span>
-                <div className="flex items-baseline justify-center gap-2 my-1">
-                  <span className="text-6xl font-black text-white tracking-tighter">
-                    {analysisResult.authorityScore.score}
-                  </span>
-                  <span className="text-xl font-bold text-slate-400">/ 100</span>
-                </div>
-                <p className="text-xs text-slate-400 font-medium max-w-md mx-auto pt-1 leading-relaxed">
-                  Indicador experimental para observar tu evolución, no una medida absoluta de tu capacidad comunicativa.
-                </p>
-              </div>
-
-              {/* NIVEL 2 — TUS HABILIDADES AL HABLAR */}
-              <div className="space-y-4 pt-1">
-                <h3 className="text-sm font-black uppercase tracking-wider text-slate-200 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-amber-400 text-base">graphic_eq</span>
-                  Tus indicadores vocales
-                </h3>
-
-                <div className="space-y-3">
-                  
-                  {/* 1. Consistencia vocal */}
-                  <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold">
-                      <span className="text-white uppercase">Consistencia vocal</span>
-                      <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.fuerzaVocal.valueFormatted}</span>
-                    </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-amber-500/20">
-                      {analysisResult.metrics.energyStability !== null ? (
-                        <div
-                          className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500"
-                          style={{ width: `${Math.max(0, Math.min(100, analysisResult.metrics.energyStability * 100))}%` }}
-                        />
-                      ) : (
-                        <span className="block text-[10px] text-slate-400 px-2">Medición no disponible</span>
-                      )}
-                    </div>
-                    <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.fuerzaVocal.explanation}</p>
-                  </div>
-
-                  {/* 3. Variación tonal */}
-                  <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold">
-                      <span className="text-white uppercase">Variación tonal</span>
-                      <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.dinamicaEntonacion.valueFormatted}</span>
-                    </div>
-                    <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.dinamicaEntonacion.explanation}</p>
-                  </div>
-
-                  {/* 4. Presencia espectral estimada */}
-                  <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold">
-                      <span className="text-white uppercase">Presencia espectral estimada</span>
-                      <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.estabilidadEspectral.valueFormatted}</span>
-                    </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-amber-500/20">
-                      <div 
-                        className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500" 
-                        style={{ width: `${analysisResult.metrics.spectralBand3Score !== null ? Math.max(0, Math.min(100, analysisResult.metrics.spectralBand3Score)) : 0}%` }} 
-                      />
-                    </div>
-                    <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.estabilidadEspectral.explanation}</p>
-                  </div>
-
-                  {/* 5. Palabras por minuto (Estimación bioacústica) */}
-                  {analysisResult.metricExplanations.ritmoHabla && (
-                    <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-2">
-                      <div className="flex justify-between items-center text-xs font-bold">
-                        <span className="text-white uppercase">Palabras por minuto</span>
-                        <span className="text-amber-400 font-mono font-black">{analysisResult.metricExplanations.ritmoHabla.valueFormatted}</span>
-                      </div>
-                      <p className="text-xs text-slate-300 font-medium">{analysisResult.metricExplanations.ritmoHabla.explanation}</p>
-                    </div>
-                  )}
-
-                </div>
-              </div>
-
-              {/* NIVEL 3 — DETALLES TÉCNICOS ("¿CÓMO LO MEDIMOS?") */}
-              <div className="border-t border-white/10 pt-4">
-                <button
-                  onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
-                  className="flex items-center justify-between w-full text-xs font-bold text-slate-400 hover:text-amber-400 transition-colors uppercase tracking-wider py-2 px-1 cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-amber-400">tune</span>
-                    ¿Cómo lo medimos? (Detalles técnicos y limitaciones)
-                  </span>
-                  <span className="material-symbols-outlined">{showTechnicalDetails ? 'expand_less' : 'expand_more'}</span>
-                </button>
-
-                {showTechnicalDetails && (
-                  <div className="mt-3 p-5 bg-slate-950 rounded-2xl border border-white/10 space-y-3 text-xs text-slate-300 animate-fade-in">
-                    <div>
-                      <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Consistencia Vocal (RMS):</strong>
-                      <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.fuerzaVocal.explanation}</p>
-                      <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.fuerzaVocal.limitations}</p>
-                    </div>
-
-                    <div className="border-t border-white/5 pt-2">
-                      <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Variación de Entonación (ΔF0 - YIN):</strong>
-                      <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.dinamicaEntonacion.explanation}</p>
-                      <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.dinamicaEntonacion.limitations}</p>
-                    </div>
-
-                    <div className="border-t border-white/5 pt-2">
-                      <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Presencia Espectral Estimada (FFT 1024):</strong>
-                      <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.estabilidadEspectral.explanation}</p>
-                      <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.estabilidadEspectral.limitations}</p>
-                    </div>
-
-                    {analysisResult.metricExplanations.ritmoHabla && (
-                      <div className="border-t border-white/5 pt-2">
-                        <strong className="text-amber-400 uppercase tracking-wide block mb-0.5">Ritmo al Hablar (Sílabas / Minuto):</strong>
-                        <p className="text-[11px] leading-relaxed">{analysisResult.metricExplanations.ritmoHabla.explanation}</p>
-                        <p className="text-[10px] text-slate-500 italic border-l border-amber-500/40 pl-2 mt-1">{analysisResult.metricExplanations.ritmoHabla.limitations}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* TU FOCO DE MEJORA Y MISIÓN DE HOY */}
-              <div className="bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 text-slate-950 p-6 md:p-7 rounded-3xl space-y-5 border border-amber-300/40 shadow-[0_0_50px_-10px_rgba(245,158,11,0.3)]">
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-950 block">
-                    🎯 Tu foco de mejora
-                  </span>
-                  <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-950 leading-tight">
-                    {analysisResult.coaching.prescription.primaryExercise.title}
-                  </h4>
-                  <p className="text-xs font-semibold text-slate-900/90 leading-relaxed">
-                    {analysisResult.coaching.prescription.primaryExercise.explanation}
-                  </p>
-                </div>
-
-                <div className="bg-slate-950/25 p-4 rounded-2xl border border-slate-950/20 space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-950 block">
-                    TU MISIÓN DE HOY · 3 MINUTOS
-                  </span>
-                  <p className="text-xs font-semibold text-slate-950 leading-relaxed">
-                    {analysisResult.coaching.prescription.primaryExercise.instruction}
-                  </p>
-                </div>
-
-                <div className="flex flex-col md:flex-row gap-3 pt-1">
-                  <button
-                    onClick={() => setIsAhaMode(true)}
-                    className="flex-1 py-4 bg-slate-950 text-amber-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition-colors flex items-center justify-center gap-2 shadow-xl border border-amber-400/30 cursor-pointer"
-                  >
-                    <span>Entrenar esta habilidad</span>
-                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                  </button>
-
-                  <button
-                    onClick={handleStartClick}
-                    className="py-4 px-6 bg-slate-900/20 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-900/30 transition-colors border border-slate-950/20 cursor-pointer"
-                  >
-                    Volver a Grabar
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-        </div>
-
-        {/* Value Proposition */}
-        {!analysisResult && (
-          <div className="grid grid-cols-3 gap-4 pt-8 text-center text-slate-500 text-[10px] font-mono uppercase tracking-widest border-t border-white/5">
-            <div>⚡ Seguro con Google</div>
-            <div>🎯 Diagnóstico Inmediato</div>
-            <div>🏋️ Misión Adaptativa</div>
           </div>
         )}
 
+        {/* VISTA 3: PROCESANDO AUDITORÍA */}
+        {isAnalyzing && (
+          <div className="p-8 bg-[#090C10]/90 backdrop-blur-xl border border-amber-500/30 rounded-3xl space-y-4 max-w-md w-full animate-fade-in shadow-2xl">
+            <div className="fire-orb-container mx-auto my-2 !w-32 !h-32">
+              <div className="fire-ambient"></div>
+              <div className="fire-ring-1"></div>
+              <div className="fire-ring-core"></div>
+              <div className="relative z-10 w-24 h-24 rounded-full bg-[#05070a] flex items-center justify-center">
+                <svg className="w-8 h-8 text-amber-400 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" suppressHydrationWarning>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-base font-black uppercase tracking-wider text-white">
+              Decodificando Señal Bioacústica...
+            </h3>
+            <p className="text-slate-400 text-xs leading-relaxed font-mono">
+              Calculando ritmo, pausas y nivel de autoridad con IA...
+            </p>
+          </div>
+        )}
+
+        {/* ERROR MESSAGE */}
+        {errorMessage && (
+          <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-300 text-xs font-mono max-w-md w-full">
+            ⚠️ {errorMessage}
+            <div className="mt-3">
+              <button
+                onClick={handleReset}
+                className="px-4 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 rounded-lg text-xs font-bold uppercase transition cursor-pointer"
+              >
+                Volver a intentar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* VISTA 4: RESULTADO Y AUDITORÍA DE VÍCTOR MARTÍNEZ */}
+        {analysisResult && (
+          <div className="bg-[#090C10]/95 border border-amber-500/30 rounded-3xl p-6 md:p-8 text-left space-y-6 shadow-2xl backdrop-blur-xl w-full max-w-xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div>
+                <h2 className="text-xl font-black uppercase tracking-tight text-white">Tu Diagnóstico Vocal</h2>
+                <p className="text-xs text-slate-400">Auditoría real de tu grabación de 15 segundos</p>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full uppercase tracking-wider">
+                ✓ Completado
+              </span>
+            </div>
+
+            {/* Score Global */}
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-center space-y-2 relative overflow-hidden">
+              <span className="text-[10px] font-black tracking-[0.25em] text-amber-400 uppercase block">
+                Índice de Autoridad Vocal
+              </span>
+              <div className="flex items-baseline justify-center gap-2 my-1">
+                <span className="text-6xl font-black text-white tracking-tighter">
+                  {analysisResult.authorityScore.score}
+                </span>
+                <span className="text-xl font-bold text-slate-400">/ 100</span>
+              </div>
+              <p className="text-xs text-slate-300 font-medium">
+                Nivel diagnosticado:{" "}
+                <strong className="text-amber-400 uppercase">
+                  {analysisResult.authorityScore.level}
+                </strong>
+              </p>
+            </div>
+
+            {/* Comparativa Bioacústica con el Arquetipo Objetivo */}
+            {analysisResult.archetypeComparison && (
+              <div className="p-5 rounded-2xl bg-[#0c1424] border border-cyan-500/30 space-y-3 shadow-lg">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400 block">
+                      DISTANCIA A TU ARQUETIPO DESTINO
+                    </span>
+                    <h3 className="text-base font-black text-white">
+                      {analysisResult.archetypeComparison.targetArchetype.name} ({analysisResult.archetypeComparison.targetArchetype.code})
+                    </h3>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs font-mono font-bold text-amber-300">
+                      {analysisResult.archetypeComparison.matchScore}% AFINIDAD
+                    </span>
+                    <span className="block text-[9px] font-mono text-slate-400">
+                      BRECHA: {analysisResult.archetypeComparison.distancePercent}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Barra de Afinidad / Distancia */}
+                <div className="space-y-1">
+                  <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-[1px] border border-white/10">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 transition-all duration-1000"
+                      style={{ width: `${analysisResult.archetypeComparison.matchScore}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                    <span>Voz Actual</span>
+                    <span>Cuello de Botella: <strong className="text-rose-400">{analysisResult.archetypeComparison.bottleneckDimension}</strong></span>
+                    <span>Arquetipo 100%</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-slate-300 space-y-1">
+                  <p>
+                    <strong className="text-amber-300">Prescripción de Calibración:</strong>{" "}
+                    {analysisResult.archetypeComparison.targetArchetype.actionablePrescription}
+                  </p>
+                  <p className="text-[11px] text-cyan-300 font-mono pt-1 border-t border-white/5">
+                    🎯 Foco: {analysisResult.archetypeComparison.targetArchetype.recommendedTrainingFocus}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Métricas clave */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="p-3 bg-white/[0.02] border border-white/10 rounded-xl text-center">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  Ritmo WPM
+                </span>
+                <span className="text-base font-black text-white">
+                  {analysisResult.metrics.wordsPerMinute}
+                </span>
+              </div>
+              <div className="p-3 bg-white/[0.02] border border-white/10 rounded-xl text-center">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  Pausas
+                </span>
+                <span className="text-base font-black text-amber-400">
+                  {analysisResult.metrics.pauseCount}
+                </span>
+              </div>
+              <div className="p-3 bg-white/[0.02] border border-white/10 rounded-xl text-center">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  Duración
+                </span>
+                <span className="text-base font-black text-cyan-400">
+                  {analysisResult.metrics.avgPauseDuration.toFixed(1)}s
+                </span>
+              </div>
+            </div>
+
+            {/* Diagnóstico pedagógico */}
+            {analysisResult.feedback && (
+              <div className="space-y-2 p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl text-xs leading-relaxed text-slate-300">
+                <h4 className="font-bold text-amber-300 uppercase tracking-wider text-[11px]">
+                  Diagnóstico del Entrenador
+                </h4>
+                <p><strong>Observación:</strong> {analysisResult.feedback.diagnostico}</p>
+                <p><strong>Decisión Táctica:</strong> {analysisResult.feedback.decision}</p>
+                <p><strong>Impacto:</strong> {analysisResult.feedback.payoff}</p>
+              </div>
+            )}
+
+            {/* Prescripción */}
+            {analysisResult.coaching?.prescription?.primaryExercise && (
+              <div className="p-4 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-400/30 rounded-2xl space-y-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 block">
+                  🎯 Tu entrenamiento correctivo recomendado
+                </span>
+                <h3 className="text-sm font-bold text-white">
+                  {analysisResult.coaching.prescription.primaryExercise.title}
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {analysisResult.coaching.prescription.primaryExercise.instruction}
+                </p>
+              </div>
+            )}
+
+            {/* Botones finales */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleReset}
+                className="flex-1 py-3 bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition text-center cursor-pointer"
+              >
+                Probar otra vez
+              </button>
+              <Link
+                href="/gym"
+                className="flex-1 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition text-center shadow-lg shadow-amber-400/20"
+              >
+                Gimnasio Vocal →
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 py-4 text-center text-[11px] text-slate-500 border-t border-white/5">
+        © {new Date().getFullYear()} Víctor Martínez Pro · Diagnóstico Vocal de 15 Segundos
+      </footer>
     </main>
   );
 }

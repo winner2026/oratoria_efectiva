@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/infrastructure/db/client';
+import { sendLeadToGoogleSheets } from '@/services/googleSheetsLeadService';
 
 export const runtime = 'nodejs';
 
@@ -65,6 +66,15 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('[WAITLIST] New signup:', { email, name, position, referredBy });
+
+    // Sincronizar lead con Google Sheets
+    sendLeadToGoogleSheets({
+      name,
+      email,
+      source: referredBy ? `waitlist (ref: ${referredBy})` : 'waitlist',
+    }).catch(err => {
+      console.error('[WAITLIST] Error syncing lead to Google Sheets:', err);
+    });
 
     return NextResponse.json({
       success: true,

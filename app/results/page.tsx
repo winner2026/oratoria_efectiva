@@ -59,7 +59,7 @@ export default function ResultsPage() {
   useEffect(() => {
     const savedResult = localStorage.getItem("voiceAnalysisResult");
     if (!savedResult) {
-      router.push("/practice");
+      router.push("/voz_efectiva");
       return;
     }
     
@@ -84,7 +84,7 @@ export default function ResultsPage() {
         setStreakUpdated(true);
       }
     } catch (e) {
-      router.push("/practice");
+      router.push("/voz_efectiva");
     }
   }, [router, streakUpdated]);
 
@@ -120,7 +120,7 @@ export default function ResultsPage() {
         
         {/* Header */}
         <div className="flex items-center p-4 justify-between sticky top-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
-          <button onClick={() => router.push("/practice")} className="flex size-10 items-center justify-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-white active:scale-95">
+          <button onClick={() => router.push("/voz_efectiva")} className="flex size-10 items-center justify-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-white active:scale-95">
             <span className="material-symbols-outlined">refresh</span>
           </button>
           <div className="flex flex-col items-center">
@@ -214,7 +214,7 @@ export default function ResultsPage() {
 
           <div className="grid grid-cols-2 gap-3 mb-20">
             <button 
-                onClick={() => router.push("/practice")}
+                onClick={() => router.push("/voz_efectiva")}
                 className="py-4 rounded-[20px] bg-white/5 border border-white/10 text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all"
             >
                 Re-calibrar
