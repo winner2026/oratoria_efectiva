@@ -3,9 +3,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Productos y Entrenamiento | Oratoria Efectiva - Víctor Martínez Pro",
+  title: "Productos y Entrenamiento | Oratoria Efectiva",
   description:
-    "Descubre los manuales, cursos y herramientas de entrenamiento vocal y oratoria estratégica de Víctor Martínez Pro.",
+    "Descubre los manuales, cursos y herramientas de entrenamiento vocal y oratoria estratégica de Oratoria Efectiva.",
 };
 
 export default function ProductosPage() {
@@ -45,13 +45,13 @@ export default function ProductosPage() {
       </section>
 
       {/* Products Grid */}
-      <section className="relative z-10 w-full max-w-6xl mx-auto px-6 py-10 space-y-12">
+      <section className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-8 sm:space-y-12">
         
         {/* PRODUCT 1: Protocolo de Respuestas Inteligentes (FEATURED FLAGSHIP BOOK) */}
-        <div className="p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-amber-950/40 via-slate-900/90 to-neutral-950 border-2 border-amber-500/40 shadow-2xl relative overflow-hidden group">
+        <div className="p-5 sm:p-8 md:p-12 rounded-3xl sm:rounded-[2.5rem] bg-gradient-to-br from-amber-950/40 via-slate-900/90 to-neutral-950 border-2 border-amber-500/40 shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-amber-500/10 rounded-full blur-[130px] pointer-events-none" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
             
             {/* Left Cover Image */}
             <div className="lg:col-span-5 flex justify-center">
@@ -125,8 +125,8 @@ export default function ProductosPage() {
         </div>
 
         {/* PRODUCT 2: Curso Sin Miedo a Hablar */}
-        <div className="p-8 md:p-12 rounded-[2.5rem] bg-slate-900/40 border border-white/10 hover:border-amber-500/30 transition-all shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="p-5 sm:p-8 md:p-12 rounded-3xl sm:rounded-[2.5rem] bg-slate-900/40 border border-white/10 hover:border-amber-500/30 transition-all shadow-xl relative overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
             
             <div className="lg:col-span-5 flex justify-center">
               <div className="relative w-full max-w-xs aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
@@ -159,7 +159,7 @@ export default function ProductosPage() {
               <div className="pt-2">
                 <Link
                   href="/sin_miedo_a_hablar"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-widest transition-all"
+                  className="inline-flex items-center justify-center min-h-[48px] w-full sm:w-auto gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-widest transition-all"
                 >
                   <span>Conocer el Curso Sin Miedo</span>
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -171,8 +171,8 @@ export default function ProductosPage() {
         </div>
 
         {/* PRODUCT 3: Diagnóstico Vocal Gratuito & VocalGym */}
-        <div className="p-8 md:p-12 rounded-[2.5rem] bg-slate-900/20 border border-white/5 hover:border-white/15 transition-all shadow-xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="p-5 sm:p-8 md:p-12 rounded-3xl sm:rounded-[2.5rem] bg-slate-900/20 border border-white/5 hover:border-white/15 transition-all shadow-xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
             <div className="lg:col-span-8 space-y-3">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">
@@ -189,7 +189,7 @@ export default function ProductosPage() {
             <div className="lg:col-span-4 flex lg:justify-end">
               <Link
                 href="/onboarding"
-                className="w-full sm:w-auto px-6 py-4 rounded-xl border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-black text-xs uppercase tracking-widest text-center transition-all"
+                className="w-full sm:w-auto min-h-[48px] flex items-center justify-center px-6 py-4 rounded-xl border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-black text-xs uppercase tracking-widest text-center transition-all"
               >
                 Hacer Diagnóstico Gratis
               </Link>
@@ -205,7 +205,7 @@ export default function ProductosPage() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="font-black text-white text-sm tracking-tight">ORATORIA EFECTIVA</span>
-            <span>&copy; {new Date().getFullYear()} Víctor Martínez Pro. Todos los derechos reservados.</span>
+            <span>&copy; {new Date().getFullYear()} Oratoria Efectiva. Todos los derechos reservados.</span>
           </div>
           <div className="flex items-center gap-6">
             <Link href="/" className="hover:text-white transition-colors">Inicio</Link>

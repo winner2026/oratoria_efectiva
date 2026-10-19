@@ -13,7 +13,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Víctor Martínez Pro | Entrenamiento vocal",
+  title: "Oratoria Efectiva | Entrenamiento vocal",
   description: "Entrena tu oratoria con ejercicios breves y un diagnóstico vocal gratuito para descubrir qué practicar primero.",
   icons: {
     icon: "/logo-new.png",

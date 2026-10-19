@@ -3,7 +3,7 @@ import Link from "next/link";
 import LeadCaptureForm from "./LeadCaptureForm";
 
 export const metadata: Metadata = {
-  title: "Regalo gratuito: guía para hablar con claridad | Víctor Martínez Pro",
+  title: "Regalo gratuito: guía para hablar con claridad | Oratoria Efectiva",
   description:
     "Recibe una práctica breve para trabajar el ritmo, las pausas y la claridad al hablar.",
 };
@@ -20,7 +20,7 @@ export default function RegalosPage() {
 
       <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
         <Link href="/" className="text-sm font-black tracking-wide text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
-          VÍCTOR MARTÍNEZ <span className="text-amber-400">PRO</span>
+          ORATORIA <span className="text-amber-400">EFECTIVA</span>
         </Link>
         <Link href="/" className="text-sm font-semibold text-slate-300 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
           Volver al inicio
@@ -64,7 +64,7 @@ export default function RegalosPage() {
       </section>
 
       <footer className="relative z-10 border-t border-white/10 px-6 py-6 text-center text-xs text-slate-400">
-        © {new Date().getFullYear()} Víctor Martínez Pro
+        © {new Date().getFullYear()} Oratoria Efectiva
       </footer>
     </main>
   );

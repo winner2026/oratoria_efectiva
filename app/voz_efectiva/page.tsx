@@ -621,7 +621,7 @@ export default function VozEfectivaPage() {
 
       {/* Footer */}
       <footer className="relative z-10 py-4 text-center text-[11px] text-slate-500 border-t border-white/5">
-        © {new Date().getFullYear()} Víctor Martínez Pro · Diagnóstico Vocal de 15 Segundos
+        © {new Date().getFullYear()} Oratoria Efectiva · Diagnóstico Vocal de 15 Segundos
       </footer>
     </main>
   );

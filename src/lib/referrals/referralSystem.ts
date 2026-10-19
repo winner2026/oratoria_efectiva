@@ -1,5 +1,5 @@
 /**
- * Sistema de Referidos - Víctor Martínez Pro
+ * Sistema de Referidos - Oratoria Efectiva
  * 
  * Permite a usuarios invitar a amigos y ganar beneficios.
  * Costo: $0 (todo client-side + DB simple)
@@ -132,12 +132,12 @@ export function calculateRewards(referralCount: number): ReferralReward[] {
  */
 export async function shareReferralLink(): Promise<boolean> {
   const link = getReferralLink();
-  const text = '¡Mejora tu forma de hablar con Víctor Martínez Pro! Usa mi link para acceso anticipado:';
+  const text = '¡Mejora tu forma de hablar con Oratoria Efectiva! Usa mi link para acceso anticipado:';
   
   if (navigator.share) {
     try {
       await navigator.share({
-        title: 'Víctor Martínez Pro - Invitación',
+        title: 'Oratoria Efectiva - Invitación',
         text,
         url: link,
       });

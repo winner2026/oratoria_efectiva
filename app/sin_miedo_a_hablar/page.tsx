@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export const metadata = {
-  title: 'Sin Miedo a Hablar - Víctor Martínez Pro',
+  title: 'Sin Miedo a Hablar - Oratoria Efectiva',
   description: 'Recupera tu voz y hazla sonar con claridad.',
 };
 
@@ -196,7 +196,7 @@ export default function SinMiedoSalesPage() {
                 <span className="text-orange-500 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="px-6 pb-6 text-neutral-400">
-                Al completar todas las lecciones del curso, la plataforma generará automáticamente un certificado a tu nombre que valida tu participación y aprendizaje con Víctor Martínez Pro.
+                Al completar todas las lecciones del curso, la plataforma generará automáticamente un certificado a tu nombre que valida tu participación y aprendizaje con Oratoria Efectiva.
               </div>
             </details>
 

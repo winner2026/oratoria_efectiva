@@ -97,7 +97,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-black uppercase tracking-tight text-white leading-[1.08] max-w-4xl drop-shadow-2xl"
+          className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-white leading-[1.12] sm:leading-[1.08] max-w-4xl drop-shadow-2xl"
         >
           Tus ideas son brillantes. <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-500 to-orange-500">
@@ -109,7 +109,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-lg md:text-xl text-slate-400 mt-8 max-w-2xl leading-relaxed"
+          className="text-base sm:text-lg md:text-xl text-slate-400 mt-6 sm:mt-8 max-w-2xl leading-relaxed"
         >
           La oratoria es una habilidad que se entrena. Identifica un aspecto de tu voz para mejorar y recibe una primera recomendación práctica.
         </motion.p>
@@ -118,11 +118,11 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-12 flex flex-col sm:flex-row gap-4 items-center justify-center w-full"
+          className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center w-full"
         >
           <Link 
             href="/onboarding" 
-            className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_-10px_rgba(245,158,11,0.5)] flex items-center justify-center gap-3"
+            className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 min-h-[48px] bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_-10px_rgba(245,158,11,0.5)] flex items-center justify-center gap-3"
           >
             Comenzar diagnóstico gratuito
             <span className="material-symbols-outlined text-lg">mic</span>
@@ -131,13 +131,13 @@ export default function Home() {
             href="https://www.youtube.com/@victormartinezpro"
             target="_blank" 
             rel="noopener noreferrer"
-            className="w-full sm:w-auto px-8 py-5 bg-transparent border border-white/10 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+            className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] bg-transparent border border-white/10 text-white rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-white/5 transition-all flex items-center justify-center gap-3"
           >
             Ver en YouTube
             <span className="material-symbols-outlined text-lg">smart_display</span>
           </a>
         </motion.div>
-        <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-400">
+        <p className="mt-5 max-w-xl text-xs sm:text-sm leading-relaxed text-slate-400">
           El diagnóstico inicial es gratuito. Para guardar tus respuestas y el resultado, tendrás que iniciar sesión con Google; no necesitas tarjeta.
         </p>
       </section>
@@ -312,10 +312,10 @@ export default function Home() {
         </div>
 
         {/* PRODUCT 1: NUEVO LIBRO PROTOCOLO DE RESPUESTAS INTELIGENTES (FEATURED) */}
-        <div className="mb-12 p-8 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-amber-950/40 via-slate-900/95 to-neutral-950 border-2 border-amber-500/40 shadow-[0_0_60px_rgba(245,158,11,0.15)] relative overflow-hidden group">
+        <div className="mb-10 sm:mb-12 p-5 sm:p-8 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-gradient-to-br from-amber-950/40 via-slate-900/95 to-neutral-950 border-2 border-amber-500/40 shadow-[0_0_60px_rgba(245,158,11,0.15)] relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
             
             {/* Left Column: Book Mockup */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center">
@@ -336,17 +336,17 @@ export default function Home() {
             </div>
 
             {/* Right Column: Copy targeting Avatar's pain points */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-7 space-y-5 sm:space-y-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-wider">
                 <span className="material-symbols-outlined text-[16px]">psychology_alt</span>
                 Tu Escudo Definitivo Contra la Improvisación
               </div>
 
-              <h3 className="text-3xl md:text-4xl font-black uppercase text-white leading-tight">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase text-white leading-tight">
                 Protocolo de Respuestas Inteligentes
               </h3>
 
-              <p className="text-slate-300 text-base leading-relaxed font-light">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-light">
                 ¿Alguna vez te quedaste en blanco en una reunión crucial? Sueltas muletillas (<em className="text-amber-400">«ehhh...», «bueno...»</em>) que fulminan tu autoridad en segundos. No importa cuánto sepas: si titubeas ante una pregunta difícil, tu entorno percibe incompetencia.
               </p>
 
@@ -369,17 +369,17 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+              <div className="pt-2 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
                 <Link
                   href="/protocolo-de-respuestas-inteligentes"
-                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest text-center transition-all shadow-[0_0_25px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-4 min-h-[48px] rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest text-center transition-all shadow-[0_0_25px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
                 >
                   <span>Ver Landing del Libro y Adquirir</span>
                   <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </Link>
                 <Link
                   href="/productos"
-                  className="text-xs text-slate-400 hover:text-white transition-colors text-center sm:text-left font-bold uppercase tracking-wider"
+                  className="text-xs text-slate-400 hover:text-white transition-colors text-center sm:text-left font-bold uppercase tracking-wider py-2"
                 >
                   Ver en catálogo general →
                 </Link>
@@ -391,23 +391,23 @@ export default function Home() {
         </div>
 
         {/* PRODUCT 2: CURSO SIN MIEDO A HABLAR */}
-        <div className="p-10 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-neutral-950 border border-white/10 shadow-xl relative overflow-hidden">
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="p-5 sm:p-8 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-neutral-950 border border-white/10 shadow-xl relative overflow-hidden">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-center">
             
-            <div className="lg:col-span-7 space-y-5">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-widest">
                 <span className="material-symbols-outlined text-[16px]">school</span>
                 Curso Grabado de 21 Días
               </div>
 
-              <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-white leading-tight">
+              <h3 className="text-xl sm:text-2xl md:text-4xl font-black uppercase tracking-tight text-white leading-tight">
                 Sin Miedo a Hablar: <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-500 to-orange-500">
                   Recupera tu voz y hazla sonar
                 </span>
               </h3>
 
-              <p className="text-slate-300 text-base leading-relaxed font-light">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-light">
                 Explora herramientas de respiración para desactivar los nervios desde el origen y practica cómo proyectar una voz firme y natural ante cualquier público.
               </p>
 
@@ -432,7 +432,7 @@ export default function Home() {
             </div>
 
             <div className="lg:col-span-5 flex flex-col items-center lg:items-end justify-center">
-              <div className="w-full max-w-sm bg-neutral-950/90 border border-amber-500/30 rounded-3xl p-7 text-center shadow-2xl backdrop-blur-xl relative">
+              <div className="w-full max-w-sm bg-neutral-950/90 border border-amber-500/30 rounded-3xl p-5 sm:p-7 text-center shadow-2xl backdrop-blur-xl relative">
                 <p className="text-xs uppercase font-bold tracking-widest text-slate-400 mb-1">
                   Modalidad Única
                 </p>
@@ -440,14 +440,14 @@ export default function Home() {
                   PAGO AL CONTADO
                 </div>
 
-                <div className="mb-5">
-                  <span className="text-4xl sm:text-5xl font-black text-white">29 USD</span>
+                <div className="mb-4 sm:mb-5">
+                  <span className="text-3xl sm:text-5xl font-black text-white">29 USD</span>
                   <p className="text-xs text-slate-400 mt-1 font-medium">Pago único al contado &bull; Sin cuotas</p>
                 </div>
 
                 <Link
                   href="/sin_miedo_a_hablar"
-                  className="w-full py-3.5 px-6 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_25px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 mb-3"
+                  className="w-full py-4 px-6 min-h-[48px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_25px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 mb-3"
                 >
                   <span>Ver Curso Sin Miedo</span>
                   <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -521,7 +521,7 @@ export default function Home() {
       <footer className="w-full border-t border-white/5 py-12 px-6 bg-slate-950 text-slate-500 text-xs">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span className="font-black text-white text-sm tracking-tight">VÍCTOR MARTÍNEZ PRO</span>
+            <span className="font-black text-white text-sm tracking-tight">ORATORIA EFECTIVA</span>
             <span>&copy; {new Date().getFullYear()} Todos los derechos reservados.</span>
           </div>
           <div className="flex flex-wrap items-center gap-6">

@@ -41,7 +41,7 @@ function LoginForm() {
         {/* LOGO & IDENTITY */}
         <div className="text-center mb-12 space-y-4">
             <h1 className="text-3xl font-black text-white tracking-widest uppercase mb-1">
-                VÍCTOR MARTÍNEZ PRO
+                ORATORIA EFECTIVA
             </h1>
             <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] bg-blue-900/10 inline-block px-3 py-1 rounded-full border border-blue-500/20">
                 Sistema de Control Vocal
@@ -84,7 +84,7 @@ function LoginForm() {
 
         {/* FOOTER */}
         <p className="mt-8 text-center text-[10px] text-slate-600 uppercase tracking-widest font-medium">
-             &copy; {new Date().getFullYear()} Víctor Martínez Pro
+             &copy; {new Date().getFullYear()} Oratoria Efectiva
         </p>
 
       </div>

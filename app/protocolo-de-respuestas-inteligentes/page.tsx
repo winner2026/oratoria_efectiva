@@ -89,17 +89,17 @@ export default function ProtocoloRespuestasPage() {
       <div className="absolute top-[35%] right-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[180px] pointer-events-none" />
 
       {/* Top Notification Bar */}
-      <div className="w-full bg-gradient-to-r from-neutral-900 via-amber-950/80 to-neutral-900 border-b border-amber-500/20 py-2.5 px-4 text-center">
-        <p className="text-xs md:text-sm font-semibold tracking-wide text-amber-200 flex items-center justify-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-          <span>MANUAL TÁCTICO DE ÉLITE: Para profesionales que no pueden permitirse dudar en público</span>
+      <div className="w-full bg-gradient-to-r from-neutral-900 via-amber-950/80 to-neutral-900 border-b border-amber-500/20 py-2 sm:py-2.5 px-3 sm:px-4 text-center">
+        <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-amber-200 flex items-center justify-center gap-1.5 sm:gap-2">
+          <span className="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span>MANUAL TÁCTICO: Para profesionales que no pueden permitirse dudar en público</span>
         </p>
       </div>
 
       {/* Navbar */}
-      <nav className="w-full max-w-6xl mx-auto px-6 py-5 flex items-center justify-between border-b border-white/5 relative z-20">
+      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-white/5 relative z-20">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="font-black tracking-tight text-xl text-white">
+          <span className="font-black tracking-tight text-lg sm:text-xl text-white">
             ORATORIA<span className="text-amber-500">EFECTIVA</span>
           </span>
           <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-white/10 text-slate-300">
@@ -107,7 +107,7 @@ export default function ProtocoloRespuestasPage() {
           </span>
         </Link>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link 
             href="/productos"
             className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-colors hidden sm:block"
@@ -118,7 +118,7 @@ export default function ProtocoloRespuestasPage() {
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105"
+            className="px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105 min-h-[40px] flex items-center justify-center"
           >
             Adquirir Libro
           </a>
@@ -126,29 +126,29 @@ export default function ProtocoloRespuestasPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-12 md:pt-16 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 md:pt-16 pb-14 sm:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
           
           {/* Left Column: Painful Hook & Value Proposition */}
-          <div className="lg:col-span-7 space-y-6 text-left">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-widest">
               <span className="material-symbols-outlined text-[16px]">warning</span>
               El fin de la improvisación y los bloqueos mentales
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-[1.08]">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-[1.12] sm:leading-[1.08]">
               ¿Te quedas en blanco <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-amber-400 to-orange-400">
                 ante una pregunta difícil?
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-slate-300 font-light leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 font-light leading-relaxed">
               Tu mente se acelera, el pulso se dispara y sueltas un <span className="text-amber-400 font-semibold">«ehhh... bueno...»</span> que destruye tu estatus en segundos. No importa cuánto sepas: <strong>si titubeas bajo presión, tu entorno percibe incompetencia.</strong>
             </p>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/80 border-l-4 border-amber-500 border-white/5 space-y-2">
-              <p className="text-sm font-bold text-white uppercase tracking-wider">
+              <p className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
                 El Escudo Definitivo Para Pensar Rápido y Responder Con Autoridad
               </p>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
@@ -177,19 +177,19 @@ export default function ProtocoloRespuestasPage() {
             </div>
 
             {/* Primary CTA Button */}
-            <div className="pt-4 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+            <div className="pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <a
                 href={defaultCheckoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm uppercase tracking-widest text-center transition-all shadow-[0_0_35px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest text-center transition-all shadow-[0_0_35px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
               >
                 <span>Obtener Mi Copia Ahora</span>
                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
               </a>
               <a
                 href="#recetario"
-                className="px-6 py-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 sm:px-6 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2"
               >
                 <span>Ver los 25 Casos</span>
                 <span className="material-symbols-outlined text-sm">visibility</span>
@@ -395,12 +395,12 @@ export default function ProtocoloRespuestasPage() {
           </div>
 
           {/* Situation Tabs */}
-          <div className="flex flex-wrap gap-2 justify-center mb-8">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sm:flex-wrap sm:justify-center mb-8 px-1 py-1 -mx-2 sm:mx-0">
             {situationDemos.map((item, index) => (
               <button
                 key={index}
                 onClick={() => setActiveTab(index)}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shrink-0 min-h-[44px] flex items-center justify-center ${
                   activeTab === index
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 scale-105"
                     : "bg-slate-900 border border-white/10 text-slate-400 hover:text-white hover:bg-slate-800"
@@ -689,7 +689,7 @@ export default function ProtocoloRespuestasPage() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="font-black text-white text-sm tracking-tight">ORATORIA EFECTIVA</span>
-            <span>&copy; {new Date().getFullYear()} Víctor Martínez Pro. Todos los derechos reservados.</span>
+            <span>&copy; {new Date().getFullYear()} Oratoria Efectiva. Todos los derechos reservados.</span>
           </div>
           <div className="flex items-center gap-6">
             <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
@@ -702,9 +702,9 @@ export default function ProtocoloRespuestasPage() {
 
       {/* STICKY BOTTOM CTA FOR MOBILE (90.9% OF USERS ACCORDING TO AUDIENCE REPORT) */}
       {showStickyCta && (
-        <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-950/95 border-t border-amber-500/30 p-3 backdrop-blur-lg sm:hidden flex items-center justify-between gap-3 shadow-2xl animate-fade-in">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <div className="w-9 h-11 relative shrink-0 rounded overflow-hidden border border-white/20">
+        <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-950/95 border-t border-amber-500/30 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-lg sm:hidden flex items-center justify-between gap-3 shadow-2xl animate-fade-in">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-10 h-12 relative shrink-0 rounded overflow-hidden border border-white/20">
               <img
                 src="/libro-protocolo-respuestas-inteligentes.jpg"
                 alt="Miniatura libro"
@@ -713,7 +713,7 @@ export default function ProtocoloRespuestasPage() {
               />
             </div>
             <div className="leading-tight truncate">
-              <p className="text-[11px] font-black text-white truncate">Protocolo de Respuestas</p>
+              <p className="text-[12px] font-black text-white truncate">Protocolo de Respuestas</p>
               <p className="text-[10px] text-amber-400 font-bold">Manual Táctico Digital</p>
             </div>
           </div>
@@ -721,7 +721,7 @@ export default function ProtocoloRespuestasPage() {
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider shrink-0 shadow-lg"
+            className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider shrink-0 shadow-lg min-h-[44px] flex items-center justify-center active:scale-95 transition-transform"
           >
             Adquirir Ahora
           </a>
