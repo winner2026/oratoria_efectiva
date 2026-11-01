@@ -83,26 +83,27 @@ export default function ProtocoloRespuestasPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#030712] text-slate-100 font-sans selection:bg-amber-500/30 overflow-x-hidden relative">
-      {/* Background ambient lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-amber-600/15 via-red-600/10 to-transparent rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute top-[35%] right-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[180px] pointer-events-none" />
+    <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-amber-500/30 overflow-x-hidden relative">
+      {/* Background ambient lighting - strictly Red, Gold & Obsidian Black */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-red-600/20 via-amber-600/15 to-transparent rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-[35%] right-0 w-[550px] h-[550px] bg-red-900/15 rounded-full blur-[180px] pointer-events-none" />
+      <div className="absolute top-[65%] left-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[170px] pointer-events-none" />
 
       {/* Top Notification Bar */}
-      <div className="w-full bg-gradient-to-r from-neutral-900 via-amber-950/80 to-neutral-900 border-b border-amber-500/20 py-2 sm:py-2.5 px-3 sm:px-4 text-center">
+      <div className="w-full bg-gradient-to-r from-black via-red-950/80 to-black border-b border-amber-500/30 py-2 sm:py-2.5 px-3 sm:px-4 text-center">
         <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-amber-200 flex items-center justify-center gap-1.5 sm:gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" />
           <span>MANUAL TÁCTICO: Para profesionales que no pueden permitirse dudar en público</span>
         </p>
       </div>
 
       {/* Navbar */}
-      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-white/5 relative z-20">
+      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-white/10 relative z-20">
         <Link href="/" className="flex items-center gap-2 group">
           <span className="font-black tracking-tight text-lg sm:text-xl text-white">
-            ORATORIA<span className="text-amber-500">EFECTIVA</span>
+            ORATORIA<span className="text-amber-400">EFECTIVA</span>
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-white/10 text-slate-300">
+          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-red-600/20 border border-red-500/30 text-red-300">
             Libro
           </span>
         </Link>
@@ -110,7 +111,7 @@ export default function ProtocoloRespuestasPage() {
         <div className="flex items-center gap-3 sm:gap-4">
           <Link 
             href="/productos"
-            className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-colors hidden sm:block"
+            className="text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white transition-colors hidden sm:block"
           >
             Ver catálogo
           </Link>
@@ -118,7 +119,7 @@ export default function ProtocoloRespuestasPage() {
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs uppercase tracking-widest transition-all shadow-md hover:scale-105 min-h-[40px] flex items-center justify-center"
+            className="px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(245,158,11,0.35)] hover:scale-105 min-h-[40px] flex items-center justify-center"
           >
             Adquirir Libro
           </a>
@@ -126,32 +127,32 @@ export default function ProtocoloRespuestasPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 md:pt-16 pb-14 sm:pb-20">
+      <section className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 md:pt-16 pb-12 sm:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
           
           {/* Left Column: Painful Hook & Value Proposition */}
           <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-400 text-xs font-black uppercase tracking-widest">
               <span className="material-symbols-outlined text-[16px]">warning</span>
               El fin de la improvisación y los bloqueos mentales
             </div>
 
             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-[1.12] sm:leading-[1.08]">
               ¿Te quedas en blanco <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-amber-400 to-orange-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
                 ante una pregunta difícil?
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-slate-300 font-light leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-200 font-light leading-relaxed">
               Tu mente se acelera, el pulso se dispara y sueltas un <span className="text-amber-400 font-semibold">«ehhh... bueno...»</span> que destruye tu estatus en segundos. No importa cuánto sepas: <strong>si titubeas bajo presión, tu entorno percibe incompetencia.</strong>
             </p>
 
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/80 border-l-4 border-amber-500 border-white/5 space-y-2">
+            <div className="p-4 sm:p-5 rounded-2xl bg-black/80 border-l-4 border-amber-500 border-white/10 space-y-2 shadow-xl">
               <p className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
                 El Escudo Definitivo Para Pensar Rápido y Responder Con Autoridad
               </p>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 El <strong>Protocolo de Respuestas Inteligentes</strong> es un manual táctico de intervención inmediata. Cero teoría motivacional. Puros sistemas ejecutivos para desarmar preguntas capciosas, frenar interrupciones y hablar con frialdad de cirujano.
               </p>
             </div>
@@ -160,19 +161,19 @@ export default function ProtocoloRespuestasPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-amber-400 text-lg shrink-0 mt-0.5">verified</span>
-                <span className="text-xs sm:text-sm text-slate-300"><strong>Protocolo de los 3 Segundos:</strong> Gana tiempo proyectando estatus.</span>
+                <span className="text-xs sm:text-sm text-slate-200"><strong>Protocolo de los 3 Segundos:</strong> Gana tiempo proyectando estatus.</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-amber-400 text-lg shrink-0 mt-0.5">verified</span>
-                <span className="text-xs sm:text-sm text-slate-300"><strong>3 Estructuras Mentales:</strong> Respuestas sin una sola gota de relleno.</span>
+                <span className="text-xs sm:text-sm text-slate-200"><strong>3 Estructuras Mentales:</strong> Respuestas sin una sola gota de relleno.</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-amber-400 text-lg shrink-0 mt-0.5">verified</span>
-                <span className="text-xs sm:text-sm text-slate-300"><strong>Recetario de 25 Escenarios:</strong> Neutraliza ataques y trampas.</span>
+                <span className="text-xs sm:text-sm text-slate-200"><strong>Recetario de 25 Escenarios:</strong> Neutraliza ataques y trampas.</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-amber-400 text-lg shrink-0 mt-0.5">verified</span>
-                <span className="text-xs sm:text-sm text-slate-300"><strong>Biohackeo del Estrés:</strong> Desactiva el pánico en tiempo real.</span>
+                <span className="text-xs sm:text-sm text-slate-200"><strong>Biohackeo del Estrés:</strong> Desactiva el pánico en tiempo real.</span>
               </div>
             </div>
 
@@ -182,58 +183,104 @@ export default function ProtocoloRespuestasPage() {
                 href={defaultCheckoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest text-center transition-all shadow-[0_0_35px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs sm:text-sm uppercase tracking-widest text-center transition-all shadow-[0_0_35px_rgba(245,158,11,0.45)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
               >
                 <span>Obtener Mi Copia Ahora</span>
                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
               </a>
               <a
                 href="#recetario"
-                className="w-full sm:w-auto px-5 sm:px-6 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 sm:px-6 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-red-600/15 border border-red-500/30 hover:bg-red-600/25 text-white font-bold text-xs uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.2)]"
               >
                 <span>Ver los 25 Casos</span>
                 <span className="material-symbols-outlined text-sm">visibility</span>
               </a>
             </div>
 
-            <p className="text-[11px] text-slate-500 flex items-center gap-2 pt-1">
-              <span className="material-symbols-outlined text-emerald-400 text-sm">lock</span>
+            <p className="text-[11px] text-slate-400 flex items-center gap-2 pt-1">
+              <span className="material-symbols-outlined text-amber-400 text-sm">lock</span>
               Descarga digital inmediata &bull; Acceso de por vida &bull; Garantía 7 días
             </p>
           </div>
 
-          {/* Right Column: Physical-style Book Mockup Showcase */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center relative">
-            <div className="relative w-full max-w-sm aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.9),0_0_50px_rgba(245,158,11,0.2)] border border-amber-500/30 group">
-              <img
-                src="/libro-protocolo-respuestas-inteligentes.jpg"
-                alt="Libro Protocolo de Respuestas Inteligentes por Víctor Martínez"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loading="eager"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-40 pointer-events-none" />
+          {/* Right Column: 3D Hardcover Book Showcase */}
+          <div className="lg:col-span-5 flex flex-col items-center justify-center relative w-full">
+            <div className="relative group max-w-[340px] sm:max-w-[420px] w-full flex flex-col items-center">
+              {/* Ambient Glow */}
+              <div className="absolute -inset-4 bg-gradient-to-tr from-red-600/30 via-amber-500/25 to-yellow-400/20 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity pointer-events-none" />
               
-              {/* Badge overlay */}
-              <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
-                Manual Táctico
+              {/* Badge */}
+              <div className="relative z-20 mb-3 px-3.5 py-1.5 rounded-full bg-black/90 border border-amber-500/50 shadow-lg text-[11px] font-black uppercase tracking-widest text-amber-300 flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm text-red-500">menu_book</span>
+                Manual Táctico Digital + Video Masterclass
               </div>
-            </div>
 
-            <div className="mt-4 text-center">
-              <p className="text-xs font-semibold text-slate-400">
-                Por <strong className="text-white">Víctor Martínez</strong> &bull; Oratoria Efectiva
-              </p>
-              <p className="text-[11px] text-amber-400/90 font-medium mt-0.5">
-                Los secretos de las personas que siempre saben qué responder bajo presión
-              </p>
+              {/* 3D Realistic Book Image */}
+              <div className="relative z-10 w-full flex justify-center">
+                <img
+                  src="/libro-mockup-3d.png"
+                  alt="Libro 3D Protocolo de Respuestas Inteligentes - Víctor Martínez"
+                  className="w-full h-auto max-h-[520px] object-contain drop-shadow-[0_25px_40px_rgba(0,0,0,0.95)] transform group-hover:scale-[1.02] transition-transform duration-500"
+                />
+              </div>
+
+              {/* Quick Video Trigger / Masterclass Link */}
+              <div className="relative z-20 mt-3 text-center">
+                <a
+                  href="#video-masterclass"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white bg-black/80 hover:bg-black border border-white/10 hover:border-amber-500/50 px-4 py-2 rounded-xl transition-all shadow-md group/btn"
+                >
+                  <span className="material-symbols-outlined text-red-500 text-base group-hover/btn:scale-110 transition-transform">play_circle</span>
+                  <span>Ver Clase Táctica en Video con Víctor Martínez ↓</span>
+                </a>
+              </div>
             </div>
           </div>
 
         </div>
       </section>
 
+      {/* SECTION: VIDEO MASTERCLASS THEATER */}
+      <section id="video-masterclass" className="relative z-10 w-full max-w-4xl mx-auto px-6 -mt-2 sm:-mt-6 mb-16">
+        <div className="p-6 sm:p-8 rounded-3xl bg-black/90 border-2 border-amber-500/40 shadow-[0_0_60px_rgba(220,38,38,0.25)]">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+            <div>
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-red-500 bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-full">
+                Clase Maestra en Video
+              </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mt-2">
+                Mira el Protocolo en Acción con Víctor Martínez
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 mt-1">
+                Cómo responder preguntas incómodas o agresivas sin titubear ni ceder estatus.
+              </p>
+            </div>
+            <a
+              href="https://youtu.be/WcFRCvUOYmw?si=_-87cuO2tzqYi81M"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-bold shrink-0 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl hover:bg-white/10 transition-colors"
+            >
+              <span>Abrir en YouTube</span>
+              <span className="material-symbols-outlined text-sm">open_in_new</span>
+            </a>
+          </div>
+
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border-2 border-red-600/30 bg-black">
+            <iframe
+              src="https://www.youtube.com/embed/WcFRCvUOYmw?si=_-87cuO2tzqYi81M"
+              title="Mi protocolo para responder preguntas incómodas al instante - Víctor Martínez"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
+
       {/* SECTION: EL DOLOR MÁS PROFUNDO DEL AVATAR (Rodrigo / Mariana) */}
-      <section className="relative z-10 w-full bg-slate-950 border-y border-white/5 py-20 px-6">
+      <section className="relative z-10 w-full bg-black border-y border-white/10 py-20 px-6">
         <div className="max-w-4xl mx-auto">
           
           <div className="text-center mb-14 space-y-4">
@@ -316,6 +363,45 @@ export default function ProtocoloRespuestasPage() {
           <p className="text-slate-400 text-base sm:text-lg">
             Olvídate de consejos como «ten confianza en ti mismo» o «imagina al público en ropa interior». Eso no te sirve cuando un cliente agresivo te acorrala con una objeción financiera.
           </p>
+        </div>
+
+        {/* Visual Showcase: 2D Book Cover - Anatomía de la Presión */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-gradient-to-br from-black via-red-950/20 to-black p-6 sm:p-10 rounded-3xl border-2 border-white/10 shadow-[0_10px_50px_rgba(0,0,0,0.9)]">
+          <div className="lg:col-span-5 flex justify-center">
+            <div className="relative group max-w-[280px] sm:max-w-[320px]">
+              <div className="absolute -inset-2 bg-gradient-to-r from-red-600/40 via-amber-500/30 to-yellow-500/20 rounded-2xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity" />
+              <img
+                src="/libro-portada-2d.png"
+                alt="Portada oficial del libro Protocolo de Respuestas Inteligentes"
+                className="relative z-10 w-full h-auto rounded-xl shadow-2xl border-2 border-amber-500/30 group-hover:scale-[1.02] transition-transform duration-300"
+              />
+            </div>
+          </div>
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-full">
+              Anatomía de la Presión Real
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white leading-tight">
+              Los Secretos de Quienes Siempre Saben Qué Responder Bajo Presión
+            </h3>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              La portada del manual ilustra con exactitud el momento crítico: cuando un comité, un cliente o un colega agresivo apunta directamente hacia ti esperando verte titubear o perder los estribos.
+            </p>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Frente a esa hostilidad, la reacción impulsiva o el silencio incómodo te destruyen. El <strong>Protocolo de Respuestas Inteligentes</strong> te equipa con los reflejos verbales y la templanza táctica para desarmar el ataque con precisión quirúrgica.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-bold text-amber-400 uppercase tracking-wider">
+              <span className="flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">menu_book</span>
+                Manual de Consulta Rápida
+              </span>
+              <span>&bull;</span>
+              <span className="flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">shield</span>
+                Escudo Verbal Anti-Ataques
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -412,8 +498,8 @@ export default function ProtocoloRespuestasPage() {
           </div>
 
           {/* Active Card Comparison */}
-          <div className="bg-slate-900/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500" />
+          <div className="bg-black/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-amber-500 to-yellow-400" />
             
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-3">
               <span className="w-3 h-3 rounded-full bg-amber-500" />
@@ -423,13 +509,13 @@ export default function ProtocoloRespuestasPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Loser Reaction */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-red-950/20 border border-red-500/30 flex flex-col justify-between">
+              <div className="p-5 sm:p-6 rounded-2xl bg-red-950/25 border-2 border-red-500/40 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 text-red-400 font-black text-xs uppercase tracking-widest mb-3">
                     <span className="material-symbols-outlined text-base">cancel</span>
                     Reacción Común (Pierdes Autoridad)
                   </div>
-                  <p className="text-sm sm:text-base text-red-200/90 italic font-mono leading-relaxed">
+                  <p className="text-sm sm:text-base text-red-200/95 italic font-mono leading-relaxed">
                     {situationDemos[activeTab].loserReaction}
                   </p>
                 </div>
@@ -439,17 +525,17 @@ export default function ProtocoloRespuestasPage() {
               </div>
 
               {/* Strategic Response */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex flex-col justify-between">
+              <div className="p-5 sm:p-6 rounded-2xl bg-amber-950/20 border-2 border-amber-500/40 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-widest mb-3">
+                  <div className="flex items-center gap-2 text-amber-400 font-black text-xs uppercase tracking-widest mb-3">
                     <span className="material-symbols-outlined text-base">check_circle</span>
                     Respuesta del Protocolo (Ganas Estatus)
                   </div>
-                  <p className="text-sm sm:text-base text-emerald-200 font-mono leading-relaxed font-semibold">
+                  <p className="text-sm sm:text-base text-amber-100 font-mono leading-relaxed font-semibold">
                     {situationDemos[activeTab].strategicResponse}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-emerald-500/20 text-xs text-emerald-400/90 font-medium">
+                <div className="mt-4 pt-3 border-t border-amber-500/30 text-xs text-amber-300 font-medium">
                   <strong>Por qué funciona:</strong> {situationDemos[activeTab].takeaway}
                 </div>
               </div>
@@ -470,10 +556,11 @@ export default function ProtocoloRespuestasPage() {
 
       {/* SECTION: AUTHOR / CREDIBILITY */}
       <section className="relative z-10 w-full max-w-5xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-slate-900/40 border border-white/10 rounded-3xl p-8 sm:p-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-black/80 border-2 border-amber-500/30 shadow-[0_0_60px_rgba(220,38,38,0.2)] rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
           
           <div className="md:col-span-4 flex flex-col items-center">
-            <div className="relative w-44 h-44 rounded-2xl overflow-hidden border-2 border-amber-500 shadow-2xl">
+            <div className="relative w-48 h-48 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.3)]">
               <img
                 src="/victor-martinez.png"
                 alt="Profesor Víctor Martínez"
@@ -487,7 +574,7 @@ export default function ProtocoloRespuestasPage() {
             </p>
           </div>
 
-          <div className="md:col-span-8 space-y-4 text-slate-300 font-light leading-relaxed">
+          <div className="md:col-span-8 space-y-4 text-slate-200 font-light leading-relaxed">
             <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
               Acerca del Autor
             </span>
@@ -495,10 +582,10 @@ export default function ProtocoloRespuestasPage() {
               Más de 20 años entrenando la palabra hablada en el mundo real.
             </h3>
             <p className="text-sm sm:text-base">
-              Docente uruguayo de Educación Secundaria y Educación Técnico Profesional, con más de dos décadas formando a profesionales, líderes y docentes en comunicación, retórica y oratoria práctica.
+              Docente uruguayo de Educación Secundaria y Educación Técnico Profesional, con más de dos décadas formando a profesionales, líderes y emprendedores en comunicación, retórica y oratoria práctica.
             </p>
             <p className="text-sm sm:text-base">
-              Fundador del canal de YouTube <strong className="text-white">@victormartinezpro</strong> (con cientos de miles de visualizaciones y una comunidad activa en México, Uruguay, España y Latinoamérica), Víctor ha dedicado su vida a desarmar el mito de que «la oratoria es un don natural».
+              Fundador del canal de YouTube <strong className="text-white">@oratoria_efectiva</strong> (con cientos de miles de visualizaciones y una comunidad activa en México, Uruguay, España y Latinoamérica), Víctor ha dedicado su vida a desarmar el mito de que «la oratoria es un don natural».
             </p>
             <div className="p-4 rounded-xl bg-white/[0.03] border-l-2 border-amber-400 text-xs sm:text-sm text-slate-300 italic">
               «La autoridad no se improvisa con suerte ni carisma fingido. Se entrena mediante estructuras cognitivas y pausas deliberadas. Cuando tienes un método probado, el miedo a la pregunta difícil simplemente desaparece.»
@@ -513,26 +600,26 @@ export default function ProtocoloRespuestasPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
           {/* SÍ ES PARA TI */}
-          <div className="p-8 rounded-3xl bg-slate-900/60 border border-emerald-500/20 space-y-4">
-            <div className="flex items-center gap-3 text-emerald-400 font-black text-sm uppercase tracking-wider">
+          <div className="p-8 rounded-3xl bg-black/80 border-2 border-amber-500/30 space-y-4 shadow-xl">
+            <div className="flex items-center gap-3 text-amber-400 font-black text-sm uppercase tracking-wider">
               <span className="material-symbols-outlined">check_circle</span>
               Este manual es exactamente para ti si:
             </div>
-            <ul className="space-y-3 text-sm text-slate-300">
+            <ul className="space-y-3 text-sm text-slate-200">
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-amber-400 font-bold">✓</span>
                 <span>Eres profesional de empresa, líder o consultor y necesitas defender propuestas ante jefes o clientes exigentes.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-amber-400 font-bold">✓</span>
                 <span>Sientes que tu mente se acelera o sueltas muletillas cuando te hacen preguntas inesperadas.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-amber-400 font-bold">✓</span>
                 <span>Quieres admitir que no tienes un dato sin sonar débil ni perder el respeto de tus colegas.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-amber-400 font-bold">✓</span>
                 <span>Quieres un manual táctico y conciso que puedas leer en una tarde y aplicar al día siguiente.</span>
               </li>
             </ul>
@@ -565,38 +652,49 @@ export default function ProtocoloRespuestasPage() {
 
       {/* SECTION: CHECKOUT / OFERTA */}
       <section id="comprar" className="relative z-10 w-full max-w-4xl mx-auto px-6 py-20">
-        <div className="rounded-[2.5rem] bg-gradient-to-b from-slate-900 via-neutral-950 to-slate-950 border-2 border-amber-500/40 p-8 sm:p-14 text-center shadow-[0_0_80px_rgba(245,158,11,0.15)] relative overflow-hidden">
+        <div className="rounded-[2.5rem] bg-gradient-to-b from-black via-red-950/30 to-black border-2 border-amber-500/40 p-8 sm:p-14 text-center shadow-[0_0_80px_rgba(220,38,38,0.2)] relative overflow-hidden">
           
-          <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/15 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
           
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-black uppercase tracking-widest mb-6">
-            <span className="material-symbols-outlined text-[16px]">bolt</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-300 text-xs font-black uppercase tracking-widest mb-6">
+            <span className="material-symbols-outlined text-[16px] text-amber-400">bolt</span>
             Edición Táctica Digital &bull; Acceso Instantáneo
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white mb-4">
             Convierte Tu Voz En Tu Activo <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-500 to-orange-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
               Más Rentable e Irrebatible
             </span>
           </h2>
 
-          <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto mb-8 font-light">
+          <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto mb-8 font-light">
             Deja de rezar para que no te hagan la pregunta difícil. Ten a mano el manual con las 3 estructuras mentales y el recetario exacto de las 25 situaciones reales.
           </p>
 
-          {/* Book Mockup Preview in Checkout Box */}
-          <div className="mx-auto w-36 sm:w-44 aspect-[4/5] relative rounded-xl overflow-hidden shadow-2xl border border-white/20 mb-8">
-            <img
-              src="/libro-protocolo-respuestas-inteligentes.jpg"
-              alt="Portada de Protocolo de Respuestas Inteligentes"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
+          {/* Book Mockup Preview in Checkout Box: 3D Hardcover + 2D Cover */}
+          <div className="mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
+            <div className="w-40 sm:w-48 aspect-[3/4] relative rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.3)] border-2 border-amber-500/50 bg-black flex items-center justify-center p-2 group">
+              <img
+                src="/libro-mockup-3d.png"
+                alt="Edición 3D de Protocolo de Respuestas Inteligentes"
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+            <div className="w-36 sm:w-40 aspect-[2/3] relative rounded-2xl overflow-hidden shadow-2xl border-2 border-red-500/40 bg-black hidden sm:flex items-center justify-center group">
+              <img
+                src="/libro-portada-2d.png"
+                alt="Portada Oficial de Protocolo de Respuestas Inteligentes"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
           </div>
 
           {/* Offer inclusions */}
-          <div className="max-w-md mx-auto text-left space-y-3 mb-8 bg-white/[0.02] border border-white/5 p-5 rounded-2xl">
+          <div className="max-w-md mx-auto text-left space-y-3 mb-8 bg-black/60 border border-white/10 p-5 rounded-2xl">
             <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-200">
               <span className="material-symbols-outlined text-amber-400 text-base">check_circle</span>
               <span><strong>Manual Táctico Completo:</strong> Protocolo de Respuestas Inteligentes (PDF de alta resolución).</span>
@@ -624,19 +722,19 @@ export default function ProtocoloRespuestasPage() {
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 px-8 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-base uppercase tracking-widest transition-all shadow-[0_0_40px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95"
+            className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 px-8 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-base uppercase tracking-widest transition-all shadow-[0_0_40px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95"
           >
             <span>Quiero Mi Copia Ahora</span>
             <span className="material-symbols-outlined text-xl">shopping_cart</span>
           </a>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300">
             <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-emerald-400 text-sm">verified_user</span>
+              <span className="material-symbols-outlined text-amber-400 text-sm">verified_user</span>
               Garantía de 7 días 100% segura
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-blue-400 text-sm">devices</span>
+              <span className="material-symbols-outlined text-red-400 text-sm">devices</span>
               Apto para móvil, PC y Kindle
             </span>
             <span className="flex items-center gap-1.5">
@@ -695,7 +793,7 @@ export default function ProtocoloRespuestasPage() {
             <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
             <Link href="/productos" className="hover:text-white transition-colors">Productos</Link>
             <Link href="/sin_miedo_a_hablar" className="hover:text-amber-400 transition-colors">Curso Sin Miedo a Hablar</Link>
-            <a href="https://www.youtube.com/@victormartinezpro" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
+            <a href="https://www.youtube.com/@oratoria_efectiva" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
           </div>
         </div>
       </footer>
@@ -706,7 +804,7 @@ export default function ProtocoloRespuestasPage() {
           <div className="flex items-center gap-2.5 overflow-hidden">
             <div className="w-10 h-12 relative shrink-0 rounded overflow-hidden border border-white/20">
               <img
-                src="/libro-protocolo-respuestas-inteligentes.jpg"
+                src="/libro-portada-2d.png"
                 alt="Miniatura libro"
                 className="w-full h-full object-cover"
                 loading="lazy"

@@ -8,18 +8,18 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <main className="min-h-screen bg-[#020408] text-slate-200 font-sans flex flex-col items-center selection:bg-amber-500/30 overflow-x-hidden relative">
+    <main className="min-h-screen bg-[#050505] text-slate-100 font-sans flex flex-col items-center selection:bg-amber-500/30 overflow-x-hidden relative">
       
-      {/* Background Ambient Glows */}
-      <div className="absolute top-[10%] left-[20%] -translate-x-1/2 w-[500px] h-[500px] bg-emerald-900/20 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute top-[40%] right-[10%] translate-x-1/2 w-[600px] h-[600px] bg-amber-700/10 rounded-full blur-[180px] pointer-events-none" />
-      <div className="absolute bottom-[10%] left-[50%] -translate-x-1/2 w-[800px] h-[500px] bg-blue-900/10 rounded-full blur-[200px] pointer-events-none" />
+      {/* Background Ambient Glows - strictly Red, Gold & Obsidian Black */}
+      <div className="absolute top-[8%] left-[15%] -translate-x-1/2 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-[35%] right-[10%] translate-x-1/2 w-[600px] h-[600px] bg-amber-500/15 rounded-full blur-[180px] pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[50%] -translate-x-1/2 w-[800px] h-[500px] bg-red-950/30 rounded-full blur-[200px] pointer-events-none" />
 
       {/* Header */}
-      <header className="w-full max-w-7xl mx-auto px-6 py-5 z-50 flex flex-wrap items-center justify-between border-b border-white/5 bg-transparent relative">
+      <header className="w-full max-w-7xl mx-auto px-6 py-5 z-50 flex flex-wrap items-center justify-between border-b border-white/10 bg-transparent relative">
         <div className="flex items-center gap-3">
           <span className="font-black tracking-tighter text-2xl uppercase block text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-            VOZ<span className="text-amber-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">EFECTIVA</span>
+            VOZ<span className="text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">EFECTIVA</span>
           </span>
         </div>
         <button
@@ -32,7 +32,7 @@ export default function Home() {
         >
           <span className="material-symbols-outlined" aria-hidden="true">{mobileMenuOpen ? "close" : "menu"}</span>
         </button>
-        <nav className="hidden md:flex gap-8 items-center text-xs font-bold uppercase tracking-widest text-slate-400" aria-label="Navegación principal">
+        <nav className="hidden md:flex gap-8 items-center text-xs font-bold uppercase tracking-widest text-slate-300" aria-label="Navegación principal">
           <a href="#dolores" className="hover:text-white transition-colors">El Problema</a>
           <a href="#metodo" className="hover:text-white transition-colors">El Método</a>
           <a href="#productos" className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold">
@@ -42,6 +42,10 @@ export default function Home() {
           <Link href="/sin_miedo_a_hablar" className="hover:text-white transition-colors">
             Curso Sin Miedo
           </Link>
+          <Link href="/protocolo-de-respuestas-inteligentes" className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 font-bold">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            Protocolo de Respuestas
+          </Link>
           <Link href="/regalos" className="hover:text-amber-300 transition-colors">Regalos</Link>
           <a href="#youtube" className="hover:text-amber-400 transition-colors flex items-center gap-2">
              <span className="material-symbols-outlined text-[18px]">play_circle</span>
@@ -49,13 +53,13 @@ export default function Home() {
           </a>
           <Link 
             href="/onboarding" 
-            className="px-5 py-2.5 rounded-full border border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-slate-950 transition-all duration-300 shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+            className="px-5 py-2.5 rounded-full border border-amber-500/50 text-amber-400 hover:bg-amber-500 hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.2)] font-black"
           >
             Diagnóstico gratis
           </Link>
         </nav>
         {mobileMenuOpen && (
-          <nav id="mobile-navigation" className="order-3 mt-4 w-full rounded-2xl border border-white/10 bg-slate-950/95 p-4 shadow-2xl md:hidden" aria-label="Navegación móvil">
+          <nav id="mobile-navigation" className="order-3 mt-4 w-full rounded-2xl border border-white/10 bg-black/95 p-4 shadow-2xl md:hidden" aria-label="Navegación móvil">
             <div className="flex flex-col gap-1 text-sm font-semibold text-slate-300">
               <a href="#dolores" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">El problema</a>
               <a href="#metodo" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">Cómo funciona</a>
@@ -67,14 +71,39 @@ export default function Home() {
               <Link href="/sin_miedo_a_hablar" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 text-slate-300 hover:bg-white/5">Curso Sin Miedo a Hablar · 29 USD</Link>
               <Link href="/regalos" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">Regalos · guía gratuita</Link>
               <a href="#youtube" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-white/5">Comunidad</a>
-              <Link href="/onboarding" onClick={() => setMobileMenuOpen(false)} className="mt-2 rounded-xl bg-amber-500 px-4 py-3 text-center font-black text-slate-950">Comenzar diagnóstico gratuito</Link>
+              <Link href="/onboarding" onClick={() => setMobileMenuOpen(false)} className="mt-2 rounded-xl bg-amber-500 px-4 py-3 text-center font-black text-black">Comenzar diagnóstico gratuito</Link>
             </div>
           </nav>
         )}
       </header>
 
       {/* Hero Section */}
-        <section className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-20 md:pt-28 pb-20 md:pb-24 text-center flex flex-col items-center">
+      <section className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-20 md:pb-24 text-center flex flex-col items-center">
+        
+        {/* Mentor Credibility Avatar Badge */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/80 border-2 border-amber-500/40 backdrop-blur-md shadow-[0_0_30px_rgba(220,38,38,0.3)] mb-6"
+        >
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400 shrink-0">
+            <img 
+              src="/victor-martinez.png" 
+              alt="Víctor Martínez" 
+              className="w-full h-full object-cover object-[center_20%]" 
+            />
+          </div>
+          <div className="text-left">
+            <p className="text-xs font-black text-white tracking-wide">
+              Víctor Martínez <span className="text-amber-400 font-bold">· Oratoria Efectiva</span>
+            </p>
+            <p className="text-[10px] text-slate-300 font-medium">
+              Docente en Comunicación · Más de 20 años entrenando líderes
+            </p>
+          </div>
+        </motion.div>
+
         <Link
           href="/sin_miedo_a_hablar"
           className="inline-flex items-center gap-2 border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-amber-400 mb-6 transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
@@ -88,7 +117,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.8 }}
-          className="inline-block border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-slate-300 mb-8"
+          className="inline-block border border-red-500/30 bg-red-600/15 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-red-300 mb-8"
         >
           Entrenamiento Vocal Impulsado por Inteligencia Artificial
         </motion.div>
@@ -100,7 +129,7 @@ export default function Home() {
           className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-white leading-[1.12] sm:leading-[1.08] max-w-4xl drop-shadow-2xl"
         >
           Tus ideas son brillantes. <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-500 to-orange-500">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
             Tu voz debe demostrarlo.
           </span>
         </motion.h1>
@@ -109,7 +138,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-base sm:text-lg md:text-xl text-slate-400 mt-6 sm:mt-8 max-w-2xl leading-relaxed"
+          className="text-base sm:text-lg md:text-xl text-slate-300 mt-6 sm:mt-8 max-w-2xl leading-relaxed font-light"
         >
           La oratoria es una habilidad que se entrena. Identifica un aspecto de tu voz para mejorar y recibe una primera recomendación práctica.
         </motion.p>
@@ -122,22 +151,53 @@ export default function Home() {
         >
           <Link 
             href="/onboarding" 
-            className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 min-h-[48px] bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_-10px_rgba(245,158,11,0.5)] flex items-center justify-center gap-3"
+            className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 min-h-[48px] bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-black rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_-10px_rgba(245,158,11,0.6)] flex items-center justify-center gap-3"
           >
             Comenzar diagnóstico gratuito
             <span className="material-symbols-outlined text-lg">mic</span>
           </Link>
           <a 
-            href="https://www.youtube.com/@victormartinezpro"
+            href="https://www.youtube.com/@oratoria_efectiva"
             target="_blank" 
             rel="noopener noreferrer"
-            className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] bg-transparent border border-white/10 text-white rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+            className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] bg-black/60 border-2 border-red-500/40 text-white rounded-2xl font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-red-600/20 transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(220,38,38,0.2)]"
           >
             Ver en YouTube
-            <span className="material-symbols-outlined text-lg">smart_display</span>
+            <span className="material-symbols-outlined text-lg text-red-500">smart_display</span>
           </a>
         </motion.div>
-        <p className="mt-5 max-w-xl text-xs sm:text-sm leading-relaxed text-slate-400">
+        
+        {/* Mentor Spotlight Banner inside Hero */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.35 }}
+          className="mt-14 w-full max-w-3xl rounded-3xl p-1 bg-gradient-to-r from-red-600 via-amber-500 to-yellow-400 shadow-[0_0_50px_rgba(220,38,38,0.25)]"
+        >
+          <div className="rounded-[22px] bg-black/95 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 text-left">
+            <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-amber-400 shrink-0 shadow-2xl">
+              <img
+                src="/victor-martinez.png"
+                alt="Víctor Martínez - Tu Mentor"
+                className="w-full h-full object-cover object-[center_20%]"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-red-600/20 text-red-400 text-[11px] font-black uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                Mentor & Fundador
+              </div>
+              <h3 className="text-lg sm:text-xl font-black text-white">
+                «La autoridad al hablar no es un don milagroso. Es una habilidad que se entrena con método.»
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300">
+                Aprende el sistema de comunicación estratégica validado por más de 20 años en el aula y consultoría con <strong className="text-white">Víctor Martínez</strong>.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <p className="mt-6 max-w-xl text-xs sm:text-sm leading-relaxed text-slate-400">
           El diagnóstico inicial es gratuito. Para guardar tus respuestas y el resultado, tendrás que iniciar sesión con Google; no necesitas tarjeta.
         </p>
       </section>
@@ -271,23 +331,30 @@ export default function Home() {
 
       {/* Instructor */}
       <section className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 md:py-20" aria-labelledby="profesor-title">
-        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] items-center gap-8 md:gap-14 rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-10">
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl border border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] items-center gap-8 md:gap-14 rounded-3xl border-2 border-amber-500/30 bg-black/80 p-6 md:p-10 shadow-[0_0_60px_rgba(220,38,38,0.2)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="relative mx-auto aspect-[16/11] w-full max-w-md overflow-hidden rounded-2xl border-2 border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.3)]">
             <img
               src="/victor-martinez.png"
               alt="El profesor Víctor Martínez"
-              className="w-full h-full object-cover object-[center_25%]"
+              className="w-full h-full object-cover object-[center_20%]"
               loading="lazy"
             />
           </div>
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-400">Tu profesor</p>
-            <h2 id="profesor-title" className="mt-3 text-3xl md:text-4xl font-black text-white">Víctor Martínez</h2>
-            <p className="mt-5 text-lg leading-relaxed text-slate-300">
-              Docente uruguayo de Educación Secundaria y Educación Técnico Profesional, con más de 20 años de experiencia en Lengua y Comunicación.
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-widest mb-3">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              Tu Mentor y Docente
+            </div>
+            <h2 id="profesor-title" className="text-3xl md:text-5xl font-black text-white">Víctor Martínez</h2>
+            <p className="mt-2 text-xs font-bold uppercase tracking-wider text-amber-400">
+              Docente en Lengua & Comunicación &bull; Fundador de Oratoria Efectiva
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-slate-400">
-              Esa trayectoria en el aula inspira un enfoque práctico para ayudarte a expresarte con claridad y confianza.
+            <p className="mt-5 text-base sm:text-lg leading-relaxed text-slate-200">
+              Docente uruguayo de Educación Secundaria y Educación Técnico Profesional, con más de 20 años de experiencia formando a profesionales, líderes y emprendedores en comunicación, retórica y oratoria práctica.
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-slate-300">
+              Esa trayectoria en el aula inspira un enfoque táctico y quirúrgico para ayudarte a expresarte con verdadera autoridad y sin bloqueos bajo presión.
             </p>
           </div>
         </div>
@@ -453,8 +520,8 @@ export default function Home() {
                   <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </Link>
 
-                <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
-                  <span className="material-symbols-outlined text-[14px] text-emerald-400">verified_user</span>
+                <p className="text-[11px] text-slate-300 flex items-center justify-center gap-1.5 font-medium">
+                  <span className="material-symbols-outlined text-[14px] text-amber-400">verified_user</span>
                   Garantía de 7 días · Hotmart
                 </p>
               </div>
@@ -479,11 +546,11 @@ export default function Home() {
               Únete a la Comunidad en YouTube
             </h2>
             <p className="text-red-200 text-lg mb-10 max-w-2xl">
-              Visita el canal <strong className="text-white">@victormartinezpro</strong> para encontrar consejos prácticos, análisis de discursos y técnicas gratuitas.
+              Visita el canal <strong className="text-white">@oratoria_efectiva</strong> para encontrar consejos prácticos, análisis de discursos y técnicas gratuitas.
             </p>
             
             <a 
-              href="https://www.youtube.com/@victormartinezpro"
+              href="https://www.youtube.com/@oratoria_efectiva"
               target="_blank" 
               rel="noopener noreferrer"
               className="px-10 py-4 bg-red-600 text-white rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-500 transition-colors flex items-center gap-3 shadow-[0_0_30px_rgba(220,38,38,0.4)]"
@@ -537,7 +604,7 @@ export default function Home() {
             <Link href="/onboarding" className="hover:text-white transition-colors">
               Diagnóstico Vocal
             </Link>
-            <a href="https://www.youtube.com/@victormartinezpro" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+            <a href="https://www.youtube.com/@oratoria_efectiva" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               YouTube
             </a>
           </div>

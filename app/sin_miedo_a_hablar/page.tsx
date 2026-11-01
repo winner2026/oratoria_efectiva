@@ -100,7 +100,7 @@ export default function SinMiedoSalesPage() {
               />
               <div>
                 <h3 className="text-2xl font-bold text-white mb-1">Víctor Martínez</h3>
-                <p className="text-orange-500 font-medium">@victormartinezpro</p>
+                <p className="text-orange-500 font-medium">@oratoria_efectiva</p>
               </div>
             </div>
             
