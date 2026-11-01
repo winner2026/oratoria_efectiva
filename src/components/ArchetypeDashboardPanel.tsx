@@ -68,7 +68,7 @@ export default function ArchetypeDashboardPanel({
         {
           id: "consistency",
           name: "Consistencia Vocal",
-          shortLabel: "CONS",
+          shortLabel: "CONS (20)",
           max: 20,
           currentVal: 0,
           ratioText: "0/20",
@@ -91,7 +91,7 @@ export default function ArchetypeDashboardPanel({
         {
           id: "clarity",
           name: "Claridad & Articulación",
-          shortLabel: "CLAR",
+          shortLabel: "CLAR (17)",
           max: 17,
           currentVal: 0,
           ratioText: "0/17",
@@ -114,7 +114,7 @@ export default function ArchetypeDashboardPanel({
         {
           id: "rhythm",
           name: "Ritmo & Capacidad de Pausa",
-          shortLabel: "RITM",
+          shortLabel: "RITM (25)",
           max: 25,
           currentVal: 0,
           ratioText: "0/25",
@@ -137,10 +137,10 @@ export default function ArchetypeDashboardPanel({
         {
           id: "authority",
           name: "Peso & Tono de Autoridad",
-          shortLabel: "PESO",
-          max: 15,
+          shortLabel: "PESO (20)",
+          max: 20,
           currentVal: 0,
-          ratioText: "0/15",
+          ratioText: "0/20",
           percent: 0,
           grade: "-",
           badgeBg: "bg-slate-900/60",
@@ -160,10 +160,10 @@ export default function ArchetypeDashboardPanel({
         {
           id: "regulation",
           name: "Regulación Neuro-Vocal",
-          shortLabel: "REG",
-          max: 15,
+          shortLabel: "REG (18)",
+          max: 18,
           currentVal: 0,
-          ratioText: "0/15",
+          ratioText: "0/18",
           percent: 0,
           grade: "-",
           badgeBg: "bg-slate-900/60",
@@ -196,8 +196,8 @@ export default function ArchetypeDashboardPanel({
     const r1 = Math.min(1, Math.max(0.12, v1 / 20));
     const r2 = Math.min(1, Math.max(0.12, v2 / 17));
     const r3 = Math.min(1, Math.max(0.12, v3 / 25));
-    const r4 = Math.min(1, Math.max(0.12, v4 / 15));
-    const r5 = Math.min(1, Math.max(0.12, v5 / 15));
+    const r4 = Math.min(1, Math.max(0.12, v4 / 20));
+    const r5 = Math.min(1, Math.max(0.12, v5 / 18));
 
     const getBadgeStyle = (grade: string) => {
       switch (grade) {
@@ -223,7 +223,7 @@ export default function ArchetypeDashboardPanel({
       {
         id: "consistency",
         name: "Consistencia Vocal",
-        shortLabel: "CONS",
+        shortLabel: "CONS (20)",
         max: 20,
         currentVal: v1,
         ratioText: `${v1}/20`,
@@ -246,7 +246,7 @@ export default function ArchetypeDashboardPanel({
       {
         id: "clarity",
         name: "Claridad & Articulación",
-        shortLabel: "CLAR",
+        shortLabel: "CLAR (17)",
         max: 17,
         currentVal: v2,
         ratioText: `${v2}/17`,
@@ -269,7 +269,7 @@ export default function ArchetypeDashboardPanel({
       {
         id: "rhythm",
         name: "Ritmo & Capacidad de Pausa",
-        shortLabel: "RITM",
+        shortLabel: "RITM (25)",
         max: 25,
         currentVal: v3,
         ratioText: `${v3}/25`,
@@ -292,10 +292,10 @@ export default function ArchetypeDashboardPanel({
       {
         id: "authority",
         name: "Peso & Tono de Autoridad",
-        shortLabel: "PESO",
-        max: 15,
+        shortLabel: "PESO (20)",
+        max: 20,
         currentVal: v4,
-        ratioText: `${v4}/15`,
+        ratioText: `${v4}/20`,
         percent: dyn.authority.percent,
         grade: dyn.authority.grade,
         badgeBg: b4.bg,
@@ -315,10 +315,10 @@ export default function ArchetypeDashboardPanel({
       {
         id: "regulation",
         name: "Regulación Neuro-Vocal",
-        shortLabel: "REG",
-        max: 15,
+        shortLabel: "REG (18)",
+        max: 18,
         currentVal: v5,
-        ratioText: `${v5}/15`,
+        ratioText: `${v5}/18`,
         percent: dyn.regulation.percent,
         grade: dyn.regulation.grade,
         badgeBg: b5.bg,
