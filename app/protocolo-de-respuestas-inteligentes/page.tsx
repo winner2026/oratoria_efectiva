@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import ProductViewTracker from "@/components/ProductViewTracker";
+import CtaButton from "@/components/CtaButton";
 
 export default function ProtocoloRespuestasPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -84,6 +86,7 @@ export default function ProtocoloRespuestasPage() {
 
   return (
     <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-amber-500/30 overflow-x-hidden relative">
+      <ProductViewTracker itemId="protocolo-de-respuestas-inteligentes" itemName="Protocolo de Respuestas Inteligentes" price={17.0} category="Libro Digital" />
       {/* Background ambient lighting - strictly Red, Gold & Obsidian Black */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-red-600/20 via-amber-600/15 to-transparent rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute top-[35%] right-0 w-[550px] h-[550px] bg-red-900/15 rounded-full blur-[180px] pointer-events-none" />
@@ -115,14 +118,19 @@ export default function ProtocoloRespuestasPage() {
           >
             Ver catálogo
           </Link>
-          <a
+          <CtaButton
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
+            location="navbar"
+            productId="protocolo-de-respuestas-inteligentes"
+            productName="Protocolo de Respuestas Inteligentes"
+            price={17.0}
+            category="Libro Digital"
             className="px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(245,158,11,0.35)] hover:scale-105 min-h-[40px] flex items-center justify-center"
           >
             Adquirir Libro
-          </a>
+          </CtaButton>
         </div>
       </nav>
 
@@ -179,15 +187,20 @@ export default function ProtocoloRespuestasPage() {
 
             {/* Primary CTA Button */}
             <div className="pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
-              <a
+              <CtaButton
                 href={defaultCheckoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                location="hero"
+                productId="protocolo-de-respuestas-inteligentes"
+                productName="Protocolo de Respuestas Inteligentes"
+                price={17.0}
+                category="Libro Digital"
                 className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs sm:text-sm uppercase tracking-widest text-center transition-all shadow-[0_0_35px_rgba(245,158,11,0.45)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
               >
                 <span>Obtener Mi Copia Ahora</span>
                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </a>
+              </CtaButton>
               <a
                 href="#recetario"
                 className="w-full sm:w-auto px-5 sm:px-6 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-red-600/15 border border-red-500/30 hover:bg-red-600/25 text-white font-bold text-xs uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.2)]"
@@ -336,15 +349,20 @@ export default function ProtocoloRespuestasPage() {
           </div>
 
           <div className="mt-12 text-center">
-            <a
+            <CtaButton
               href={defaultCheckoutUrl}
               target="_blank"
               rel="noopener noreferrer"
+              location="mid_page"
+              productId="protocolo-de-respuestas-inteligentes"
+              productName="Protocolo de Respuestas Inteligentes"
+              price={17.0}
+              category="Libro Digital"
               className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:scale-105"
             >
               <span>Rompe Este Ciclo Hoy Mismo</span>
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </a>
+            </CtaButton>
           </div>
 
         </div>
@@ -718,15 +736,20 @@ export default function ProtocoloRespuestasPage() {
           </div>
 
           {/* CTA Link to Checkout */}
-          <a
+          <CtaButton
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
+            location="pricing"
+            productId="protocolo-de-respuestas-inteligentes"
+            productName="Protocolo de Respuestas Inteligentes"
+            price={17.0}
+            category="Libro Digital"
             className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 px-8 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-base uppercase tracking-widest transition-all shadow-[0_0_40px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95"
           >
             <span>Quiero Mi Copia Ahora</span>
             <span className="material-symbols-outlined text-xl">shopping_cart</span>
-          </a>
+          </CtaButton>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300">
             <span className="flex items-center gap-1.5">
@@ -815,14 +838,19 @@ export default function ProtocoloRespuestasPage() {
               <p className="text-[10px] text-amber-400 font-bold">Manual Táctico Digital</p>
             </div>
           </div>
-          <a
+          <CtaButton
             href={defaultCheckoutUrl}
             target="_blank"
             rel="noopener noreferrer"
+            location="checkout"
+            productId="protocolo-de-respuestas-inteligentes"
+            productName="Protocolo de Respuestas Inteligentes"
+            price={17.0}
+            category="Libro Digital"
             className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider shrink-0 shadow-lg min-h-[44px] flex items-center justify-center active:scale-95 transition-transform"
           >
             Adquirir Ahora
-          </a>
+          </CtaButton>
         </div>
       )}
 

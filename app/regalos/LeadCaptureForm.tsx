@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { trackGenerateLead } from "@/lib/analytics/gtag";
 
 type GuideStep = {
   title: string;
@@ -67,6 +68,7 @@ export default function LeadCaptureForm() {
       }
 
       setIsComplete(true);
+      trackGenerateLead({ leadType: "guia_claridad_5_minutos", location: "regalos_page" });
     } catch (submitError) {
       setError(
         submitError instanceof Error

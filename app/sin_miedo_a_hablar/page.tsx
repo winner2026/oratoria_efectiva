@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import ProductViewTracker from '@/components/ProductViewTracker';
+import CtaButton from '@/components/CtaButton';
 
 export const metadata = {
   title: 'Sin Miedo a Hablar - Oratoria Efectiva',
@@ -12,6 +14,7 @@ export default function SinMiedoSalesPage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-300 font-sans selection:bg-orange-600/30">
+      <ProductViewTracker itemId="sin-miedo-a-hablar" itemName="Sin Miedo a Hablar" price={29} category="Curso Online" />
       
       {/* 1. HERO SECTION */}
       <section className="relative pt-20 pb-16 px-6 overflow-hidden border-b border-neutral-900">

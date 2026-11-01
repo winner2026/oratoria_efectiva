@@ -27,7 +27,8 @@ const ArchetypeDashboardPanel = dynamic(
 );
 
 import { calculateVoiceArchetype } from "@/domain/archetype/ArchetypeEngine";
-import { getArchetypeAvatarUrl } from "@/domain/archetype/ArchetypeScoring";
+import { getArchetypeAvatarUrl, calculateDynamicDimensions } from "@/domain/archetype/ArchetypeScoring";
+import { trackDiagnosticCompleted } from "@/lib/analytics/gtag";
 
 
 // 12 PREGUNTAS ESTRATÉGICAS DE PERFILAMIENTO FORENSE Y NEURO-VOCAL
@@ -239,6 +240,16 @@ export default function OnboardingPage() {
       if (!response.ok || !data?.success) {
         throw new Error(data?.error || "No se pudo guardar tu perfil. Inténtalo de nuevo.");
       }
+
+      // Enviar evento de conversión a GA4
+      try {
+        const dyn = calculateDynamicDimensions(answers);
+        trackDiagnosticCompleted({
+          archetypeName: synthesizedArchetype.name,
+          archetypeId: synthesizedArchetype.id,
+          score: dyn.totalScore,
+        });
+      } catch {}
 
       // Redirigir a la experiencia de voz
       router.push("/voz_efectiva");

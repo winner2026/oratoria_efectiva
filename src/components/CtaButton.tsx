@@ -1,20 +1,20 @@
 "use client";
 
 import React from "react";
-
-// Extend Window to include gtag
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-  }
-}
+import { trackBeginCheckout } from "@/lib/analytics/gtag";
 
 interface CtaButtonProps {
   href: string;
   className?: string;
   children: React.ReactNode;
   /** Label to identify which button was clicked in GA4 reports */
-  location: "hero" | "mid_page" | "pricing";
+  location: "hero" | "mid_page" | "pricing" | "navbar" | "checkout";
+  productId?: string;
+  productName?: string;
+  price?: number;
+  category?: string;
+  target?: string;
+  rel?: string;
 }
 
 export default function CtaButton({
@@ -22,16 +22,22 @@ export default function CtaButton({
   className,
   children,
   location,
+  productId = "sin-miedo-a-hablar",
+  productName = "Sin Miedo a Hablar",
+  price = 29.0,
+  category = "Curso Online",
+  target,
+  rel,
 }: CtaButtonProps) {
   const handleClick = () => {
-    // GA4 event
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "comprar_ahora_click", {
-        event_category: "conversion",
-        event_label: location,
-        link_url: href,
-      });
-    }
+    trackBeginCheckout({
+      itemId: productId,
+      itemName: productName,
+      price,
+      category,
+      currency: "USD",
+      location,
+    });
   };
 
   return (
@@ -39,6 +45,8 @@ export default function CtaButton({
       href={href}
       className={className}
       onClick={handleClick}
+      target={target}
+      rel={rel}
     >
       {children}
     </a>
