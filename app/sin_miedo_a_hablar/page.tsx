@@ -28,7 +28,7 @@ export default function SinMiedoSalesPage() {
           <div className="w-full max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 bg-black">
             <div className="relative pb-[56.25%] h-0">
               <iframe 
-                src="https://www.youtube.com/embed/FQxA4yntAEY?si=XZlIadv_fLx5l-Lb" 
+                src="https://www.youtube.com/embed/FQxA4yntAEY?si=ccx3Cjt7btG__eWS" 
                 title="Video de presentación" 
                 className="absolute top-0 left-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 

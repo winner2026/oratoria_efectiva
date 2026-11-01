@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-11-01T17:53:17.142Z",
+  "globalTracking": {
+    "hasGTM": true,
+    "gtmId": "GTM-5RJT8LRJ",
+    "hasGA4": true,
+    "ga4Id": "G-K54S39NNTD",
+    "hasGoogleAds": true,
+    "adsId": "AW-18488283276",
+    "appliesToAllRoutes": true
+  },
+  "pagesAudited": [
+    {
+      "product": "Catálogo General",
+      "file": "app/productos/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": false,
+      "hotmartCheckoutUrls": [],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    },
+    {
+      "product": "Protocolo de Respuestas Inteligentes",
+      "file": "app/protocolo-de-respuestas-inteligentes/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": false,
+      "hotmartCheckoutUrls": [
+        "https://pay.hotmart.com/Q108091621U"
+      ],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    },
+    {
+      "product": "Protocolo Preguntas Inteligentes",
+      "file": "app/protocolo-preguntas-inteligentes/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": false,
+      "hotmartCheckoutUrls": [],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    },
+    {
+      "product": "Curso Sin Miedo a Hablar",
+      "file": "app/sin_miedo_a_hablar/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": false,
+      "hotmartCheckoutUrls": [
+        "https://pay.hotmart.com/F99862019P?off=dlcepqmr&hotfeature=51"
+      ],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    },
+    {
+      "product": "Voz Efectiva / Diagnóstico",
+      "file": "app/voz_efectiva/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": false,
+      "hotmartCheckoutUrls": [],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    },
+    {
+      "product": "Lead Magnet / Regalos",
+      "file": "app/regalos/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": true,
+      "hotmartCheckoutUrls": [],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    },
+    {
+      "product": "Onboarding / Diagnóstico Inicial",
+      "file": "app/onboarding/page.tsx",
+      "exists": true,
+      "globalGA4Active": true,
+      "globalGTMActive": true,
+      "hasDirectLeadForm": true,
+      "hotmartCheckoutUrls": [],
+      "hasHotmartUtmOrSrcForwarding": false,
+      "hasCustomEventLogging": false
+    }
+  ],
+  "summary": {
+    "totalAudited": 7,
+    "pagesWithGA4PageviewTracking": 7,
+    "pagesWithDirectLeadCaptureForm": 2,
+    "pagesWithHotmartCheckout": 2,
+    "pagesWithHotmartUtmTracking": 0,
+    "pagesWithInternalEventLogging": 0
+  }
+}
