@@ -27,6 +27,7 @@ const ArchetypeDashboardPanel = dynamic(
 );
 
 import { calculateVoiceArchetype } from "@/domain/archetype/ArchetypeEngine";
+import { getArchetypeAvatarUrl } from "@/domain/archetype/ArchetypeScoring";
 
 
 // 12 PREGUNTAS ESTRATÉGICAS DE PERFILAMIENTO FORENSE Y NEURO-VOCAL
@@ -280,16 +281,23 @@ export default function OnboardingPage() {
               <p>
                 <strong className="text-white">Meta Primaria:</strong> {objectiveChoice || "Liderazgo y Autoridad"}
               </p>
-              <div className="p-3.5 rounded-xl border border-white/10 bg-[#0d1527] space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 block font-bold">
-                  ARQUETIPO VOCAL DETERMINADO:
-                </span>
-                <span className="text-base sm:text-lg text-emerald-400 font-black block">
-                  {synthesizedArchetype.name} ({synthesizedArchetype.code})
-                </span>
-                <p className="text-xs text-amber-300/90 font-medium">
-                  "{synthesizedArchetype.tagline}"
-                </p>
+              <div className="p-4 rounded-xl border border-white/10 bg-[#0d1527] flex items-center gap-4">
+                <img
+                  src={getArchetypeAvatarUrl(synthesizedArchetype.id, true)}
+                  alt={synthesizedArchetype.name}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-emerald-400/80 shadow-[0_0_20px_rgba(16,185,129,0.35)] p-0.5 bg-slate-950 object-cover shrink-0"
+                />
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 block font-bold">
+                    ARQUETIPO VOCAL DETERMINADO:
+                  </span>
+                  <span className="text-base sm:text-xl text-emerald-400 font-black block truncate">
+                    {synthesizedArchetype.name} ({synthesizedArchetype.code})
+                  </span>
+                  <p className="text-xs text-amber-300/90 font-medium">
+                    "{synthesizedArchetype.tagline}"
+                  </p>
+                </div>
               </div>
               <p className="text-xs text-slate-400 border-t border-white/5 pt-2">
                 {synthesizedArchetype.description}
@@ -355,7 +363,7 @@ export default function OnboardingPage() {
 
           {/* Lado Derecho: Panel de Auditoría Consolidado */}
           <div className="flex justify-center">
-            <ArchetypeDashboardPanel answers={answers} currentStepIndex={11} />
+            <ArchetypeDashboardPanel answers={answers} currentStepIndex={11} userName={userName} />
           </div>
         </div>
       </div>
@@ -494,7 +502,7 @@ export default function OnboardingPage() {
 
         {/* Lado Derecho: Matriz Científica con Barras Gruesas de Neón y Radar de Arquetipo */}
         <aside className="w-full lg:w-[500px] xl:w-[560px] shrink-0 sticky top-20 flex justify-center">
-          <ArchetypeDashboardPanel answers={answers} currentStepIndex={step} />
+          <ArchetypeDashboardPanel answers={answers} currentStepIndex={step} userName={userName} />
         </aside>
       </main>
     </div>

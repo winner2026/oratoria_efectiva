@@ -2,12 +2,14 @@
 
 import React, { useMemo } from "react";
 import { calculateVoiceArchetype, VoiceArchetype } from "@/domain/archetype/ArchetypeEngine";
+import { calculateDynamicDimensions, getArchetypeAvatarUrl } from "@/domain/archetype/ArchetypeScoring";
 
 interface ArchetypeDashboardProps {
   answers: Record<string, string>;
   currentStepIndex: number;
   className?: string;
   showTopPills?: boolean;
+  userName?: string;
 }
 
 interface DimensionData {
@@ -39,6 +41,7 @@ export default function ArchetypeDashboardPanel({
   currentStepIndex,
   className = "",
   showTopPills = false,
+  userName = "",
 }: ArchetypeDashboardProps) {
   const answeredCount = Object.keys(answers).length;
   const isUnanswered = answeredCount === 0;
@@ -180,27 +183,41 @@ export default function ArchetypeDashboardPanel({
       ];
     }
 
-    // Cuando el usuario ya seleccionó al menos una respuesta:
-    const v1 = Math.max(1, Math.round(arc.coreDimensions.consistency * progressRatio));
-    const v2 = Math.max(1, Math.round(arc.coreDimensions.clarity * progressRatio));
-    const v3 = Math.max(1, Math.round(arc.coreDimensions.rhythm * progressRatio));
-    const v4 = Math.max(1, Math.round(arc.coreDimensions.authority * progressRatio));
-    const v5 = Math.max(1, Math.round(arc.coreDimensions.regulation * progressRatio));
+    // Cuando el usuario ya seleccionó al menos una respuesta, calculamos valores reales y diferenciados:
+    const dyn = calculateDynamicDimensions(answers);
+    const v1 = dyn.consistency.currentVal;
+    const v2 = dyn.clarity.currentVal;
+    const v3 = dyn.rhythm.currentVal;
+    const v4 = dyn.authority.currentVal;
+    const v5 = dyn.regulation.currentVal;
 
-    const r1 = Math.min(1, v1 / 20);
-    const r2 = Math.min(1, v2 / 17);
-    const r3 = Math.min(1, v3 / 25);
-    const r4 = Math.min(1, v4 / 15);
-    const r5 = Math.min(1, v5 / 15);
+    // Distancia radial: mayor resultado = más alejado del centro (perímetro exterior)
+    // Menor resultado = colapsa hacia el centro (debilidad o área de mejora evidente)
+    const r1 = Math.min(1, Math.max(0.12, v1 / 20));
+    const r2 = Math.min(1, Math.max(0.12, v2 / 17));
+    const r3 = Math.min(1, Math.max(0.12, v3 / 25));
+    const r4 = Math.min(1, Math.max(0.12, v4 / 15));
+    const r5 = Math.min(1, Math.max(0.12, v5 / 15));
 
-    const getGrade = (val: number, max: number) => {
-      const p = val / max;
-      if (p >= 0.88) return "A+";
-      if (p >= 0.8) return "A";
-      if (p >= 0.68) return "B";
-      if (p >= 0.5) return "C";
-      return "D";
+    const getBadgeStyle = (grade: string) => {
+      switch (grade) {
+        case "A+":
+        case "A":
+          return { bg: "bg-emerald-950/80", border: "border-emerald-500/40", text: "text-emerald-400" };
+        case "B":
+          return { bg: "bg-cyan-950/80", border: "border-cyan-500/40", text: "text-cyan-300" };
+        case "C":
+          return { bg: "bg-amber-950/80", border: "border-amber-500/40", text: "text-amber-400" };
+        default:
+          return { bg: "bg-rose-950/80", border: "border-rose-500/40", text: "text-rose-400" };
+      }
     };
+
+    const b1 = getBadgeStyle(dyn.consistency.grade);
+    const b2 = getBadgeStyle(dyn.clarity.grade);
+    const b3 = getBadgeStyle(dyn.rhythm.grade);
+    const b4 = getBadgeStyle(dyn.authority.grade);
+    const b5 = getBadgeStyle(dyn.regulation.grade);
 
     return [
       {
@@ -210,11 +227,11 @@ export default function ArchetypeDashboardPanel({
         max: 20,
         currentVal: v1,
         ratioText: `${v1}/20`,
-        percent: Math.round(r1 * 100),
-        grade: getGrade(v1, 20),
-        badgeBg: "bg-emerald-950/80",
-        badgeBorder: "border-emerald-500/40",
-        badgeText: "text-emerald-400",
+        percent: dyn.consistency.percent,
+        grade: dyn.consistency.grade,
+        badgeBg: b1.bg,
+        badgeBorder: b1.border,
+        badgeText: b1.text,
         dotColor: "#10b981",
         dotGlow: "#34d399",
         gradientClass: "from-emerald-500 to-emerald-300",
@@ -233,11 +250,11 @@ export default function ArchetypeDashboardPanel({
         max: 17,
         currentVal: v2,
         ratioText: `${v2}/17`,
-        percent: Math.round(r2 * 100),
-        grade: getGrade(v2, 17),
-        badgeBg: "bg-cyan-950/80",
-        badgeBorder: "border-cyan-500/40",
-        badgeText: "text-cyan-300",
+        percent: dyn.clarity.percent,
+        grade: dyn.clarity.grade,
+        badgeBg: b2.bg,
+        badgeBorder: b2.border,
+        badgeText: b2.text,
         dotColor: "#06b6d4",
         dotGlow: "#22d3ee",
         gradientClass: "from-cyan-500 to-teal-300",
@@ -256,11 +273,11 @@ export default function ArchetypeDashboardPanel({
         max: 25,
         currentVal: v3,
         ratioText: `${v3}/25`,
-        percent: Math.round(r3 * 100),
-        grade: getGrade(v3, 25),
-        badgeBg: "bg-sky-950/80",
-        badgeBorder: "border-sky-500/40",
-        badgeText: "text-sky-400",
+        percent: dyn.rhythm.percent,
+        grade: dyn.rhythm.grade,
+        badgeBg: b3.bg,
+        badgeBorder: b3.border,
+        badgeText: b3.text,
         dotColor: "#3b82f6",
         dotGlow: "#60a5fa",
         gradientClass: "from-blue-500 to-sky-400",
@@ -279,11 +296,11 @@ export default function ArchetypeDashboardPanel({
         max: 15,
         currentVal: v4,
         ratioText: `${v4}/15`,
-        percent: Math.round(r4 * 100),
-        grade: getGrade(v4, 15),
-        badgeBg: "bg-amber-950/80",
-        badgeBorder: "border-amber-500/40",
-        badgeText: "text-amber-400",
+        percent: dyn.authority.percent,
+        grade: dyn.authority.grade,
+        badgeBg: b4.bg,
+        badgeBorder: b4.border,
+        badgeText: b4.text,
         dotColor: "#f59e0b",
         dotGlow: "#fbbf24",
         gradientClass: "from-orange-500 to-amber-400",
@@ -302,15 +319,15 @@ export default function ArchetypeDashboardPanel({
         max: 15,
         currentVal: v5,
         ratioText: `${v5}/15`,
-        percent: Math.round(r5 * 100),
-        grade: getGrade(v5, 15),
-        badgeBg: "bg-rose-950/80",
-        badgeBorder: "border-rose-500/40",
-        badgeText: "text-rose-400",
+        percent: dyn.regulation.percent,
+        grade: dyn.regulation.grade,
+        badgeBg: b5.bg,
+        badgeBorder: b5.border,
+        badgeText: b5.text,
         dotColor: "#f43f5e",
-        dotGlow: "#f43f5e",
-        gradientClass: "from-rose-600 to-red-400",
-        glowClass: "glow-red",
+        dotGlow: "#fb7185",
+        gradientClass: "from-rose-500 to-pink-400",
+        glowClass: "glow-rose",
         tx: 48,
         ty: 201,
         labelColor: "#fb7185",
@@ -324,9 +341,9 @@ export default function ArchetypeDashboardPanel({
   // Puntuación Global: exactamente 0 si no se ha respondido nada
   const totalScore = useMemo(() => {
     if (isUnanswered) return 0;
-    const raw = dimensions.reduce((acc, d) => acc + d.currentVal, 0);
-    return Math.min(100, Math.max(1, Math.round(raw)));
-  }, [dimensions, isUnanswered]);
+    const dyn = calculateDynamicDimensions(answers);
+    return dyn.totalScore;
+  }, [answers, isUnanswered]);
 
   // Offset para el medidor circular de 100 puntos (circunferencia = 2 * PI * 40 ≈ 251.2)
   const circleCircumference = 251.2;
@@ -527,18 +544,18 @@ export default function ArchetypeDashboardPanel({
             <div className="flex items-center space-x-3.5">
               <div className="relative shrink-0">
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                  alt="Avatar"
-                  className={`w-14 h-14 rounded-full object-cover border-2 transition-all duration-500 ${
+                  src={getArchetypeAvatarUrl(activeArchetype?.id, answeredCount >= 12)}
+                  alt="Avatar de Arquetipo Vocal"
+                  className={`w-14 h-14 rounded-full p-0.5 object-cover border-2 transition-all duration-500 ${
                     isUnanswered
-                      ? "border-slate-700 opacity-60"
-                      : "border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.4)] opacity-100"
+                      ? "border-slate-700 opacity-60 bg-slate-900"
+                      : "border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.4)] opacity-100 bg-slate-950"
                   }`}
                 />
               </div>
               <div>
                 <h3 className="text-base md:text-lg font-bold leading-snug text-white">
-                  <span className={isUnanswered ? "text-slate-400" : "text-amber-300"}>Víctor Martínez</span>
+                  <span className={isUnanswered ? "text-slate-400" : "text-amber-300"}>{userName || (isUnanswered ? "Aspirante en Calibración" : "Tu Perfil Biométrico")}</span>
                   <span className="text-slate-400 font-normal"> - {isUnanswered ? "Calibración en Reposo" : activeArchetype.name}</span>
                 </h3>
                 <p className="text-xs text-slate-400 font-medium mt-0.5 line-clamp-1">

@@ -60,7 +60,7 @@ export default function RegalosPage() {
           </p>
         </div>
 
-        <LeadCaptureForm isConfigured={Boolean(process.env.GOOGLE_SHEETS_WEBHOOK_URL && process.env.GOOGLE_SHEETS_WEBHOOK_SECRET)} />
+        <LeadCaptureForm />
       </section>
 
       <footer className="relative z-10 border-t border-white/10 px-6 py-6 text-center text-xs text-slate-400">

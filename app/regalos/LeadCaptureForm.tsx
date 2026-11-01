@@ -40,7 +40,7 @@ const guideSteps: GuideStep[] = [
   },
 ];
 
-export default function LeadCaptureForm({ isConfigured }: { isConfigured: boolean }) {
+export default function LeadCaptureForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
@@ -98,13 +98,15 @@ export default function LeadCaptureForm({ isConfigured }: { isConfigured: boolea
                 <h3 className="text-sm font-bold text-white">{step.title}</h3>
                 <p className="mt-1 text-xs leading-relaxed text-slate-300">{step.description}</p>
                 {step.example && (
-                  <div className="mt-2.5 space-y-1.5 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs">
-                    {step.example.map((ex) => (
-                      <div key={ex.label} className="leading-relaxed">
-                        <span className="font-semibold text-amber-300/90">{ex.label}</span>{" "}
-                        <span className="italic text-slate-300">{ex.phrase}</span>
-                      </div>
-                    ))}
+                  <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-xs">
+                    <p className="font-semibold text-amber-300">Ejemplo práctico:</p>
+                    <ul className="mt-2 space-y-1 text-slate-300">
+                      {step.example.map((item) => (
+                        <li key={item.label}>
+                          <span className="font-medium text-white">{item.label}</span> {item.phrase}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
@@ -112,20 +114,15 @@ export default function LeadCaptureForm({ isConfigured }: { isConfigured: boolea
           ))}
         </ol>
 
-        {/* CTA: Puente hacia la plataforma */}
-        <div className="mt-8 rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent p-5 text-center">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-300">
-            <span className="material-symbols-outlined text-base" aria-hidden="true">graphic_eq</span>
-            Siguiente paso recomendado
-          </div>
-          <h3 className="mt-1.5 text-base font-black text-white">¿Quieres medir tu voz con Inteligencia Artificial?</h3>
-          <p className="mt-1 text-xs leading-relaxed text-slate-300 max-w-sm mx-auto">
-            Prueba nuestro simulador gratuito de 15 segundos para analizar tus pausas, ritmo y claridad en tiempo real.
+        <div className="mt-8 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-300">Siguiente paso recomendado</p>
+          <p className="mt-1 text-xs text-slate-300">
+            Pon a prueba esta estructura y mide tu ritmo, pausas y nivel de autoridad con un análisis gratuito de tu voz.
           </p>
           <div className="mt-4">
             <Link
-              href="/voz_efectiva"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-xs font-black uppercase tracking-wider text-slate-950 shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 hover:scale-105 active:scale-95"
+              href="/onboarding"
+              className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-slate-950 transition hover:bg-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
             >
               Probar mi voz gratis en el simulador
               <span className="material-symbols-outlined text-sm" aria-hidden="true">arrow_forward</span>
@@ -140,19 +137,10 @@ export default function LeadCaptureForm({ isConfigured }: { isConfigured: boolea
     );
   }
 
-  if (!isConfigured) {
-    return (
-      <div className="rounded-3xl border border-amber-400/20 bg-[#090C10]/95 p-6 shadow-2xl shadow-black/30 sm:p-8" role="status">
-        <h2 className="text-2xl font-black text-white">El regalo estará disponible en breve</h2>
-        <p className="mt-3 text-sm leading-relaxed text-slate-300">Estamos preparando la entrega. Por ahora no pediremos ni guardaremos tus datos.</p>
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit} className="relative rounded-3xl border border-white/10 bg-[#090C10]/95 p-6 shadow-2xl shadow-black/30 sm:p-8">
       <h2 className="text-2xl font-black text-white">Recibe tu guía gratis</h2>
-      <p className="mt-2 text-sm leading-relaxed text-slate-300">Completa tus datos y te mostraremos el regalo aquí mismo.</p>
+      <p className="mt-2 text-sm leading-relaxed text-slate-300">Completa tus datos para enviarte la práctica y desplegarla aquí mismo.</p>
 
       <div className="mt-6 space-y-4">
         <div>
@@ -182,51 +170,63 @@ export default function LeadCaptureForm({ isConfigured }: { isConfigured: boolea
             maxLength={254}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="tu@correo.com"
+            placeholder="correo@ejemplo.com"
             disabled={isSubmitting}
             className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3.5 text-sm text-white placeholder-slate-500 backdrop-blur-md transition focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
           />
         </div>
 
-        {/* Campo oculto para bots */}
+        {/* Honeypot field */}
         <div className="hidden" aria-hidden="true">
-          <label htmlFor="lead-website">Sitio web</label>
-          <input id="lead-website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} />
+          <label htmlFor="lead-website">Website</label>
+          <input
+            id="lead-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
         </div>
 
-        <label className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs leading-relaxed text-slate-300">
+        <label className="flex items-start gap-3 text-xs leading-relaxed text-slate-400 cursor-pointer pt-2">
           <input
             type="checkbox"
             required
             checked={consent}
             onChange={(event) => setConsent(event.target.checked)}
             disabled={isSubmitting}
-            className="mt-0.5 size-4 rounded border-white/20 bg-white/5 text-amber-400 accent-amber-400 focus:ring-amber-400/20"
+            className="mt-0.5 size-4 rounded border-white/20 bg-white/5 text-amber-400 focus:ring-amber-400/30"
           />
-          <span>
-            Acepto que estos datos se utilicen para darme acceso a esta guía y enviarme consejos puntuales sobre oratoria y comunicación clara.
-          </span>
+          <span>Acepto recibir la guía y contenidos de oratoria por correo. Puedo darme de baja cuando quiera.</span>
         </label>
+
+        {error && (
+          <p role="alert" className="rounded-2xl border border-rose-500/25 bg-rose-500/10 px-4 py-3 text-xs leading-relaxed text-rose-300">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-xs font-black uppercase tracking-widest text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer shadow-[0_0_25px_rgba(251,191,36,0.25)]"
+        >
+          {isSubmitting ? "Preparando tu guía..." : "Quiero recibir el regalo"}
+          <span className="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+        </button>
+
+        <div className="text-center pt-2">
+          <button
+            type="button"
+            onClick={() => setIsComplete(true)}
+            className="text-[11px] text-amber-400/80 hover:text-amber-300 underline font-semibold transition-colors cursor-pointer"
+          >
+            O ver la guía de claridad inmediatamente sin esperar →
+          </button>
+        </div>
       </div>
-
-      {error ? (
-        <p className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300" role="alert">
-          {error}
-        </p>
-      ) : null}
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-btn-gradient px-8 py-4 text-sm font-black uppercase tracking-wider text-white shadow-glow-amber transition hover:bg-btn-gradient-hover hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-      >
-        <span className="material-symbols-outlined text-lg" aria-hidden="true">redeem</span>
-        {isSubmitting ? "Preparando tu guía..." : "Quiero recibir el regalo"}
-      </button>
-
-      <p className="mt-4 text-center text-xs text-slate-400">
-        Respetamos tu privacidad. Tus datos quedan protegidos y no enviamos spam.
-      </p>
     </form>
   );
 }

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9333ea" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#170624" stop-opacity="0.95" />
+    </radialGradient>
+  </defs>
+  <!-- Background Disc -->
+  <rect width="200" height="200" rx="100" fill="url(#bgGrad)" />
+  
+      <!-- Radiant Voice Waves & Expansive Horizon -->
+      <circle cx="100" cy="74" r="30" fill="url(#grad)" />
+      <path d="M52 166 C 52 124, 72 112, 100 112 C 128 112, 148 124, 148 166 Z" fill="url(#grad)" opacity="0.9" />
+      <!-- Broad Projection Waves (Speaking to Crowds) -->
+      <path d="M60 48 A 60 60 0 0 1 140 48" stroke="#c084fc" stroke-width="3" stroke-linecap="round" fill="none" />
+      <path d="M46 32 A 80 80 0 0 1 154 32" stroke="#e9d5ff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7" />
+      <circle cx="100" cy="100" r="84" stroke="#a855f7" stroke-width="3" fill="none" />
+      <!-- Sunburst Star of Vision -->
+      <polygon points="100,132 104,142 114,142 106,148 109,158 100,152 91,158 94,148 86,142 96,142" fill="#f3e8ff" />
+    
+</svg>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendLeadToGoogleSheets } from "@/services/googleSheetsLeadService";
+import { prisma } from "@/infrastructure/db/client";
 
 export const runtime = "nodejs";
 export const maxDuration = 15;
@@ -38,19 +39,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: "Necesitas aceptar el aviso para continuar." }, { status: 400 });
   }
 
-  const result = await sendLeadToGoogleSheets({
-    name: normalizedName,
-    email: normalizedEmail,
-    source: "regalos",
-  });
-
-  if (!result.success) {
-    console.error("[API /api/regalos] Failed to save lead to Google Sheets:", result.error, result.detail);
-    return NextResponse.json(
-      { success: false, error: "No pudimos registrar tu solicitud. Inténtalo de nuevo más tarde." },
-      { status: 502 }
-    );
+  // 1. Intentar registrar en base de datos PostgreSQL local
+  try {
+    await prisma.user.upsert({
+      where: { email: normalizedEmail },
+      update: {
+        name: normalizedName,
+      },
+      create: {
+        email: normalizedEmail,
+        name: normalizedName,
+        role: "lead_regalo",
+        goal: "claridad",
+      },
+    });
+  } catch (dbError) {
+    console.warn("[API /api/regalos] Could not save user to DB, continuing to webhook:", dbError);
   }
 
+  // 2. Intentar registrar en Google Sheets si el webhook está configurado
+  try {
+    const result = await sendLeadToGoogleSheets({
+      name: normalizedName,
+      email: normalizedEmail,
+      source: "regalos",
+    });
+
+    if (!result.success) {
+      console.warn("[API /api/regalos] Google Sheets webhook failed or not configured:", result.error);
+    }
+  } catch (sheetError) {
+    console.warn("[API /api/regalos] Exception sending to Google Sheets:", sheetError);
+  }
+
+  // Siempre devolver success true para garantizar que el usuario reciba el regalo
   return NextResponse.json({ success: true });
 }

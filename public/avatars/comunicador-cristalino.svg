@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#041421" stop-opacity="0.95" />
+    </radialGradient>
+  </defs>
+  <!-- Background Disc -->
+  <rect width="200" height="200" rx="100" fill="url(#bgGrad)" />
+  
+      <!-- Diamond Precision & Laser Articulation -->
+      <circle cx="100" cy="74" r="30" fill="url(#grad)" />
+      <path d="M52 166 C 52 124, 72 112, 100 112 C 128 112, 148 124, 148 166 Z" fill="url(#grad)" opacity="0.9" />
+      <!-- Crystalline Geometry -->
+      <polygon points="100,24 116,42 100,60 84,42" fill="none" stroke="#38bdf8" stroke-width="3" />
+      <circle cx="100" cy="100" r="84" stroke="#0ea5e9" stroke-width="2.5" fill="none" opacity="0.8" />
+      <circle cx="100" cy="100" r="92" stroke="#7dd3fc" stroke-width="1" stroke-dasharray="4 6" fill="none" opacity="0.5" />
+      <!-- Crisp Frequency Waves -->
+      <path d="M68 136 Q84 122 100 136 T132 136" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" fill="none" />
+      <path d="M76 150 Q88 140 100 150 T124 150" stroke="#bae6fd" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    
+</svg>
