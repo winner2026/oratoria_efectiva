@@ -9,6 +9,7 @@ export default function ProtocoloRespuestasPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   // Hotmart checkout link for Protocolo de Respuestas Inteligentes
   const defaultCheckoutUrl = "https://pay.hotmart.com/Q108091621U";
@@ -23,7 +24,23 @@ export default function ProtocoloRespuestasPage() {
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Exit Intent: Detect cursor moving to top of window to close tab
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 15) {
+        const alreadyShown = sessionStorage.getItem("exit_modal_shown");
+        if (!alreadyShown) {
+          setShowExitModal(true);
+          sessionStorage.setItem("exit_modal_shown", "true");
+        }
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
   }, []);
 
   const toggleFaq = (index: number) => {
@@ -100,24 +117,18 @@ export default function ProtocoloRespuestasPage() {
         </p>
       </div>
 
-      {/* Navbar */}
+      {/* Navbar (Zero Leaks: foco exclusivo en la compra) */}
       <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b border-white/10 relative z-20">
-        <Link href="/" className="flex items-center gap-2 group">
+        <div className="flex items-center gap-2 select-none">
           <span className="font-black tracking-tight text-lg sm:text-xl text-white">
             ORATORIA<span className="text-amber-400">EFECTIVA</span>
           </span>
           <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-red-600/20 border border-red-500/30 text-red-300">
             Libro
           </span>
-        </Link>
+        </div>
         
         <div className="flex items-center gap-3 sm:gap-4">
-          <Link 
-            href="/productos"
-            className="text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white transition-colors hidden sm:block"
-          >
-            Ver catálogo
-          </Link>
           <CtaButton
             href={defaultCheckoutUrl}
             target="_blank"
@@ -268,15 +279,10 @@ export default function ProtocoloRespuestasPage() {
                 Cómo responder preguntas incómodas o agresivas sin titubear ni ceder estatus.
               </p>
             </div>
-            <a
-              href="https://youtu.be/WcFRCvUOYmw?si=_-87cuO2tzqYi81M"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-bold shrink-0 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl hover:bg-white/10 transition-colors"
-            >
-              <span>Abrir en YouTube</span>
-              <span className="material-symbols-outlined text-sm">open_in_new</span>
-            </a>
+            <div className="inline-flex items-center gap-1.5 text-xs text-amber-400 font-bold shrink-0 bg-white/5 border border-white/10 px-4 py-2 rounded-xl">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span>Demostración en vivo</span>
+            </div>
           </div>
 
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border-2 border-red-600/30 bg-black">
@@ -805,25 +811,30 @@ export default function ProtocoloRespuestasPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="w-full border-t border-white/5 py-12 px-6 bg-slate-950 text-slate-500 text-xs">
+      {/* FOOTER (Zero Leaks: 100% Compliant con políticas de Google Ads) */}
+      <footer className="w-full border-t border-white/5 py-10 px-6 bg-slate-950 text-slate-500 text-xs">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="font-black text-white text-sm tracking-tight">ORATORIA EFECTIVA</span>
             <span>&copy; {new Date().getFullYear()} Oratoria Efectiva. Todos los derechos reservados.</span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-            <Link href="/productos" className="hover:text-white transition-colors">Productos</Link>
-            <Link href="/sin_miedo_a_hablar" className="hover:text-amber-400 transition-colors">Curso Sin Miedo a Hablar</Link>
-            <a href="https://www.youtube.com/@oratoria_efectiva" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-5 text-slate-400 text-xs">
+            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+              <span className="material-symbols-outlined text-sm">verified_user</span>
+              Garantía de 7 Días Incondicional
+            </span>
+            <span className="flex items-center gap-1 text-amber-300 font-semibold">
+              <span className="material-symbols-outlined text-sm">lock</span>
+              Pago 100% Seguro vía Hotmart
+            </span>
+            <span className="text-slate-500">Soporte: contacto@oratoriaefectiva.in</span>
           </div>
         </div>
       </footer>
 
-      {/* STICKY BOTTOM CTA FOR MOBILE (90.9% OF USERS ACCORDING TO AUDIENCE REPORT) */}
+      {/* STICKY BOTTOM CTA (Visible tras pasar el Hero para móvil y escritorio) */}
       {showStickyCta && (
-        <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-950/95 border-t border-amber-500/30 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-lg sm:hidden flex items-center justify-between gap-3 shadow-2xl animate-fade-in">
+        <div className="fixed bottom-0 left-0 w-full z-40 bg-slate-950/95 border-t border-amber-500/30 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-lg flex items-center justify-between gap-3 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] animate-fade-in max-w-6xl md:left-1/2 md:-translate-x-1/2 md:rounded-t-2xl">
           <div className="flex items-center gap-2.5 overflow-hidden">
             <div className="w-10 h-12 relative shrink-0 rounded overflow-hidden border border-white/20">
               <img
@@ -834,8 +845,8 @@ export default function ProtocoloRespuestasPage() {
               />
             </div>
             <div className="leading-tight truncate">
-              <p className="text-[12px] font-black text-white truncate">Protocolo de Respuestas</p>
-              <p className="text-[10px] text-amber-400 font-bold">Manual Táctico Digital</p>
+              <p className="text-[12px] sm:text-sm font-black text-white truncate">Protocolo de Respuestas Inteligentes</p>
+              <p className="text-[10px] sm:text-xs text-amber-400 font-bold">Manual Táctico Digital — Solo $17 USD</p>
             </div>
           </div>
           <CtaButton
@@ -847,10 +858,74 @@ export default function ProtocoloRespuestasPage() {
             productName="Protocolo de Respuestas Inteligentes"
             price={17.0}
             category="Libro Digital"
-            className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider shrink-0 shadow-lg min-h-[44px] flex items-center justify-center active:scale-95 transition-transform"
+            className="px-5 sm:px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shrink-0 shadow-[0_0_20px_rgba(245,158,11,0.4)] min-h-[44px] flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
           >
             Adquirir Ahora
           </CtaButton>
+        </div>
+      )}
+
+      {/* EXIT-INTENT POPUP (100% Legal y Compliant con Google Ads - Atrapa abandonos) */}
+      {showExitModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-lg bg-gradient-to-b from-neutral-900 to-black border-2 border-amber-500/50 rounded-3xl p-6 sm:p-8 shadow-[0_0_60px_rgba(245,158,11,0.3)] text-center">
+            {/* Close button */}
+            <button
+              onClick={() => setShowExitModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sm"
+              aria-label="Cerrar"
+            >
+              ✕
+            </button>
+
+            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-red-600/20 text-red-400 border border-red-500/30 mb-3">
+              ¡Espera un momento!
+            </span>
+
+            <h3 className="text-xl sm:text-2xl font-black text-white leading-tight mb-2">
+              No dejes que tu próxima reunión te agarre desprevenido
+            </h3>
+
+            <p className="text-xs sm:text-sm text-slate-300 mb-5 leading-relaxed">
+              Una sola respuesta titubeante ante tu jefe o cliente puede costarte respeto profesional. Llévate el manual táctico hoy mismo con acceso instantáneo.
+            </p>
+
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 text-left space-y-2 text-xs sm:text-sm text-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 font-bold">✓</span>
+                <span>Descarga inmediata en PDF (30 min de lectura)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 font-bold">✓</span>
+                <span><strong>Garantía total de 7 días:</strong> si no te sirve, te devolvemos el 100%</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 font-bold">✓</span>
+                <span>Pago único de solo <strong>$17 USD</strong> (acceso de por vida)</span>
+              </div>
+            </div>
+
+            <CtaButton
+              href={defaultCheckoutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              location="checkout"
+              productId="protocolo-de-respuestas-inteligentes"
+              productName="Protocolo de Respuestas Inteligentes"
+              price={17.0}
+              category="Libro Digital"
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-sm uppercase tracking-wider transition-all shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:scale-[1.02] flex items-center justify-center gap-2 mb-3"
+            >
+              <span>SÍ, QUIERO EL PROTOCOLO ($17 USD)</span>
+            </CtaButton>
+
+            <button
+              onClick={() => setShowExitModal(false)}
+              className="text-[11px] text-slate-400 hover:text-slate-200 underline transition-colors"
+            >
+              No gracias, prefiero improvisar en mi próxima reunión
+            </button>
+          </div>
         </div>
       )}
 
