@@ -103,7 +103,7 @@ export default function ProtocoloRespuestasPage() {
 
   return (
     <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-amber-500/30 overflow-x-hidden relative">
-      <ProductViewTracker itemId="protocolo-de-respuestas-inteligentes" itemName="Protocolo de Respuestas Inteligentes" price={17.0} category="Libro Digital" />
+      <ProductViewTracker itemId="protocolo-de-respuestas-inteligentes" itemName="Protocolo de Respuestas Inteligentes" price={9.99} category="Libro Digital" />
       {/* Background ambient lighting - strictly Red, Gold & Obsidian Black */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-red-600/20 via-amber-600/15 to-transparent rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute top-[35%] right-0 w-[550px] h-[550px] bg-red-900/15 rounded-full blur-[180px] pointer-events-none" />
@@ -136,7 +136,7 @@ export default function ProtocoloRespuestasPage() {
             location="navbar"
             productId="protocolo-de-respuestas-inteligentes"
             productName="Protocolo de Respuestas Inteligentes"
-            price={17.0}
+            price={9.99}
             category="Libro Digital"
             className="px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(245,158,11,0.35)] hover:scale-105 min-h-[40px] flex items-center justify-center"
           >
@@ -205,7 +205,7 @@ export default function ProtocoloRespuestasPage() {
                 location="hero"
                 productId="protocolo-de-respuestas-inteligentes"
                 productName="Protocolo de Respuestas Inteligentes"
-                price={17.0}
+                price={9.99}
                 category="Libro Digital"
                 className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 min-h-[48px] rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs sm:text-sm uppercase tracking-widest text-center transition-all shadow-[0_0_35px_rgba(245,158,11,0.45)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
               >
@@ -362,7 +362,7 @@ export default function ProtocoloRespuestasPage() {
               location="mid_page"
               productId="protocolo-de-respuestas-inteligentes"
               productName="Protocolo de Respuestas Inteligentes"
-              price={17.0}
+              price={9.99}
               category="Libro Digital"
               className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:scale-105"
             >
@@ -717,6 +717,18 @@ export default function ProtocoloRespuestasPage() {
             </div>
           </div>
 
+          {/* Price display */}
+          <div className="mb-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 line-through text-lg sm:text-xl font-bold">$27 USD</span>
+              <span className="text-4xl sm:text-6xl font-black text-amber-400 tracking-tight">$9,99</span>
+              <span className="text-base sm:text-lg text-white font-bold">USD</span>
+            </div>
+            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-black uppercase tracking-wider">
+              Acceso Instantáneo
+            </span>
+          </div>
+
           {/* Offer inclusions */}
           <div className="max-w-md mx-auto text-left space-y-3 mb-8 bg-black/60 border border-white/10 p-5 rounded-2xl">
             <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-200">
@@ -749,7 +761,7 @@ export default function ProtocoloRespuestasPage() {
             location="pricing"
             productId="protocolo-de-respuestas-inteligentes"
             productName="Protocolo de Respuestas Inteligentes"
-            price={17.0}
+            price={9.99}
             category="Libro Digital"
             className="inline-flex items-center justify-center gap-3 w-full max-w-md py-5 px-8 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-base uppercase tracking-widest transition-all shadow-[0_0_40px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95"
           >
@@ -846,7 +858,7 @@ export default function ProtocoloRespuestasPage() {
             </div>
             <div className="leading-tight truncate">
               <p className="text-[12px] sm:text-sm font-black text-white truncate">Protocolo de Respuestas Inteligentes</p>
-              <p className="text-[10px] sm:text-xs text-amber-400 font-bold">Manual Táctico Digital — Solo $17 USD</p>
+              <p className="text-[10px] sm:text-xs text-amber-400 font-bold">Manual Táctico Digital — Solo $9,99 USD</p>
             </div>
           </div>
           <CtaButton
@@ -856,7 +868,7 @@ export default function ProtocoloRespuestasPage() {
             location="checkout"
             productId="protocolo-de-respuestas-inteligentes"
             productName="Protocolo de Respuestas Inteligentes"
-            price={17.0}
+            price={9.99}
             category="Libro Digital"
             className="px-5 sm:px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shrink-0 shadow-[0_0_20px_rgba(245,158,11,0.4)] min-h-[44px] flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
           >
@@ -901,7 +913,7 @@ export default function ProtocoloRespuestasPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-emerald-400 font-bold">✓</span>
-                <span>Pago único de solo <strong>$17 USD</strong> (acceso de por vida)</span>
+                <span>Pago único de solo <strong>$9,99 USD</strong> (acceso de por vida)</span>
               </div>
             </div>
 
@@ -912,11 +924,11 @@ export default function ProtocoloRespuestasPage() {
               location="checkout"
               productId="protocolo-de-respuestas-inteligentes"
               productName="Protocolo de Respuestas Inteligentes"
-              price={17.0}
+              price={9.99}
               category="Libro Digital"
               className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-sm uppercase tracking-wider transition-all shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:scale-[1.02] flex items-center justify-center gap-2 mb-3"
             >
-              <span>SÍ, QUIERO EL PROTOCOLO ($17 USD)</span>
+              <span>SÍ, QUIERO EL PROTOCOLO ($9,99 USD)</span>
             </CtaButton>
 
             <button
